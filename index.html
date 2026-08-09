@@ -572,7 +572,7 @@ $('#add').onclick=()=>{
   cart.push(...items);persist();render();$('#input').value='';
   $('#status').textContent=items.length?`${items.length} artículo(s) agregados y clasificados.`:'No detecté artículos.';
 };
-$('#clearText').onclick=()=>{ $('#input').value=''; dictationPrefix=''; finalText=''; };
+$('#clearText').onclick=()=>{ $('#input').value=''; dictationPrefix=''; finalText=''; sessionFinalResults.clear(); };
 $('#clearCart').onclick=()=>{cart=[];persist();render()};
 $('#save').onclick=()=>{persist();$('#status').textContent='Lista guardada en este dispositivo.'};
 $('#analyze').onclick=()=>{
@@ -591,6 +591,39 @@ let rec = null;
 let isListening = false;
 let finalText = '';
 let dictationPrefix = '';
+let sessionFinalResults = new Map();
+
+function normalizeSpeechText(text){
+  return (text || '').replace(/\s+/g,' ').trim();
+}
+
+function mergeSpeechText(current, incoming){
+  const base = normalizeSpeechText(current);
+  const addition = normalizeSpeechText(incoming);
+  if(!base) return addition;
+  if(!addition) return base;
+
+  const baseWords = base.split(' ');
+  const additionWords = addition.split(' ');
+  const comparable = word => word.toLocaleLowerCase('es-GT');
+  const maxOverlap = Math.min(baseWords.length, additionWords.length);
+
+  for(let size = maxOverlap; size > 0; size--){
+    const baseEnd = baseWords.slice(-size).map(comparable).join(' ');
+    const additionStart = additionWords.slice(0,size).map(comparable).join(' ');
+    if(baseEnd === additionStart){
+      return [...baseWords, ...additionWords.slice(size)].join(' ');
+    }
+  }
+
+  return `${base} ${addition}`;
+}
+
+function buildSessionFinalText(){
+  return [...sessionFinalResults.entries()]
+    .sort(([a],[b]) => a - b)
+    .reduce((text, [,transcript]) => mergeSpeechText(text, transcript), '');
+}
 
 function setDictationStatus(message, kind='normal'){
   const el = $('#status');
@@ -650,27 +683,28 @@ function initRecognition(){
   };
 
   rec.onresult = e => {
-    let sessionFinal = '';
     let sessionInterim = '';
 
-    for(let i = 0; i < e.results.length; i++){
-      const tx = (e.results[i][0].transcript || '').replace(/\s+/g,' ').trim();
+    for(let i = e.resultIndex; i < e.results.length; i++){
+      const tx = normalizeSpeechText(e.results[i][0].transcript);
       if(!tx) continue;
 
       if(e.results[i].isFinal){
-        sessionFinal += (sessionFinal ? ' ' : '') + tx;
-      }else{
-        sessionInterim += (sessionInterim ? ' ' : '') + tx;
+        sessionFinalResults.set(i, tx);
       }
     }
 
-    finalText = sessionFinal.replace(/\s+/g,' ').trim();
+    for(let i = 0; i < e.results.length; i++){
+      if(e.results[i].isFinal) continue;
+      const tx = normalizeSpeechText(e.results[i][0].transcript);
+      sessionInterim = mergeSpeechText(sessionInterim, tx);
+    }
 
-    const composed = [
-      dictationPrefix,
-      finalText,
-      sessionInterim
-    ].filter(Boolean).join(' ').replace(/\s+/g,' ').trim();
+    finalText = buildSessionFinalText();
+
+    const dictatedText = mergeSpeechText(finalText, sessionInterim);
+    const composed = [dictationPrefix, dictatedText]
+      .filter(Boolean).join(' ');
 
     $('#input').value = composed;
   };
@@ -730,6 +764,7 @@ $('#mic').onclick = async () => {
 
   dictationPrefix = $('#input').value.replace(/\s+/g,' ').trim();
   finalText = '';
+  sessionFinalResults = new Map();
 
   try{
     rec.start();
