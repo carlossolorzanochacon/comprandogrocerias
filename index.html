@@ -550,7 +550,8 @@ select,input[type=text]{border:1.5px solid #dce8e0;background:#fff;border-radius
   width:min(590px,calc(100% - 18px));padding:7px 8px;border-radius:23px;
   border:1px solid rgba(34,97,63,.10);box-shadow:0 13px 35px rgba(26,68,48,.18)
 }
-.tab-button{border-radius:17px;color:#6f7d77}
+.tab-button{border-radius:17px;color:#6f7d77;outline:none}
+.tab-button:focus-visible{box-shadow:0 0 0 3px rgba(25,168,98,.20)}
 .tab-icon{background:transparent!important;border-radius:10px;color:inherit}
 .tab-button[aria-selected="true"]{background:#eaf7ef;color:#0d854c}
 .tab-button[aria-selected="true"] .tab-icon{box-shadow:none;transform:translateY(-2px) scale(1.06)}
