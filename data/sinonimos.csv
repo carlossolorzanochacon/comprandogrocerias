@@ -1,0 +1,95 @@
+sinonimo,producto_id,prioridad
+huevo,prod_001,100
+huevos,prod_001,100
+cartón de huevos,prod_001,90
+leche,prod_002,100
+leches,prod_002,100
+queso,prod_003,100
+quesos,prod_003,100
+yogur,prod_004,100
+yogurt,prod_004,100
+crema,prod_005,100
+crema de batir,prod_005,100
+mantequilla,prod_006,100
+aguacate,prod_007,100
+aguacates,prod_007,100
+tomate,prod_008,100
+tomates,prod_008,100
+pepino,prod_009,100
+pepinos,prod_009,100
+cebolla,prod_010,100
+cebollas,prod_010,100
+papa,prod_011,100
+papas,prod_011,100
+manzana,prod_012,100
+manzanas,prod_012,100
+banano,prod_013,100
+bananos,prod_013,100
+plátano,prod_014,100
+plátanos,prod_014,100
+lechuga,prod_015,100
+lechugas,prod_015,100
+zanahoria,prod_016,100
+zanahorias,prod_016,100
+limón,prod_017,100
+limones,prod_017,100
+naranja,prod_018,100
+naranjas,prod_018,100
+agua,prod_019,100
+aguas,prod_019,100
+jugo,prod_020,100
+jugos,prod_020,100
+refresco,prod_021,100
+refrescos,prod_021,100
+gaseosa,prod_021,90
+coca-cola,prod_021,90
+cocacola,prod_021,90
+pepsi,prod_021,90
+cerveza,prod_022,100
+cervezas,prod_022,100
+detergente,prod_023,100
+detergentes,prod_023,100
+cloro,prod_024,100
+jabón,prod_025,100
+jabones,prod_025,100
+suavizante,prod_026,100
+desinfectante,prod_027,100
+limpiador,prod_028,100
+papel higiénico,prod_029,100
+papel de baño,prod_029,90
+servilleta,prod_030,100
+servilletas,prod_030,100
+bolsa,prod_031,100
+bolsas,prod_031,100
+papel aluminio,prod_032,100
+aluminio,prod_032,80
+toalla de papel,prod_033,100
+toallas de papel,prod_033,100
+cereal,prod_034,100
+cereales,prod_034,100
+arroz,prod_035,100
+frijol,prod_036,100
+frijoles,prod_036,100
+pasta,prod_037,100
+pastas,prod_037,100
+aceite,prod_038,100
+aceites,prod_038,100
+azúcar,prod_039,100
+sal,prod_040,100
+harina,prod_041,100
+harina para panqueques,prod_041,90
+café,prod_042,100
+dulce,prod_043,100
+dulces,prod_043,100
+galleta,prod_044,100
+galletas,prod_044,100
+pollo,prod_045,100
+carne,prod_046,80
+carne de res,prod_046,100
+res,prod_046,90
+carne de cerdo,prod_047,100
+cerdo,prod_047,90
+pescado,prod_048,100
+jamón,prod_049,100
+salchicha,prod_050,100
+salchichas,prod_050,100

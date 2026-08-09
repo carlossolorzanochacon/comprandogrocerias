@@ -1,0 +1,51 @@
+id,nombre_normalizado,categoria,subcategoria,unidad_base,activo
+prod_001,huevos,Huevos,Huevos frescos,unidad,true
+prod_002,leche,Lácteos,Leche líquida,litro,true
+prod_003,queso,Lácteos,Quesos,gramo,true
+prod_004,yogur,Lácteos,Yogures,gramo,true
+prod_005,crema,Lácteos,Cremas,ml,true
+prod_006,mantequilla,Lácteos,Mantequillas,gramo,true
+prod_007,aguacate,Frutas y verduras,Frutas,unidad,true
+prod_008,tomate,Frutas y verduras,Verduras,unidad,true
+prod_009,pepino,Frutas y verduras,Verduras,unidad,true
+prod_010,cebolla,Frutas y verduras,Verduras,unidad,true
+prod_011,papa,Frutas y verduras,Verduras,libra,true
+prod_012,manzana,Frutas y verduras,Frutas,unidad,true
+prod_013,banano,Frutas y verduras,Frutas,unidad,true
+prod_014,plátano,Frutas y verduras,Frutas,unidad,true
+prod_015,lechuga,Frutas y verduras,Verduras,unidad,true
+prod_016,zanahoria,Frutas y verduras,Verduras,libra,true
+prod_017,limón,Frutas y verduras,Frutas,unidad,true
+prod_018,naranja,Frutas y verduras,Frutas,unidad,true
+prod_019,agua,Bebidas,Agua,litro,true
+prod_020,jugo,Bebidas,Jugos,litro,true
+prod_021,refresco,Bebidas,Bebidas gaseosas,litro,true
+prod_022,cerveza,Bebidas,Cervezas,ml,true
+prod_023,detergente,Limpieza,Lavandería,gramo,true
+prod_024,cloro,Limpieza,Limpieza del hogar,litro,true
+prod_025,jabón,Limpieza,Jabones,unidad,true
+prod_026,suavizante,Limpieza,Lavandería,litro,true
+prod_027,desinfectante,Limpieza,Limpieza del hogar,litro,true
+prod_028,limpiador,Limpieza,Limpieza del hogar,litro,true
+prod_029,papel higiénico,Hogar,Papel higiénico,rollo,true
+prod_030,servilletas,Hogar,Papel y desechables,paquete,true
+prod_031,bolsas,Hogar,Bolsas,paquete,true
+prod_032,papel aluminio,Hogar,Papel y desechables,metro,true
+prod_033,toallas de papel,Hogar,Papel y desechables,rollo,true
+prod_034,cereal,Despensa,Cereales,gramo,true
+prod_035,arroz,Despensa,Granos,libra,true
+prod_036,frijol,Despensa,Granos,libra,true
+prod_037,pasta,Despensa,Pastas,gramo,true
+prod_038,aceite,Despensa,Aceites,ml,true
+prod_039,azúcar,Despensa,Ingredientes,libra,true
+prod_040,sal,Despensa,Ingredientes,gramo,true
+prod_041,harina,Despensa,Ingredientes,libra,true
+prod_042,café,Despensa,Café,gramo,true
+prod_043,dulces,Dulces y snacks,Dulces,gramo,true
+prod_044,galletas,Dulces y snacks,Galletas,gramo,true
+prod_045,pollo,Carnes,Carnes y aves,libra,true
+prod_046,carne de res,Carnes,Carnes y aves,libra,true
+prod_047,carne de cerdo,Carnes,Carnes y aves,libra,true
+prod_048,pescado,Carnes,Pescados,libra,true
+prod_049,jamón,Carnes,Embutidos,gramo,true
+prod_050,salchichas,Carnes,Embutidos,gramo,true
