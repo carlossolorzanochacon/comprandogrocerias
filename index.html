@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mi Carreta Inteligente</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css">
+<style>
+:root{
+  --bg:#eef5fb;
+  --card:#ffffff;
+  --text:#16324a;
+  --muted:#688093;
+  --line:#d9e6ef;
+  --blue:#1677d2;
+  --blue-dark:#095fae;
+  --orange:#ff8a1f;
+  --orange-dark:#e66d00;
+  --green:#25a55f;
+  --green-dark:#188247;
+  --soft-blue:#e7f3ff;
+  --soft-orange:#fff0df;
+  --soft-green:#e7f7ee;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+  background:linear-gradient(180deg,#eaf5ff 0,#f6fbff 38%,#eef8f1 100%);
+  color:var(--text);
+}
+.wrap{max-width:1180px;margin:auto;padding:24px}
+header{
+  background:linear-gradient(135deg,var(--blue),#25a8dd);
+  color:#fff;
+  border-radius:26px;
+  padding:24px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:20px;
+  margin-bottom:20px;
+  box-shadow:0 14px 35px rgba(18,103,166,.18)
+}
+h1{font-size:32px;letter-spacing:-.035em;margin:0;font-weight:850}
+.sub{color:rgba(255,255,255,.9);font-size:15px;margin-top:6px;font-weight:500}
+.grid{display:grid;grid-template-columns:1.05fr .95fr;gap:18px}
+.card{
+  background:var(--card);
+  border:1px solid rgba(29,113,168,.11);
+  border-radius:24px;
+  padding:20px;
+  box-shadow:0 10px 28px rgba(28,89,129,.08)
+}
+.label{
+  font-size:13px;
+  text-transform:uppercase;
+  letter-spacing:.09em;
+  color:var(--blue-dark);
+  font-weight:850;
+  margin-bottom:12px
+}
+textarea{
+  width:100%;
+  min-height:145px;
+  border:2px solid #cfe0ec;
+  border-radius:18px;
+  padding:16px;
+  font:inherit;
+  font-size:17px;
+  resize:vertical;
+  outline:none;
+  background:#fbfdff;
+}
+textarea:focus,input:focus,select:focus{border-color:var(--blue);box-shadow:0 0 0 4px rgba(22,119,210,.1)}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+button{
+  border:0;
+  border-radius:16px;
+  padding:14px 18px;
+  min-height:52px;
+  font-size:15px;
+  font-weight:800;
+  cursor:pointer;
+  background:#edf3f7;
+  color:var(--text);
+  transition:transform .15s ease,filter .15s ease
+}
+button:active{transform:scale(.98)}
+button.primary{background:linear-gradient(135deg,var(--green),#36bc73);color:white;box-shadow:0 7px 16px rgba(37,165,95,.2)}
+button.orange{background:linear-gradient(135deg,var(--orange),#ffa13e);color:white;box-shadow:0 7px 16px rgba(255,138,31,.22)}
+button.danger{background:#fff0f0;color:#9a2e2e}
+button:disabled{opacity:.5;cursor:not-allowed}
+.mic{
+  background:linear-gradient(135deg,var(--orange),#ffad48);
+  color:#fff;
+  flex:1;
+  font-size:17px;
+}
+.mic.on{outline:4px solid rgba(255,138,31,.18)}
+#add{flex:1.4;font-size:17px}
+.status{font-size:13px;color:var(--muted);margin-top:11px;min-height:20px;line-height:1.4}
+.list{margin-top:16px}
+.item{
+  display:grid;
+  grid-template-columns:1fr auto auto;
+  gap:10px;
+  align-items:center;
+  padding:14px;
+  margin-bottom:10px;
+  border:1px solid var(--line);
+  border-radius:16px;
+  background:#fbfdff
+}
+.item strong{display:block;font-size:16px}
+.meta{font-size:12px;color:var(--muted);margin-top:3px}
+.qty{
+  font-size:13px;
+  background:var(--soft-blue);
+  color:var(--blue-dark);
+  padding:8px 10px;
+  border-radius:999px;
+  font-weight:800
+}
+.x{background:transparent;padding:8px;min-height:auto;color:#8aa0af}
+.summary{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.kpi{border-radius:18px;padding:15px;border:0}
+.kpi:nth-child(1){background:var(--soft-blue);color:var(--blue-dark)}
+.kpi:nth-child(2){background:var(--soft-orange);color:var(--orange-dark)}
+.kpi:nth-child(3){background:var(--soft-green);color:var(--green-dark)}
+.kpi span{font-size:12px;font-weight:750}
+.kpi b{display:block;font-size:24px;margin-top:4px}
+.store{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  padding:16px;
+  border-radius:17px;
+  margin-bottom:10px;
+}
+.store:nth-of-type(1){background:var(--soft-blue)}
+.store:nth-of-type(2){background:var(--soft-orange)}
+.badge{
+  font-size:12px;
+  border:0;
+  padding:8px 10px;
+  border-radius:999px;
+  background:rgba(255,255,255,.78);
+  color:var(--text);
+  font-weight:750
+}
+.note{font-size:13px;line-height:1.5;color:var(--muted)}
+.section{margin-top:18px}
+select,input[type=text]{
+  width:100%;
+  border:2px solid #d4e3ed;
+  border-radius:14px;
+  padding:13px 14px;
+  font:inherit;
+  font-size:15px;
+  background:white;
+  outline:none
+}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+table{width:100%;border-collapse:separate;border-spacing:0 7px;font-size:13px;margin-top:9px}
+th{text-align:left;padding:4px 9px;color:var(--muted);font-weight:700}
+td{background:#f7fafc;padding:12px 9px}
+td:first-child{border-radius:12px 0 0 12px;font-weight:750}
+td:last-child{border-radius:0 12px 12px 0}
+.price-empty{color:var(--muted);font-style:italic}
+footer{margin-top:18px;font-size:12px;color:var(--muted);text-align:center}
+#analyze{width:100%;min-height:60px;font-size:18px;background:linear-gradient(135deg,var(--blue),#2c97df);box-shadow:0 8px 18px rgba(22,119,210,.22)}
+@media(max-width:820px){
+  .wrap{padding:12px}
+  header{border-radius:20px;padding:20px;align-items:flex-start;flex-direction:column}
+  h1{font-size:28px}
+  .grid{grid-template-columns:1fr}
+  .summary{grid-template-columns:repeat(3,1fr)}
+  .two{grid-template-columns:1fr}
+  .card{border-radius:20px;padding:16px}
+  textarea{min-height:160px;font-size:18px}
+  .actions{display:grid;grid-template-columns:1fr 1fr}
+  #clearText{grid-column:1/-1}
+  #save,#clearCart{width:100%}
+  .item{grid-template-columns:1fr auto auto}
+  button{min-height:58px;font-size:16px}
+  .mic,#add{font-size:18px}
+  #analyze{min-height:64px;font-size:19px}
+}
+@media(max-width:470px){
+  .summary{grid-template-columns:1fr 1fr 1fr}
+  .kpi{padding:12px 9px}
+  .kpi b{font-size:21px}
+  .actions{grid-template-columns:1fr}
+  #clearText{grid-column:auto}
+  .mic,#add,#clearText{width:100%}
+  .store{align-items:flex-start;flex-direction:column}
+}
+
+.module-title{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  margin-bottom:14px;
+}
+.module-icon{
+  width:52px;
+  height:52px;
+  min-width:52px;
+  border-radius:16px;
+  display:grid;
+  place-items:center;
+  font-size:27px;
+  font-weight:900;
+  box-shadow:0 7px 16px rgba(20,70,100,.10);
+}
+.icon-blue{background:var(--soft-blue);color:var(--blue)}
+.icon-orange{background:var(--soft-orange);color:var(--orange)}
+.icon-green{background:var(--soft-green);color:var(--green)}
+.module-copy .label{margin:0 0 2px}
+.module-copy .module-sub{font-size:12px;color:var(--muted);font-weight:600}
+.kpi{position:relative;overflow:hidden}
+.kpi .kpi-icon{
+  font-size:22px;
+  display:block;
+  margin-bottom:4px;
+}
+.store-icon{
+  width:44px;
+  height:44px;
+  min-width:44px;
+  border-radius:14px;
+  display:grid;
+  place-items:center;
+  font-size:23px;
+  background:white;
+  box-shadow:0 5px 14px rgba(20,70,100,.10)
+}
+.store-left{display:flex;align-items:center;gap:12px}
+.input-head{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  margin-bottom:7px
+}
+.input-head .mini-icon{
+  width:30px;height:30px;border-radius:9px;display:grid;place-items:center;
+  background:var(--soft-blue);font-size:16px
+}
+@media(max-width:470px){
+  .module-icon{width:48px;height:48px;min-width:48px;font-size:24px}
+}
+
+.location-box{
+  margin-top:14px;
+  border:2px solid #d4e3ed;
+  border-radius:18px;
+  overflow:hidden;
+  background:#f8fcff
+}
+#map{
+  width:100%;
+  height:310px;
+  background:#dcebf3
+}
+.map-toolbar{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  padding:12px
+}
+.location-btn{
+  background:linear-gradient(135deg,var(--blue),#2c97df);
+  color:white;
+}
+.pin-btn{
+  background:linear-gradient(135deg,var(--orange),#ffa13e);
+  color:white;
+}
+.coords{
+  padding:0 13px 13px;
+  font-size:12px;
+  color:var(--muted)
+}
+.location-confirmed{
+  margin-top:10px;
+  display:flex;
+  gap:9px;
+  align-items:flex-start;
+  background:var(--soft-green);
+  color:var(--green-dark);
+  border-radius:14px;
+  padding:12px 13px;
+  font-size:13px;
+  font-weight:700
+}
+@media(max-width:470px){
+  #map{height:280px}
+  .map-toolbar{grid-template-columns:1fr}
+}
+
+.manual-mode-note{
+  display:none;
+  margin-top:10px;
+  padding:11px 13px;
+  border-radius:13px;
+  background:var(--soft-orange);
+  color:var(--orange-dark);
+  font-size:13px;
+  font-weight:700
+}
+.manual-mode-note.active{display:block}
+#saveAddress{width:100%;background:linear-gradient(135deg,var(--green),#36bc73);color:#fff}
+
+/* Correcciones específicas para Leaflet en móviles */
+#map.leaflet-container{
+  position:relative;
+  z-index:1;
+  width:100%;
+  height:320px;
+  overflow:hidden;
+  border-radius:16px 16px 0 0;
+  background:#dcebf3;
+  font-family:inherit;
+}
+#map .leaflet-pane,
+#map .leaflet-tile,
+#map .leaflet-marker-icon,
+#map .leaflet-marker-shadow,
+#map .leaflet-tile-container{
+  max-width:none !important;
+  max-height:none !important;
+}
+#map img.leaflet-tile{
+  width:256px !important;
+  height:256px !important;
+}
+#map .leaflet-control-container{
+  position:relative;
+  z-index:1000;
+}
+.location-box{
+  position:relative;
+}
+@media(max-width:470px){
+  #map.leaflet-container{height:300px}
+}
+
+.permission-help{
+  display:none;
+  margin-top:12px;
+  padding:14px;
+  border-radius:16px;
+  background:#fff3e8;
+  border:1px solid #ffd3aa;
+}
+.permission-help.show{display:block}
+.permission-help strong{display:block;color:#8a4a00;margin-bottom:6px}
+.permission-help .note{color:#7a5b3c}
+.permission-help button{
+  width:100%;
+  margin-top:10px;
+  background:linear-gradient(135deg,var(--orange),#ffa13e);
+  color:#fff;
+}
+.permission-steps{
+  margin:9px 0 0;
+  padding-left:20px;
+  color:#6f5a48;
+  font-size:13px;
+  line-height:1.55;
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div>
+    <h1>Mi Carreta Inteligente</h1>
+    <div class="sub">Dicta, escribe, organiza y compara tu compra.</div>
+  </div>
+  <div class="badge">MVP • Walmart + La Torre</div>
+</header>
+
+<div class="grid">
+  <div>
+    <section class="card">
+      <div class="module-title">
+  <div class="module-icon icon-orange">🎙</div>
+  <div class="module-copy">
+    <div class="label">Agregar artículos</div>
+    <div class="module-sub">Habla o escribe lo que necesitas</div>
+  </div>
+</div>
+      <textarea id="input" placeholder="Ej.: 2 leches descremadas, cereal Corn Flakes grande, 6 aguacates, detergente Ariel 3 kg..."></textarea>
+      <div class="actions">
+        <button class="mic" id="mic">🎙 Dictar</button>
+        <button class="primary" id="add">＋ Agregar a la carreta</button>
+        <button id="clearText">Limpiar texto</button>
+      </div>
+      <div class="status" id="status">Puedes hablar de forma natural.</div>
+<div class="note" style="margin-top:4px">🎤 Dictado activo por HTTPS. Cada sesión se reconstruye desde los resultados actuales para evitar repeticiones acumuladas.</div>
+<div class="permission-help" id="permissionHelp">
+  <strong>🎙 El micrófono está bloqueado</strong>
+  <div class="note">Si Chrome rechaza el acceso, revisa el permiso del sitio o los permisos de Chrome.</div>
+  <button type="button" id="openChromeSettings">⚙ Abrir permisos de Chrome</button>
+  <ol class="permission-steps">
+    <li>Entra a <b>Permisos</b>.</li>
+    <li>Activa <b>Micrófono</b>.</li>
+    <li>Regresa a esta página y pulsa <b>Dictar</b> otra vez.</li>
+  </ol>
+</div>
+    </section>
+
+    <section class="card section">
+      <div class="module-title">
+  <div class="module-icon icon-green">🛒</div>
+  <div class="module-copy">
+    <div class="label">Tu carreta</div>
+    <div class="module-sub">Productos organizados automáticamente</div>
+  </div>
+</div>
+      <div class="summary">
+        <div class="kpi"><span class="kpi-icon">🧾</span><span>Artículos</span><b id="count">0</b></div>
+        <div class="kpi"><span class="kpi-icon">🗂</span><span>Categorías</span><b id="cats">0</b></div>
+        <div class="kpi"><span class="kpi-icon">✓</span><span>Estado</span><b id="state">Lista</b></div>
+      </div>
+      <div class="list" id="list"></div>
+      <div class="actions">
+        <button id="save">Guardar lista</button>
+        <button class="danger" id="clearCart">Vaciar carreta</button>
+      </div>
+    </section>
+  </div>
+
+  <div>
+    <section class="card">
+      <div class="module-title">
+  <div class="module-icon icon-blue">⚙</div>
+  <div class="module-copy">
+    <div class="label">Preferencias de compra</div>
+    <div class="module-sub">Ubicación, criterio y sustituciones</div>
+  </div>
+</div>
+      <div class="section" style="margin-top:0">
+        <div class="input-head">
+          <div class="mini-icon">📍</div>
+          <label class="meta">Dirección de entrega</label>
+        </div>
+        <input id="home" type="text" placeholder="Escribe tu dirección exacta">
+        <button type="button" class="primary" id="saveAddress" style="width:100%;margin-top:10px">💾 Guardar dirección y buscar en mapa</button>
+        <div class="status" id="addressStatus">Aún no has guardado una dirección.</div>
+      </div>
+
+      <div class="section">
+        <div class="input-head">
+          <div class="mini-icon">🗺</div>
+          <label class="meta">Ubicación de tu casa</label>
+        </div>
+        <div class="note">Primero intentaremos encontrar tu dirección automáticamente.</div>
+        <div class="location-box">
+          <div id="map" aria-label="Mapa para confirmar tu ubicación"></div>
+          <div class="coords" id="coords">Guarda tu dirección para buscarla en el mapa.</div>
+        </div>
+        <button type="button" class="pin-btn" id="manualLocation" style="width:100%;margin-top:10px">📌 Buscar manualmente mi ubicación</button>
+        <button type="button" class="location-btn" id="useLocation" style="width:100%;margin-top:10px">◎ Usar ubicación actual del teléfono</button>
+        <div class="location-confirmed" id="locationSaved">La ubicación todavía no ha sido confirmada.</div>
+      </div>
+
+      <div class="two section">
+        <div>
+          <div class="input-head"><div class="mini-icon">🎯</div><label class="meta">Criterio principal</label></div>
+          <select id="criterion">
+            <option value="total">Menor total de la carreta</option>
+            <option value="availability">Mayor disponibilidad</option>
+            <option value="balanced">Balance precio + existencias</option>
+          </select>
+        </div>
+        <div>
+          <div class="input-head"><div class="mini-icon">🔁</div><label class="meta">Sustituciones</label></div>
+          <select id="subs">
+            <option value="yes">Permitir equivalentes razonables</option>
+            <option value="brand">Respetar marca, permitir otra presentación</option>
+            <option value="no">Producto exacto solamente</option>
+          </select>
+        </div>
+      </div>
+    </section>
+
+    <section class="card section">
+      <div class="module-title">
+  <div class="module-icon icon-green">📊</div>
+  <div class="module-copy">
+    <div class="label">Comparación de supermercados</div>
+    <div class="module-sub">Precio total, disponibilidad y mejor combinación</div>
+  </div>
+</div>
+      <div class="store">
+        <div class="store-left"><div class="store-icon">🛒</div><div><strong>Walmart</strong><div class="meta">Sucursal por definir</div></div></div>
+        <span class="badge">Pendiente conexión</span>
+      </div>
+      <div class="store">
+        <div class="store-left"><div class="store-icon">🏬</div><div><strong>La Torre</strong><div class="meta">Sucursal por definir</div></div></div>
+        <span class="badge">Pendiente conexión</span>
+      </div>
+      <div class="actions">
+        <button class="primary" id="analyze">Comparar precios y existencias</button>
+      </div>
+      <div class="status" id="analysisStatus">Todavía no hay precios reales conectados.</div>
+
+      <table>
+        <thead><tr><th>Escenario</th><th>Disponibles</th><th>Total</th></tr></thead>
+        <tbody>
+          <tr><td>Walmart</td><td class="price-empty">—</td><td class="price-empty">—</td></tr>
+          <tr><td>La Torre</td><td class="price-empty">—</td><td class="price-empty">—</td></tr>
+          <tr><td>Compra óptima</td><td class="price-empty">—</td><td class="price-empty">—</td></tr>
+        </tbody>
+      </table>
+
+      <p class="note section">
+        Esta versión no inventa precios ni existencias. El siguiente módulo conectará fuentes reales de Walmart Guatemala y La Torre por sucursal, manteniendo historial y equivalencias de presentación.
+      </p>
+    </section>
+  </div>
+</div>
+<footer>Los datos de tu lista se guardan localmente en este navegador.</footer>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+const $=s=>document.querySelector(s);
+let cart=JSON.parse(localStorage.getItem('smartCart')||'[]');
+
+const categories = [
+  ['Lácteos',/leche|queso|yogur|crema|mantequilla/i],
+  ['Frutas y verduras',/aguacate|tomate|cebolla|papa|manzana|banano|plátano|lechuga|zanahoria|limón|naranja/i],
+  ['Bebidas',/coca|pepsi|agua|jugo|refresco|bebida|cerveza/i],
+  ['Limpieza',/detergente|cloro|jabón|suavizante|desinfectante|limpiador/i],
+  ['Hogar',/papel|servilleta|bolsa|aluminio|toalla/i],
+  ['Despensa',/cereal|arroz|frijol|pasta|aceite|azúcar|sal|harina|café/i],
+  ['Carnes',/pollo|carne|res|cerdo|pescado|jamón|salchicha/i]
+];
+function catFor(t){for(const [c,r] of categories) if(r.test(t)) return c; return 'Otros'}
+function parseLine(s){
+  s=s.trim().replace(/[.;]+$/,'');
+  if(!s)return null;
+  let qty=1;
+  const m=s.match(/^(\d+(?:\.\d+)?)\s*[xX]?\s+(.+)$/);
+  if(m){qty=Number(m[1]);s=m[2]}
+  return {id:crypto.randomUUID(),name:s,qty,category:catFor(s)};
+}
+function parseText(t){
+  return t.split(/\n|,(?!\d)|\s+y\s+/i).map(parseLine).filter(Boolean)
+}
+function render(){
+  $('#count').textContent=cart.length;
+  $('#cats').textContent=new Set(cart.map(x=>x.category)).size;
+  $('#state').textContent=cart.length?'Activa':'Lista';
+  $('#list').innerHTML=cart.length?cart.map(x=>`
+    <div class="item">
+      <div><strong>${escapeHtml(x.name)}</strong><div class="meta">${x.category}</div></div>
+      <span class="qty">${x.qty} u.</span>
+      <button class="x" onclick="removeItem('${x.id}')">✕</button>
+    </div>`).join(''):'<div class="note">Aún no has agregado artículos.</div>';
+}
+function escapeHtml(str){return str.replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+window.removeItem=id=>{cart=cart.filter(x=>x.id!==id);persist();render()}
+function persist(){localStorage.setItem('smartCart',JSON.stringify(cart))}
+$('#add').onclick=()=>{
+  const items=parseText($('#input').value);
+  cart.push(...items);persist();render();$('#input').value='';
+  $('#status').textContent=items.length?`${items.length} artículo(s) agregados y clasificados.`:'No detecté artículos.';
+};
+$('#clearText').onclick=()=>{ $('#input').value=''; dictationPrefix=''; finalText=''; };
+$('#clearCart').onclick=()=>{cart=[];persist();render()};
+$('#save').onclick=()=>{persist();$('#status').textContent='Lista guardada en este dispositivo.'};
+$('#analyze').onclick=()=>{
+  if(!cart.length){$('#analysisStatus').textContent='Primero agrega artículos a la carreta.';return}
+  $('#analysisStatus').textContent='La lista está preparada. Falta activar la conexión de precios y existencias reales por sucursal.';
+};
+
+// ============================================================
+// MÓDULO DE DICTADO PROVISIONAL PARA PRUEBA LOCAL
+// IMPORTANTE: revisar/reemplazar este bloque al publicar por HTTPS.
+// Objetivo actual: probar SpeechRecognition del navegador y mostrar
+// diagnósticos claros de permiso, compatibilidad y errores.
+// ============================================================
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+let rec = null;
+let isListening = false;
+let finalText = '';
+let dictationPrefix = '';
+
+function setDictationStatus(message, kind='normal'){
+  const el = $('#status');
+  el.textContent = message;
+  el.style.color =
+    kind === 'ok' ? 'var(--green-dark)' :
+    kind === 'error' ? '#a33a3a' :
+    kind === 'warn' ? 'var(--orange-dark)' :
+    'var(--muted)';
+}
+
+function showPermissionHelp(show=true){
+  const panel = $('#permissionHelp');
+  if(panel) panel.classList.toggle('show', show);
+}
+
+function stopDictationUI(){
+  isListening = false;
+  $('#mic').classList.remove('on');
+  $('#mic').textContent = '🎙 Dictar';
+}
+
+async function requestMicPermissionIfPossible(){
+  // PRUEBA LOCAL:
+  // No usamos getUserMedia() aquí porque en archivos file:// de Android
+  // puede fallar aunque Chrome ya tenga permiso del micrófono.
+  // SpeechRecognition gestionará directamente su propio acceso/errores.
+  return true;
+}
+
+function initRecognition(){
+  if (!SR){
+    $('#mic').disabled = true;
+    setDictationStatus(
+      'Este navegador no ofrece reconocimiento de voz compatible. En Chrome Android suele funcionar mejor cuando la web está publicada por HTTPS.',
+      'warn'
+    );
+    return;
+  }
+
+  rec = new SR();
+  rec.lang = 'es-GT';
+  rec.continuous = true;
+  rec.interimResults = true;
+  rec.maxAlternatives = 1;
+
+  rec.onstart = () => {
+    showPermissionHelp(false);
+    isListening = true;
+    $('#mic').classList.add('on');
+    $('#mic').textContent = '■ Detener dictado';
+    setDictationStatus('Escuchando… habla normalmente.', 'ok');
+  };
+
+  rec.onspeechstart = () => {
+    setDictationStatus('Te estoy escuchando…', 'ok');
+  };
+
+  rec.onresult = e => {
+    let sessionFinal = '';
+    let sessionInterim = '';
+
+    for(let i = 0; i < e.results.length; i++){
+      const tx = (e.results[i][0].transcript || '').replace(/\s+/g,' ').trim();
+      if(!tx) continue;
+
+      if(e.results[i].isFinal){
+        sessionFinal += (sessionFinal ? ' ' : '') + tx;
+      }else{
+        sessionInterim += (sessionInterim ? ' ' : '') + tx;
+      }
+    }
+
+    finalText = sessionFinal.replace(/\s+/g,' ').trim();
+
+    const composed = [
+      dictationPrefix,
+      finalText,
+      sessionInterim
+    ].filter(Boolean).join(' ').replace(/\s+/g,' ').trim();
+
+    $('#input').value = composed;
+  };
+
+  rec.onerror = e => {
+    const code = e.error || 'desconocido';
+    const messages = {
+      'not-allowed': 'El reconocimiento de voz fue bloqueado para este archivo/origen. Chrome sí puede tener permiso de Android, pero el HTML local puede seguir restringido.',
+      'service-not-allowed': 'Chrome bloqueó el servicio de reconocimiento de voz para este archivo/origen.',
+      'audio-capture': 'SpeechRecognition no pudo abrir el micrófono, aunque Chrome tenga permiso del sistema.',
+      'no-speech': 'No detecté voz. Pulsa Dictar e intenta nuevamente.',
+      'network': 'El reconocimiento de voz necesita conexión a internet en este navegador.',
+      'aborted': 'El dictado fue detenido.',
+      'language-not-supported': 'El navegador no admite español de Guatemala; probaremos con español general al publicar.'
+    };
+    setDictationStatus(messages[code] || `Error de dictado: ${code}`, code === 'aborted' ? 'warn' : 'error');
+    if(code === 'audio-capture'){
+      showPermissionHelp(true);
+    }else{
+      showPermissionHelp(false);
+    }
+  };
+
+  rec.onend = () => {
+    stopDictationUI();
+    if($('#input').value.trim()){
+      setDictationStatus('Dictado finalizado. Revisa el texto y pulsa “Agregar a la carreta”.', 'ok');
+    }
+  };
+}
+
+initRecognition();
+
+if (window.isSecureContext && location.protocol === 'https:') {
+  setDictationStatus('Sitio seguro HTTPS: pulsa “Dictar” para usar el micrófono.', 'ok');
+  showPermissionHelp(false);
+}
+
+// Diagnóstico visible para la prueba local
+(function(){
+  const protocol = location.protocol || 'desconocido';
+  const secure = window.isSecureContext ? 'sí' : 'no';
+  console.log('[DICTADO] protocolo:', protocol, 'secureContext:', secure, 'SpeechRecognition:', !!SR);
+})();
+
+
+$('#mic').onclick = async () => {
+  if(!rec) return;
+
+  if(isListening){
+    try{ rec.stop(); }catch(e){}
+    return;
+  }
+
+  const allowed = await requestMicPermissionIfPossible();
+  if(!allowed) return;
+
+  dictationPrefix = $('#input').value.replace(/\s+/g,' ').trim();
+  finalText = '';
+
+  try{
+    rec.start();
+  }catch(err){
+    // Algunos navegadores lanzan InvalidStateError si quedó una sesión previa abierta.
+    try{ rec.abort(); }catch(e){}
+    setTimeout(() => {
+      try{
+        rec.start();
+      }catch(e2){
+        setDictationStatus('No pude iniciar el dictado. Cierra y vuelve a abrir esta página en Chrome e inténtalo otra vez.', 'error');
+      }
+    }, 250);
+  }
+};
+
+// Intento de acceso directo a ajustes de Chrome en Android.
+// Nota: Android/Chrome pueden bloquear intents a Settings desde páginas web;
+// por eso mantenemos también las instrucciones visibles como respaldo.
+const settingsButton = $('#openChromeSettings');
+if(settingsButton){
+  settingsButton.addEventListener('click', () => {
+    const isAndroid = /Android/i.test(navigator.userAgent);
+
+    if(isAndroid){
+      // Best-effort Android intent. Puede depender de versión/fabricante.
+      const intent = 'intent:#Intent;action=android.settings.APPLICATION_DETAILS_SETTINGS;data=package:com.android.chrome;end';
+      try{
+        window.location.href = intent;
+      }catch(e){
+        setDictationStatus('Android bloqueó la apertura automática. Ve a Ajustes → Aplicaciones → Chrome → Permisos → Micrófono.', 'warn');
+      }
+
+      // Si seguimos en la página unos instantes después, probablemente el intent fue bloqueado.
+      setTimeout(() => {
+        if(document.visibilityState === 'visible'){
+          setDictationStatus('Si no se abrió Ajustes: ve a Ajustes → Aplicaciones → Chrome → Permisos → Micrófono.', 'warn');
+        }
+      }, 1200);
+    }else{
+      setDictationStatus('Abre los permisos del navegador y habilita el micrófono para esta página.', 'warn');
+    }
+  });
+}
+
+$('#home').value=localStorage.getItem('smartHome')||'';
+$('#criterion').value=localStorage.getItem('smartCriterion')||'total';
+$('#subs').value=localStorage.getItem('smartSubs')||'yes';
+['home','criterion','subs'].forEach(id=>$('#'+id).addEventListener('change',e=>localStorage.setItem('smart'+id[0].toUpperCase()+id.slice(1),e.target.value)));
+
+// --- Dirección y ubicación ---
+let savedLat = parseFloat(localStorage.getItem('smartLat'));
+let savedLng = parseFloat(localStorage.getItem('smartLng'));
+let map, marker, manualMode = false;
+
+function updateAddressStatus(text, good=false){
+  const el = $('#addressStatus');
+  el.textContent = text;
+  el.style.color = good ? 'var(--green-dark)' : 'var(--muted)';
+}
+
+function persistLocation(lat, lng, source){
+  savedLat = lat;
+  savedLng = lng;
+  localStorage.setItem('smartLat', String(lat));
+  localStorage.setItem('smartLng', String(lng));
+  localStorage.setItem('smartLocationSource', source);
+  $('#coords').textContent = `Ubicación guardada: ${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+  $('#locationSaved').innerHTML = '✅ Ubicación confirmada y guardada.';
+}
+
+function refreshMapSize(){
+  if (!map) return;
+  map.invalidateSize(true);
+}
+
+function showPin(lat, lng, source='manual', zoom=17){
+  if (!map) return;
+
+  refreshMapSize();
+
+  if (!marker) {
+    marker = L.marker([lat,lng], {draggable:false}).addTo(map);
+  } else {
+    marker.setLatLng([lat,lng]);
+  }
+
+  map.setView([lat,lng], zoom, {animate:false});
+  persistLocation(lat,lng,source);
+
+  setTimeout(() => {
+    refreshMapSize();
+    map.setView([lat,lng], zoom, {animate:false});
+  }, 120);
+
+  setTimeout(refreshMapSize, 450);
+}
+
+async function findAddress(address){
+  const q = encodeURIComponent(address + ', Guatemala');
+  const endpoint = `https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&countrycodes=gt&q=${q}`;
+  const response = await fetch(endpoint, {headers:{'Accept':'application/json'}});
+  if (!response.ok) throw new Error('No geocoder response');
+  return await response.json();
+}
+
+if (window.L) {
+  const initial = Number.isFinite(savedLat) && Number.isFinite(savedLng)
+    ? [savedLat, savedLng]
+    : [14.6349, -90.5069];
+
+  map = L.map('map').setView(initial, Number.isFinite(savedLat) ? 17 : 11);
+
+  const tiles = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    tileSize: 256,
+    zoomOffset: 0,
+    attribution: '&copy; OpenStreetMap'
+  }).addTo(map);
+
+  tiles.on('load', () => setTimeout(refreshMapSize, 50));
+
+  requestAnimationFrame(() => refreshMapSize());
+  setTimeout(refreshMapSize, 250);
+  window.addEventListener('resize', () => setTimeout(refreshMapSize, 100));
+  window.addEventListener('orientationchange', () => setTimeout(refreshMapSize, 250));
+
+  if (Number.isFinite(savedLat) && Number.isFinite(savedLng)) {
+    showPin(savedLat, savedLng, localStorage.getItem('smartLocationSource') || 'saved', 17);
+  }
+
+  map.on('click', (e) => {
+    if (!manualMode) return;
+    showPin(e.latlng.lat, e.latlng.lng, 'manual', map.getZoom());
+  });
+}
+
+$('#saveAddress').addEventListener('click', async () => {
+  const address = $('#home').value.trim();
+  if (!address) {
+    updateAddressStatus('Escribe una dirección primero.');
+    return;
+  }
+
+  localStorage.setItem('smartHome', address);
+  updateAddressStatus('Dirección guardada. Buscando ubicación...', true);
+  $('#coords').textContent = 'Buscando tu dirección en el mapa...';
+
+  try {
+    const results = await findAddress(address);
+    if (results.length) {
+      manualMode = false;
+      const lat = parseFloat(results[0].lat);
+      const lng = parseFloat(results[0].lon);
+      showPin(lat, lng, 'address', 17);
+      updateAddressStatus('✓ Dirección guardada. Ubicación encontrada en el mapa.', true);
+      $('#locationSaved').innerHTML = '✅ Dirección guardada. Revisa el pin. Si no es exacto, usa “Buscar manualmente mi ubicación”.';
+    } else {
+      updateAddressStatus('Dirección guardada, pero no pude ubicarla automáticamente.', true);
+      $('#coords').textContent = 'No encontré una coincidencia exacta. Usa la búsqueda manual.';
+      $('#locationSaved').innerHTML = '⚠ Dirección guardada; falta confirmar el punto en el mapa.';
+    }
+  } catch (err) {
+    updateAddressStatus('Dirección guardada. No fue posible consultar el mapa automáticamente.', true);
+    $('#coords').textContent = 'Usa “Buscar manualmente mi ubicación”.';
+  }
+});
+
+$('#manualLocation').addEventListener('click', () => {
+  manualMode = true;
+  $('#coords').textContent = 'Modo manual activo: toca el mapa donde está exactamente tu casa.';
+  $('#locationSaved').innerHTML = '📌 Toca el mapa para fijar tu ubicación exacta.';
+});
+
+$('#useLocation').addEventListener('click', () => {
+  if (!navigator.geolocation) {
+    $('#coords').textContent = 'Este navegador no permite obtener tu ubicación.';
+    return;
+  }
+  $('#coords').textContent = 'Obteniendo tu ubicación actual...';
+  navigator.geolocation.getCurrentPosition(
+    pos => {
+      manualMode = false;
+      showPin(pos.coords.latitude, pos.coords.longitude, 'device', 18);
+      $('#locationSaved').innerHTML = '✅ Ubicación actual guardada.';
+    },
+    () => {
+      $('#coords').textContent = 'No fue posible obtener la ubicación. Usa la búsqueda manual.';
+    },
+    {enableHighAccuracy:true, timeout:12000, maximumAge:30000}
+  );
+});
+
+if ($('#home').value) {
+  updateAddressStatus('Dirección guardada previamente.', true);
+}
+
+$('#home').addEventListener('input', () => {
+  updateAddressStatus('Hay cambios sin guardar.');
+});
+
+render();
+</script>
+</body>
+</html>
