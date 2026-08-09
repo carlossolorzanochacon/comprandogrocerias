@@ -44,6 +44,13 @@ header{
 }
 h1{font-size:32px;letter-spacing:-.035em;margin:0;font-weight:850}
 .sub{color:rgba(255,255,255,.9);font-size:15px;margin-top:6px;font-weight:500}
+.header-actions{display:flex;align-items:center;gap:12px}
+.profile-button{
+  width:54px;height:54px;min-height:54px;padding:0;border-radius:50%;
+  display:grid;place-items:center;font-size:27px;background:#fff;color:var(--blue-dark);
+  border:3px solid rgba(255,255,255,.55);box-shadow:0 8px 20px rgba(5,65,112,.25)
+}
+.profile-button[aria-expanded="true"]{outline:4px solid rgba(255,138,31,.35)}
 .grid{display:grid;grid-template-columns:1.05fr .95fr;gap:18px}
 .card{
   background:var(--card);
@@ -312,6 +319,18 @@ footer{margin-top:18px;font-size:12px;color:var(--muted);text-align:center}
 }
 .manual-mode-note.active{display:block}
 #saveAddress{width:100%;background:linear-gradient(135deg,var(--green),#36bc73);color:#fff}
+.profile-backdrop{
+  position:fixed;inset:0;z-index:1990;background:rgba(10,35,55,.58);backdrop-filter:blur(3px)
+}
+.profile-backdrop[hidden],.profile-panel[hidden]{display:none}
+.profile-panel{
+  position:fixed;z-index:2000;top:16px;right:16px;width:min(560px,calc(100vw - 32px));
+  max-height:calc(100vh - 32px);overflow-y:auto;box-shadow:0 24px 70px rgba(7,39,62,.32)
+}
+.profile-close{
+  margin-left:auto;padding:8px 12px;min-height:42px;background:#edf4f8;color:var(--text);font-size:18px
+}
+body.profile-open{overflow:hidden}
 
 /* Correcciones específicas para Leaflet en móviles */
 #map.leaflet-container{
@@ -345,6 +364,8 @@ footer{margin-top:18px;font-size:12px;color:var(--muted);text-align:center}
 }
 @media(max-width:470px){
   #map.leaflet-container{height:300px}
+  .header-actions{width:100%;justify-content:space-between}
+  .profile-panel{top:0;right:0;width:100%;height:100%;max-height:100vh;border-radius:0}
 }
 
 .permission-help{
@@ -380,8 +401,12 @@ footer{margin-top:18px;font-size:12px;color:var(--muted);text-align:center}
     <h1>Mi Carreta Inteligente</h1>
     <div class="sub">Dicta, escribe, organiza y compara tu compra.</div>
   </div>
-  <div class="badge">MVP • Walmart + La Torre</div>
+  <div class="header-actions">
+    <div class="badge">MVP • Walmart + La Torre</div>
+    <button type="button" class="profile-button" id="profileButton" aria-label="Abrir perfil y preferencias" aria-expanded="false">👤</button>
+  </div>
 </header>
+<div class="profile-backdrop" id="profileBackdrop" hidden></div>
 
 <div class="grid">
   <div>
@@ -435,13 +460,14 @@ footer{margin-top:18px;font-size:12px;color:var(--muted);text-align:center}
   </div>
 
   <div>
-    <section class="card">
+    <section class="card profile-panel" id="profilePanel" role="dialog" aria-modal="true" aria-labelledby="profileTitle" hidden>
       <div class="module-title">
   <div class="module-icon icon-blue">⚙</div>
   <div class="module-copy">
-    <div class="label">Preferencias de compra</div>
-    <div class="module-sub">Ubicación, criterio y sustituciones</div>
+    <div class="label" id="profileTitle">Mi perfil</div>
+    <div class="module-sub">Dirección y preferencias de compra</div>
   </div>
+  <button type="button" class="profile-close" id="closeProfile" aria-label="Cerrar perfil">✕</button>
 </div>
       <div class="section" style="margin-top:0">
         <div class="input-head">
@@ -463,6 +489,7 @@ footer{margin-top:18px;font-size:12px;color:var(--muted);text-align:center}
           <div id="map" aria-label="Mapa para confirmar tu ubicación"></div>
           <div class="coords" id="coords">Guarda tu dirección para buscarla en el mapa.</div>
         </div>
+        <button type="button" class="primary" id="confirmLocation" style="width:100%;margin-top:10px" disabled>✅ Confirmar dirección y ubicación</button>
         <button type="button" class="pin-btn" id="manualLocation" style="width:100%;margin-top:10px">📌 Buscar manualmente mi ubicación</button>
         <button type="button" class="location-btn" id="useLocation" style="width:100%;margin-top:10px">◎ Usar ubicación actual del teléfono</button>
         <div class="location-confirmed" id="locationSaved">La ubicación todavía no ha sido confirmada.</div>
@@ -488,7 +515,7 @@ footer{margin-top:18px;font-size:12px;color:var(--muted);text-align:center}
       </div>
     </section>
 
-    <section class="card section">
+    <section class="card" id="comparisonCard">
       <div class="module-title">
   <div class="module-icon icon-green">📊</div>
   <div class="module-copy">
@@ -865,6 +892,11 @@ $('#subs').value=localStorage.getItem('smartSubs')||'yes';
 // --- Dirección y ubicación ---
 let savedLat = parseFloat(localStorage.getItem('smartLat'));
 let savedLng = parseFloat(localStorage.getItem('smartLng'));
+let savedAddress = localStorage.getItem('smartHome') || '';
+let pendingLat = null;
+let pendingLng = null;
+let pendingLocationSource = '';
+let locationConfirmed = localStorage.getItem('smartLocationConfirmed') === 'true';
 let map, marker, manualMode = false;
 
 function updateAddressStatus(text, good=false){
@@ -879,8 +911,33 @@ function persistLocation(lat, lng, source){
   localStorage.setItem('smartLat', String(lat));
   localStorage.setItem('smartLng', String(lng));
   localStorage.setItem('smartLocationSource', source);
+  localStorage.setItem('smartLocationConfirmed', 'true');
+  locationConfirmed = true;
+  pendingLat = null;
+  pendingLng = null;
+  pendingLocationSource = '';
+  $('#confirmLocation').disabled = true;
   $('#coords').textContent = `Ubicación guardada: ${lat.toFixed(6)}, ${lng.toFixed(6)}`;
-  $('#locationSaved').innerHTML = '✅ Ubicación confirmada y guardada.';
+  $('#locationSaved').innerHTML = '✅ Dirección y ubicación confirmadas. Todo el proceso quedó guardado.';
+  updateAddressStatus('✓ Dirección y ubicación confirmadas.', true);
+}
+
+function invalidateLocationConfirmation(){
+  locationConfirmed = false;
+  pendingLat = null;
+  pendingLng = null;
+  pendingLocationSource = '';
+  savedLat = NaN;
+  savedLng = NaN;
+  localStorage.setItem('smartLocationConfirmed', 'false');
+  localStorage.removeItem('smartLat');
+  localStorage.removeItem('smartLng');
+  localStorage.removeItem('smartLocationSource');
+  $('#confirmLocation').disabled = true;
+  if(marker && map){
+    map.removeLayer(marker);
+    marker = null;
+  }
 }
 
 function refreshMapSize(){
@@ -888,7 +945,7 @@ function refreshMapSize(){
   map.invalidateSize(true);
 }
 
-function showPin(lat, lng, source='manual', zoom=17){
+function showPin(lat, lng, source='manual', zoom=17, confirmed=false){
   if (!map) return;
 
   refreshMapSize();
@@ -900,7 +957,21 @@ function showPin(lat, lng, source='manual', zoom=17){
   }
 
   map.setView([lat,lng], zoom, {animate:false});
-  persistLocation(lat,lng,source);
+
+  if(confirmed){
+    $('#coords').textContent = `Ubicación confirmada: ${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+    $('#locationSaved').innerHTML = '✅ Dirección y ubicación confirmadas previamente.';
+    $('#confirmLocation').disabled = true;
+  }else{
+    pendingLat = lat;
+    pendingLng = lng;
+    pendingLocationSource = source;
+    locationConfirmed = false;
+    localStorage.setItem('smartLocationConfirmed', 'false');
+    $('#coords').textContent = `Ubicación propuesta: ${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+    $('#locationSaved').innerHTML = '👀 Revisa el pin. Si está correcto, confirma la dirección y ubicación.';
+    $('#confirmLocation').disabled = false;
+  }
 
   setTimeout(() => {
     refreshMapSize();
@@ -939,8 +1010,8 @@ if (window.L) {
   window.addEventListener('resize', () => setTimeout(refreshMapSize, 100));
   window.addEventListener('orientationchange', () => setTimeout(refreshMapSize, 250));
 
-  if (Number.isFinite(savedLat) && Number.isFinite(savedLng)) {
-    showPin(savedLat, savedLng, localStorage.getItem('smartLocationSource') || 'saved', 17);
+  if (locationConfirmed && Number.isFinite(savedLat) && Number.isFinite(savedLng)) {
+    showPin(savedLat, savedLng, localStorage.getItem('smartLocationSource') || 'saved', 17, true);
   }
 
   map.on('click', (e) => {
@@ -949,6 +1020,30 @@ if (window.L) {
   });
 }
 
+function setProfileOpen(open){
+  $('#profilePanel').hidden = !open;
+  $('#profileBackdrop').hidden = !open;
+  $('#profileButton').setAttribute('aria-expanded', String(open));
+  document.body.classList.toggle('profile-open', open);
+
+  if(open){
+    $('#closeProfile').focus();
+    setTimeout(() => {
+      refreshMapSize();
+      if(map && marker) map.setView(marker.getLatLng(), map.getZoom(), {animate:false});
+    }, 80);
+  }else{
+    $('#profileButton').focus();
+  }
+}
+
+$('#profileButton').addEventListener('click', () => setProfileOpen(true));
+$('#closeProfile').addEventListener('click', () => setProfileOpen(false));
+$('#profileBackdrop').addEventListener('click', () => setProfileOpen(false));
+document.addEventListener('keydown', event => {
+  if(event.key === 'Escape' && !$('#profilePanel').hidden) setProfileOpen(false);
+});
+
 $('#saveAddress').addEventListener('click', async () => {
   const address = $('#home').value.trim();
   if (!address) {
@@ -956,7 +1051,9 @@ $('#saveAddress').addEventListener('click', async () => {
     return;
   }
 
-  localStorage.setItem('smartHome', address);
+  savedAddress = address;
+  localStorage.setItem('smartHome', savedAddress);
+  invalidateLocationConfirmation();
   updateAddressStatus('Dirección guardada. Buscando ubicación...', true);
   $('#coords').textContent = 'Buscando tu dirección en el mapa...';
 
@@ -967,8 +1064,7 @@ $('#saveAddress').addEventListener('click', async () => {
       const lat = parseFloat(results[0].lat);
       const lng = parseFloat(results[0].lon);
       showPin(lat, lng, 'address', 17);
-      updateAddressStatus('✓ Dirección guardada. Ubicación encontrada en el mapa.', true);
-      $('#locationSaved').innerHTML = '✅ Dirección guardada. Revisa el pin. Si no es exacto, usa “Buscar manualmente mi ubicación”.';
+      updateAddressStatus('✓ Dirección guardada. Revisa la ubicación encontrada.', true);
     } else {
       updateAddressStatus('Dirección guardada, pero no pude ubicarla automáticamente.', true);
       $('#coords').textContent = 'No encontré una coincidencia exacta. Usa la búsqueda manual.';
@@ -977,16 +1073,25 @@ $('#saveAddress').addEventListener('click', async () => {
   } catch (err) {
     updateAddressStatus('Dirección guardada. No fue posible consultar el mapa automáticamente.', true);
     $('#coords').textContent = 'Usa “Buscar manualmente mi ubicación”.';
+    $('#locationSaved').innerHTML = '⚠ Dirección guardada; falta seleccionar y confirmar el punto en el mapa.';
   }
 });
 
 $('#manualLocation').addEventListener('click', () => {
+  if(!savedAddress || $('#home').value.trim() !== savedAddress){
+    updateAddressStatus('Primero guarda la dirección antes de elegir el punto en el mapa.');
+    return;
+  }
   manualMode = true;
   $('#coords').textContent = 'Modo manual activo: toca el mapa donde está exactamente tu casa.';
   $('#locationSaved').innerHTML = '📌 Toca el mapa para fijar tu ubicación exacta.';
 });
 
 $('#useLocation').addEventListener('click', () => {
+  if(!savedAddress || $('#home').value.trim() !== savedAddress){
+    updateAddressStatus('Primero guarda la dirección antes de usar la ubicación del teléfono.');
+    return;
+  }
   if (!navigator.geolocation) {
     $('#coords').textContent = 'Este navegador no permite obtener tu ubicación.';
     return;
@@ -996,7 +1101,6 @@ $('#useLocation').addEventListener('click', () => {
     pos => {
       manualMode = false;
       showPin(pos.coords.latitude, pos.coords.longitude, 'device', 18);
-      $('#locationSaved').innerHTML = '✅ Ubicación actual guardada.';
     },
     () => {
       $('#coords').textContent = 'No fue posible obtener la ubicación. Usa la búsqueda manual.';
@@ -1005,12 +1109,30 @@ $('#useLocation').addEventListener('click', () => {
   );
 });
 
+$('#confirmLocation').addEventListener('click', () => {
+  if(!Number.isFinite(pendingLat) || !Number.isFinite(pendingLng)){
+    $('#locationSaved').innerHTML = '⚠ Primero localiza la dirección o selecciona un punto en el mapa.';
+    return;
+  }
+  if(!savedAddress || $('#home').value.trim() !== savedAddress){
+    updateAddressStatus('La dirección cambió. Guárdala nuevamente antes de confirmar.');
+    return;
+  }
+  manualMode = false;
+  persistLocation(pendingLat, pendingLng, pendingLocationSource);
+});
+
 if ($('#home').value) {
-  updateAddressStatus('Dirección guardada previamente.', true);
+  updateAddressStatus(
+    locationConfirmed ? '✓ Dirección y ubicación confirmadas previamente.' : 'Dirección guardada; falta confirmar la ubicación.',
+    locationConfirmed
+  );
 }
 
 $('#home').addEventListener('input', () => {
   updateAddressStatus('Hay cambios sin guardar.');
+  $('#confirmLocation').disabled = true;
+  $('#locationSaved').innerHTML = '⚠ Guarda la dirección modificada para volver a verificarla en el mapa.';
 });
 
 render();
