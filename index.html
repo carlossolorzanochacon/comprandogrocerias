@@ -534,14 +534,58 @@ let cart=JSON.parse(localStorage.getItem('smartCart')||'[]');
 
 const categories = [
   ['Lácteos',/leche|queso|yogur|crema|mantequilla/i],
-  ['Frutas y verduras',/aguacate|tomate|cebolla|papa|manzana|banano|plátano|lechuga|zanahoria|limón|naranja/i],
+  ['Frutas y verduras',/aguacate|tomate|pepino|cebolla|papa|manzana|banano|plátano|lechuga|zanahoria|limón|naranja/i],
   ['Bebidas',/coca|pepsi|agua|jugo|refresco|bebida|cerveza/i],
   ['Limpieza',/detergente|cloro|jabón|suavizante|desinfectante|limpiador/i],
   ['Hogar',/papel|servilleta|bolsa|aluminio|toalla/i],
   ['Despensa',/cereal|arroz|frijol|pasta|aceite|azúcar|sal|harina|café/i],
-  ['Carnes',/pollo|carne|res|cerdo|pescado|jamón|salchicha/i]
+  ['Carnes',/pollo|carne|res|cerdo|pescado|jamón|salchicha/i],
+  ['Huevos',/huevo/i]
 ];
 function catFor(t){for(const [c,r] of categories) if(r.test(t)) return c; return 'Otros'}
+
+const productStartWords = new Set([
+  'leche','leches','queso','quesos','yogur','yogurt','crema','mantequilla',
+  'huevo','huevos','aguacate','aguacates','tomate','tomates','pepino','pepinos',
+  'cebolla','cebollas','papa','papas','manzana','manzanas','banano','bananos',
+  'platano','platanos','lechuga','lechugas','zanahoria','zanahorias','limon','limones',
+  'naranja','naranjas','coca-cola','cocacola','pepsi','agua','aguas','jugo','jugos',
+  'refresco','refrescos','bebida','bebidas','cerveza','cervezas','detergente',
+  'detergentes','cloro','jabon','jabones','suavizante','desinfectante','limpiador',
+  'papel','servilleta','servilletas','bolsa','bolsas','aluminio','toalla','toallas',
+  'cereal','cereales','arroz','frijol','frijoles','pasta','pastas','aceite','aceites',
+  'azucar','sal','harina','cafe','pollo','carne','res','cerdo','pescado','jamon',
+  'salchicha','salchichas'
+]);
+
+function normalizedProductWord(word){
+  return word.toLocaleLowerCase('es-GT')
+    .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+    .replace(/^[^a-z0-9]+|[^a-z0-9-]+$/g,'');
+}
+
+function splitNaturalProducts(text){
+  const words = text.trim().split(/\s+/).filter(Boolean);
+  const productPositions = [];
+
+  words.forEach((word,index) => {
+    if(productStartWords.has(normalizedProductWord(word))) productPositions.push(index);
+  });
+
+  if(productPositions.length < 2) return [text];
+
+  const boundaries = productPositions.map((position,index) => {
+    if(index === 0) return 0;
+    return position > 0 && /^\d+(?:[.,]\d+)?$/.test(words[position - 1])
+      ? position - 1
+      : position;
+  });
+
+  return boundaries.map((start,index) =>
+    words.slice(start, boundaries[index + 1] ?? words.length).join(' ')
+  ).filter(Boolean);
+}
+
 function parseLine(s){
   s=s.trim().replace(/[.;]+$/,'');
   if(!s)return null;
@@ -551,7 +595,9 @@ function parseLine(s){
   return {id:crypto.randomUUID(),name:s,qty,category:catFor(s)};
 }
 function parseText(t){
-  return t.split(/\n|,(?!\d)|\s+y\s+/i).map(parseLine).filter(Boolean)
+  return t.split(/\n|,(?!\d)|\s+y\s+/i)
+    .flatMap(splitNaturalProducts)
+    .map(parseLine).filter(Boolean)
 }
 function render(){
   $('#count').textContent=cart.length;
