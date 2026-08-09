@@ -45,6 +45,12 @@ header{
 }
 h1{font-size:32px;letter-spacing:-.035em;margin:0;font-weight:850}
 .sub{color:rgba(255,255,255,.9);font-size:15px;margin-top:6px;font-weight:500}
+.brand-title{display:flex;flex-wrap:wrap;align-items:flex-start;gap:.28em;line-height:1}
+.brand-groceries{display:flex;flex-direction:column;align-items:flex-start}
+.brand-english{
+  color:rgba(255,255,255,.92);font-size:.5em;line-height:1;margin-top:5px;
+  font-weight:750;letter-spacing:.08em;white-space:nowrap
+}
 .header-actions{display:flex;align-items:center;gap:12px}
 .profile-button{
   position:absolute;top:14px;right:14px;
@@ -53,6 +59,27 @@ h1{font-size:32px;letter-spacing:-.035em;margin:0;font-weight:850}
   border:3px solid rgba(255,255,255,.55);box-shadow:0 8px 20px rgba(5,65,112,.25)
 }
 .profile-button[aria-expanded="true"]{outline:4px solid rgba(255,138,31,.35)}
+.avatar-initials,.avatar-photo{width:100%;height:100%;border-radius:50%}
+.avatar-initials{display:grid;place-items:center;font-size:19px;font-weight:900;letter-spacing:.04em}
+.avatar-photo{display:block;object-fit:cover}
+.avatar-photo[hidden],.profile-avatar-preview img[hidden],#profileAvatarInitials[hidden],.remove-photo[hidden]{display:none}
+.profile-identity{
+  display:grid;grid-template-columns:84px 1fr;gap:15px;align-items:center;
+  padding:15px;border-radius:18px;background:linear-gradient(135deg,#edf7ff,#f5fbf3)
+}
+.profile-avatar-preview{
+  width:84px;height:84px;border-radius:50%;display:grid;place-items:center;
+  font-size:27px;font-weight:900;letter-spacing:.04em;overflow:hidden;
+  border:4px solid #fff;box-shadow:0 7px 18px rgba(20,70,100,.14)
+}
+.profile-avatar-preview img{width:100%;height:100%;object-fit:cover}
+.profile-photo-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:9px}
+.profile-photo-label,.remove-photo{
+  padding:9px 12px;min-height:42px;border-radius:12px;font-size:13px;font-weight:800;cursor:pointer
+}
+.profile-photo-label{background:var(--soft-blue);color:var(--blue-dark)}
+.remove-photo{background:#fff0f0;color:#9a2e2e}
+#profilePhoto{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
 .grid{display:grid;grid-template-columns:1.05fr .95fr;gap:18px}
 .card{
   background:var(--card);
@@ -368,6 +395,8 @@ body.profile-open{overflow:hidden}
   #map.leaflet-container{height:300px}
   .header-actions{width:100%;justify-content:space-between}
   .profile-panel{top:0;right:0;width:100%;height:100%;max-height:100vh;border-radius:0}
+  .profile-identity{grid-template-columns:70px 1fr;padding:12px}
+  .profile-avatar-preview{width:70px;height:70px;font-size:23px}
 }
 
 .permission-help{
@@ -400,12 +429,17 @@ body.profile-open{overflow:hidden}
 <div class="wrap">
 <header>
   <div>
-    <h1>COMPRANDO GROCERÍAS</h1>
-    <div class="sub">Dicta, escribe, organiza y compara tu compra.</div>
+    <h1 class="brand-title">
+      <span>COMPRANDO</span>
+      <span class="brand-groceries">GROCERÍAS <span class="brand-english">GROCERY SHOPPING</span></span>
+    </h1>
   </div>
   <div class="header-actions">
     <div class="badge">MVP • Walmart + La Torre</div>
-    <button type="button" class="profile-button" id="profileButton" aria-label="Abrir perfil y preferencias" aria-expanded="false">👤</button>
+    <button type="button" class="profile-button" id="profileButton" aria-label="Abrir perfil y preferencias" aria-expanded="false">
+      <span class="avatar-initials" id="headerAvatarInitials">US</span>
+      <img class="avatar-photo" id="headerAvatarPhoto" alt="" hidden>
+    </button>
   </div>
 </header>
 <div class="profile-backdrop" id="profileBackdrop" hidden></div>
@@ -471,7 +505,23 @@ body.profile-open{overflow:hidden}
   </div>
   <button type="button" class="profile-close" id="closeProfile" aria-label="Cerrar perfil">✕</button>
 </div>
-      <div class="section" style="margin-top:0">
+      <div class="profile-identity">
+        <div class="profile-avatar-preview" id="profileAvatarPreview">
+          <span id="profileAvatarInitials">US</span>
+          <img id="profileAvatarPhoto" alt="Foto del perfil" hidden>
+        </div>
+        <div>
+          <label class="meta" for="profileName">Nombre</label>
+          <input id="profileName" type="text" placeholder="Ej.: Carlos Solórzano" autocomplete="name">
+          <div class="profile-photo-actions">
+            <label class="profile-photo-label" for="profilePhoto">📷 Elegir foto</label>
+            <input id="profilePhoto" type="file" accept="image/*">
+            <button type="button" class="remove-photo" id="removeProfilePhoto" hidden>Quitar foto</button>
+          </div>
+          <div class="status" id="profileIdentityStatus">El nombre se guarda automáticamente.</div>
+        </div>
+      </div>
+      <div class="section" style="margin-top:16px">
         <div class="input-head">
           <div class="mini-icon">📍</div>
           <label class="meta">Dirección de entrega</label>
@@ -885,6 +935,108 @@ if(settingsButton){
     }
   });
 }
+
+// --- Identidad del perfil ---
+const avatarPastels = [
+  ['#dceeff','#095fae'],['#ffe6cf','#a34d00'],['#dcf4e5','#187342'],
+  ['#eee3ff','#6640a3'],['#ffe1e8','#9b3651'],['#dff5f2','#156d65']
+];
+
+function getProfileInitials(name){
+  const parts = name.trim().split(/\s+/).filter(Boolean);
+  if(!parts.length) return 'US';
+  const initials = parts.length === 1
+    ? parts[0].slice(0,2)
+    : parts[0][0] + parts[parts.length - 1][0];
+  return initials.toLocaleUpperCase('es-GT');
+}
+
+function getProfilePastel(name){
+  const hash = [...name].reduce((total,char) => total + char.codePointAt(0), 0);
+  return avatarPastels[hash % avatarPastels.length];
+}
+
+function renderProfileIdentity(){
+  const name = $('#profileName').value.trim();
+  const photo = localStorage.getItem('smartProfilePhoto') || '';
+  const initials = getProfileInitials(name);
+  const [background,color] = getProfilePastel(name || initials);
+
+  $('#headerAvatarInitials').textContent = initials;
+  $('#profileAvatarInitials').textContent = initials;
+  $('#headerAvatarInitials').style.background = background;
+  $('#headerAvatarInitials').style.color = color;
+  $('#profileAvatarPreview').style.background = background;
+  $('#profileAvatarPreview').style.color = color;
+  $('#profileButton').setAttribute('aria-label', name ? `Abrir perfil de ${name}` : 'Abrir perfil y preferencias');
+
+  for(const id of ['headerAvatarPhoto','profileAvatarPhoto']){
+    const image = $('#'+id);
+    image.hidden = !photo;
+    if(photo) image.src = photo;
+    else image.removeAttribute('src');
+  }
+  $('#headerAvatarInitials').hidden = Boolean(photo);
+  $('#profileAvatarInitials').hidden = Boolean(photo);
+  $('#removeProfilePhoto').hidden = !photo;
+}
+
+function resizeProfilePhoto(file){
+  return new Promise((resolve,reject) => {
+    const objectUrl = URL.createObjectURL(file);
+    const image = new Image();
+    image.onload = () => {
+      const size = Math.min(image.naturalWidth,image.naturalHeight);
+      const sourceX = (image.naturalWidth - size) / 2;
+      const sourceY = (image.naturalHeight - size) / 2;
+      const canvas = document.createElement('canvas');
+      canvas.width = 320;
+      canvas.height = 320;
+      canvas.getContext('2d').drawImage(image,sourceX,sourceY,size,size,0,0,320,320);
+      URL.revokeObjectURL(objectUrl);
+      resolve(canvas.toDataURL('image/jpeg',.82));
+    };
+    image.onerror = () => {
+      URL.revokeObjectURL(objectUrl);
+      reject(new Error('invalid image'));
+    };
+    image.src = objectUrl;
+  });
+}
+
+$('#profileName').value = localStorage.getItem('smartProfileName') || '';
+$('#profileName').addEventListener('input', event => {
+  localStorage.setItem('smartProfileName', event.target.value);
+  renderProfileIdentity();
+  $('#profileIdentityStatus').textContent = '✓ Nombre guardado en este dispositivo.';
+});
+
+$('#profilePhoto').addEventListener('change', async event => {
+  const file = event.target.files && event.target.files[0];
+  if(!file) return;
+  if(!file.type.startsWith('image/')){
+    $('#profileIdentityStatus').textContent = 'Selecciona un archivo de imagen válido.';
+    return;
+  }
+  $('#profileIdentityStatus').textContent = 'Preparando foto...';
+  try{
+    const photo = await resizeProfilePhoto(file);
+    localStorage.setItem('smartProfilePhoto', photo);
+    renderProfileIdentity();
+    $('#profileIdentityStatus').textContent = '✓ Foto guardada en este dispositivo.';
+  }catch(error){
+    $('#profileIdentityStatus').textContent = 'No pude guardar esa foto. Prueba con otra imagen.';
+  }
+  event.target.value = '';
+});
+
+$('#removeProfilePhoto').addEventListener('click', () => {
+  localStorage.removeItem('smartProfilePhoto');
+  renderProfileIdentity();
+  $('#profileIdentityStatus').textContent = 'Foto eliminada. Se muestran tus iniciales.';
+});
+
+renderProfileIdentity();
 
 $('#home').value=localStorage.getItem('smartHome')||'';
 $('#criterion').value=localStorage.getItem('smartCriterion')||'total';
