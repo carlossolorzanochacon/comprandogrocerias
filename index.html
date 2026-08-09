@@ -503,8 +503,18 @@ header{
 .icon-green,.icon-blue{background:#e7f6ec;color:#109055}
 .label{color:var(--green-dark);letter-spacing:.07em;font-size:12px}
 .module-copy .module-sub{color:var(--muted);font-weight:550}
+.voice-stage{
+  min-height:126px;margin-bottom:14px;border:1.5px solid #bfe2cc;border-radius:22px;
+  display:flex;align-items:center;justify-content:center;gap:14px;
+  background:radial-gradient(circle at center,#f3fbf6,#fbfdfb)
+}
+.mic-orb{
+  width:72px;height:72px;border-radius:50%;display:grid;place-items:center;font-size:34px;
+  color:#fff;background:linear-gradient(145deg,#20b76b,#079451);box-shadow:0 10px 25px rgba(20,155,87,.22)
+}
+.sound-wave{color:#3db77a;font-weight:900;letter-spacing:2px;font-size:17px;white-space:nowrap}
 textarea{
-  min-height:132px;border:1.5px solid #dbe8df;border-radius:19px;background:#fbfdfb;
+  min-height:96px;border:1.5px solid #dbe8df;border-radius:19px;background:#fbfdfb;
   padding:17px;font-size:17px;box-shadow:inset 0 1px 2px rgba(20,70,45,.03)
 }
 textarea:focus,input:focus,select:focus{border-color:#3eb878;box-shadow:0 0 0 4px rgba(25,168,98,.10)}
@@ -513,7 +523,7 @@ button{border-radius:15px;font-weight:800}
 button.primary{background:linear-gradient(135deg,#13a65d,#32bf74);box-shadow:0 8px 18px rgba(25,168,98,.17)}
 .actions{gap:9px}
 .status{color:var(--muted)}
-.summary{gap:9px}
+.summary{display:none}
 .kpi{border-radius:17px;padding:14px}
 .kpi:nth-child(1){background:#eaf6ff;color:#287bb1}
 .kpi:nth-child(2){background:#fff1df;color:#b96823}
@@ -529,6 +539,17 @@ button.primary{background:linear-gradient(135deg,#13a65d,#32bf74);box-shadow:0 8
 }
 .qty{background:#eaf7ef;color:#14834e;padding:7px 9px}
 .x{color:#a8b6af}
+.category-showcase{display:grid;grid-template-columns:repeat(5,1fr);gap:9px;margin-top:18px}
+.category-showcase div{min-width:0;text-align:center}
+.category-showcase span{
+  aspect-ratio:1;border-radius:16px;display:grid;place-items:center;font-size:25px;margin-bottom:5px
+}
+.category-showcase div:nth-child(1) span{background:#ffe5c2}
+.category-showcase div:nth-child(2) span{background:#dff2cc}
+.category-showcase div:nth-child(3) span{background:#dcecff}
+.category-showcase div:nth-child(4) span{background:#ffd9d5}
+.category-showcase div:nth-child(5) span{background:#e8dcff}
+.category-showcase small{font-size:10px;color:#566b61;font-weight:750}
 .store{border:1px solid var(--line);background:#fff!important;border-radius:19px;padding:17px}
 .store-icon{background:#e8f7ed;color:var(--green-dark);box-shadow:none}
 table{border-spacing:0 8px}
@@ -545,7 +566,36 @@ select,input[type=text]{border:1.5px solid #dce8e0;background:#fff;border-radius
 .coming-card h2{font-size:26px;margin:5px 0 9px;letter-spacing:-.03em}
 .compare-slots{justify-content:flex-start}
 .compare-slot{background:#fff;border:1.5px dashed #b9cbbf;color:#789087}
-.compare-slot:nth-child(-n+3){border-style:solid;background:#eef8f1;color:#16824d}
+.compare-slot:first-child{border-style:solid;background:#eef8f1;color:#16824d}
+.comparison-workspace{padding:18px}
+.camera-capture{
+  display:flex;align-items:center;gap:14px;padding:18px;border:1.5px dashed #67bd88;
+  border-radius:20px;background:#f4fbf6;color:#176d44
+}
+.camera-capture>span{width:54px;height:54px;border-radius:50%;display:grid;place-items:center;background:#dff3e6;font-size:27px}
+.camera-capture strong,.camera-capture small{display:block}
+.camera-capture small{margin-top:4px;color:var(--muted)}
+.comparison-section-title{display:flex;justify-content:space-between;align-items:center;margin-top:22px}
+.comparison-section-title span{font-size:12px;color:var(--muted);background:#edf5f0;padding:6px 9px;border-radius:999px}
+.comparison-empty{text-align:center;padding:25px 16px;border-top:1px solid var(--line)}
+.comparison-empty>span{font-size:35px;display:block;margin-bottom:8px}
+.comparison-empty strong{display:block}
+.comparison-empty p{max-width:430px;margin:7px auto 0;color:var(--muted);font-size:13px;line-height:1.5}
+.history-filter{display:flex;gap:10px;justify-content:space-between}
+.history-filter span{flex:1;padding:12px;border:1px solid var(--line);border-radius:13px;color:#50675d;font-size:13px}
+.chart-placeholder{padding:25px 5px 8px;text-align:center}
+.chart-bars{height:130px;display:flex;align-items:flex-end;gap:9px;padding:15px;border-bottom:1px solid #cfddd4}
+.chart-bars i{flex:1;border-radius:8px 8px 2px 2px;background:linear-gradient(#44be7e,#dff4e7)}
+.chart-bars i:nth-child(1){height:40%}.chart-bars i:nth-child(2){height:62%}.chart-bars i:nth-child(3){height:49%}.chart-bars i:nth-child(4){height:75%}.chart-bars i:nth-child(5){height:57%}.chart-bars i:nth-child(6){height:82%}.chart-bars i:nth-child(7){height:70%}
+.chart-placeholder strong,.chart-placeholder small{display:block}
+.chart-placeholder strong{margin-top:16px}.chart-placeholder small{margin-top:5px;color:var(--muted)}
+.frequent-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.frequent-card{position:relative;text-align:center;background:#fff;border:1px solid var(--line);border-radius:21px;padding:17px;box-shadow:0 8px 22px rgba(35,79,57,.06)}
+.frequent-card>b{position:absolute;right:12px;top:9px;color:#ff6a75;font-size:22px}
+.frequent-card>span{font-size:54px;display:block;margin:9px 0}
+.frequent-card strong,.frequent-card small{display:block}
+.frequent-card small{color:var(--muted);margin:4px 0 12px}
+.frequent-card button{width:100%;min-height:42px;padding:9px;background:#e7f6ec;color:#14834e}
 .bottom-tabs{
   width:min(590px,calc(100% - 18px));padding:7px 8px;border-radius:23px;
   border:1px solid rgba(34,97,63,.10);box-shadow:0 13px 35px rgba(26,68,48,.18)
@@ -573,6 +623,10 @@ footer{color:#87978f}
   .summary{grid-template-columns:repeat(3,1fr)}
   .kpi{padding:11px 8px}
   .bottom-tabs{background:rgba(255,255,255,.97)}
+  .voice-stage{min-height:112px;gap:8px}
+  .mic-orb{width:64px;height:64px;font-size:30px}
+  .sound-wave{font-size:13px;letter-spacing:1px}
+  .frequent-card{padding:14px 10px}.frequent-card>span{font-size:46px}
 }
 </style>
 </head>
@@ -602,15 +656,20 @@ footer{color:#87978f}
     </div>
     <section class="card">
       <div class="module-title">
-  <div class="module-icon icon-orange">🎙</div>
+  <div class="module-icon icon-green">📝</div>
   <div class="module-copy">
     <div class="label">Agregar artículos</div>
     <div class="module-sub">Habla o escribe tu lista naturalmente</div>
   </div>
 </div>
+      <div class="voice-stage" aria-hidden="true">
+        <div class="sound-wave">▂ ▅ ▃ ▇ ▄ ▆ ▂</div>
+        <div class="mic-orb">🎙</div>
+        <div class="sound-wave">▃ ▆ ▂ ▅ ▇ ▃ ▂</div>
+      </div>
       <textarea id="input" placeholder="Ej.: 2 leches descremadas, cereal Corn Flakes grande, 6 aguacates, detergente Ariel 3 kg..."></textarea>
       <div class="actions">
-        <button class="mic" id="mic">🎙 Dictar</button>
+        <button class="mic" id="mic">🎙 Dictar artículos</button>
         <button class="primary" id="add">＋ Agregar a la carreta</button>
         <button id="clearText">Limpiar texto</button>
       </div>
@@ -632,7 +691,7 @@ footer{color:#87978f}
       <div class="module-title">
   <div class="module-icon icon-green">🛒</div>
   <div class="module-copy">
-    <div class="label">Tu carreta</div>
+    <div class="label">Tu carrito actual</div>
     <div class="module-sub">Productos organizados automáticamente</div>
   </div>
 </div>
@@ -642,6 +701,13 @@ footer{color:#87978f}
         <div class="kpi"><span class="kpi-icon">✓</span><span>Estado</span><b id="state">Lista</b></div>
       </div>
       <div class="list" id="list"></div>
+      <div class="category-showcase">
+        <div><span>🍊</span><small>Frutas</small></div>
+        <div><span>🥬</span><small>Verduras</small></div>
+        <div><span>🥛</span><small>Lácteos</small></div>
+        <div><span>🥩</span><small>Carnes</small></div>
+        <div><span>🫙</span><small>Despensa</small></div>
+      </div>
       <div class="actions">
         <button id="save">Guardar lista</button>
         <button class="danger" id="clearCart">Vaciar carreta</button>
@@ -721,6 +787,7 @@ footer{color:#87978f}
       </div>
     </section>
 
+    <div class="screen-heading"><h2>Comparar tiendas</h2><p>Revisa el total y la disponibilidad de tu carrito</p></div>
     <section class="card" id="comparisonCard">
       <div class="module-title">
   <div class="module-icon icon-green">📊</div>
@@ -758,33 +825,44 @@ footer{color:#87978f}
   </div>
 
   <div class="tab-panel" data-tab-panel="compare" role="tabpanel" hidden>
-    <section class="card coming-card">
-      <div class="coming-icon" style="background:var(--soft-orange)">⚖️</div>
-      <div class="label">Comparador en tienda</div>
-      <h2>Compara hasta 5 productos similares</h2>
-      <p class="note">Podrás fotografiar la etiqueta o ingresar precio y presentación. El resultado se normalizará a gramos, mililitros o unidades para elegir el menor precio real.</p>
-      <div class="compare-slots" aria-label="Cinco espacios para comparar productos">
-        <span class="compare-slot">1</span><span class="compare-slot">2</span><span class="compare-slot">3</span><span class="compare-slot">4</span><span class="compare-slot">5</span>
+    <div class="screen-heading"><h2>Comparar productos</h2><p>Encuentra la mejor opción por cantidad real</p></div>
+    <section class="card comparison-workspace">
+      <div class="camera-capture">
+        <span>📷</span>
+        <div><strong>Tomar foto de etiqueta</strong><small>Captura precio y presentación</small></div>
       </div>
-      <div class="location-confirmed">📷 Próximo paso: captura de etiquetas y cálculo en vivo.</div>
+      <div class="comparison-section-title"><strong>Productos a comparar</strong><span>0/5</span></div>
+      <div class="compare-slots" aria-label="Cinco espacios para comparar productos">
+        <span class="compare-slot">＋</span><span class="compare-slot">2</span><span class="compare-slot">3</span><span class="compare-slot">4</span><span class="compare-slot">5</span>
+      </div>
+      <div class="comparison-empty">
+        <span>⚖️</span><strong>Aún no hay alternativas</strong>
+        <p>Agrega entre 2 y 5 productos similares. Compararemos automáticamente Q/g, Q/ml o Q/unidad.</p>
+      </div>
     </section>
   </div>
 
   <div class="tab-panel" data-tab-panel="history" role="tabpanel" hidden>
-    <section class="card coming-card">
-      <div class="coming-icon" style="background:#eee7ff">📈</div>
-      <div class="label">Historial</div>
-      <h2>Tus precios a través del tiempo</h2>
-      <p class="note">Aquí aparecerán las comparaciones guardadas, fechas, tiendas y cambios de precio.</p>
+    <div class="screen-heading"><h2>Historial de precios</h2><p>Observa cuándo suben o bajan tus productos</p></div>
+    <section class="card history-card">
+      <div class="history-filter"><span>Todos los productos</span><span>Todas las tiendas⌄</span></div>
+      <div class="chart-placeholder">
+        <div class="chart-bars"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+        <strong>Tu tendencia aparecerá aquí</strong>
+        <small>Guarda comparaciones para construir el historial.</small>
+      </div>
     </section>
   </div>
 
   <div class="tab-panel" data-tab-panel="frequent" role="tabpanel" hidden>
-    <section class="card coming-card">
-      <div class="coming-icon" style="background:#ffe7ee">⭐</div>
-      <div class="label">Frecuentes</div>
-      <h2>Tus productos de siempre</h2>
-      <p class="note">Marcas preferidas, tamaños habituales y sustituciones para armar la lista más rápido.</p>
+    <div class="screen-heading"><h2>Mis frecuentes</h2><p>Tus básicos listos para agregar</p></div>
+    <section class="frequent-grid">
+      <article class="frequent-card"><b>♡</b><span>🥛</span><strong>Leche</strong><small>Lácteos</small><button type="button" disabled>＋ Agregar</button></article>
+      <article class="frequent-card"><b>♡</b><span>🥚</span><strong>Huevos</strong><small>Huevos frescos</small><button type="button" disabled>＋ Agregar</button></article>
+      <article class="frequent-card"><b>♡</b><span>🥑</span><strong>Aguacates</strong><small>Frutas</small><button type="button" disabled>＋ Agregar</button></article>
+      <article class="frequent-card"><b>♡</b><span>🧴</span><strong>Detergente</strong><small>Limpieza</small><button type="button" disabled>＋ Agregar</button></article>
+      <article class="frequent-card"><b>♡</b><span>🍪</span><strong>Galletas</strong><small>Snacks</small><button type="button" disabled>＋ Agregar</button></article>
+      <article class="frequent-card"><b>♡</b><span>🧻</span><strong>Papel higiénico</strong><small>Hogar</small><button type="button" disabled>＋ Agregar</button></article>
     </section>
   </div>
 </div>
