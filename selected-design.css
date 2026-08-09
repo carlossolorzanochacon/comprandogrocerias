@@ -54,3 +54,4 @@ footer{display:none!important}
 button,input,textarea,select{font-family:inherit!important}
 @media(max-width:370px){.wrap{padding-left:12px!important;padding-right:12px!important}.category-showcase{gap:5px!important}.category-showcase>div{height:72px!important}.brand-groceries{font-size:27px!important}.profile-identity{grid-template-columns:100px 1fr!important}.profile-avatar-preview{width:100px!important;height:100px!important}}
 .category-showcase>div:nth-child(1){background:#ffd09e!important}.category-showcase>div:nth-child(2){background:#cce7a9!important}.category-showcase>div:nth-child(3){background:#b9dcf6!important}.category-showcase>div:nth-child(4){background:#ffc0bd!important}.category-showcase>div:nth-child(5){background:#d9c0ef!important}
+.profile-backdrop{z-index:59!important}.profile-panel{z-index:60!important}
