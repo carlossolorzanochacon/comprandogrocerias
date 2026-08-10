@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" role="img" aria-labelledby="title desc">
+  <title id="title">Paquete iconográfico de Comprando Grocerías</title>
+  <desc id="desc">Dieciséis iconos para categorías de supermercado.</desc>
+  <rect width="800" height="800" rx="30" fill="#f7faf8"/>
+  <text x="40" y="55" font-family="Segoe UI,Arial,sans-serif" font-size="27" font-weight="600" fill="#173c31">Paquete iconográfico</text>
+  <text x="40" y="82" font-family="Segoe UI,Arial,sans-serif" font-size="15" fill="#617169">Categorías reutilizables para productos sin fotografía</text>
+  <g font-family="Segoe UI,Arial,sans-serif" font-size="15" font-weight="600" fill="#253c31" text-anchor="middle">
+    <g transform="translate(30 110)"><rect width="170" height="145" rx="18" fill="#fff" stroke="#dce7e1"/><svg x="45" y="12" width="80" height="80" viewBox="0 0 64 64"><use href="category-icons.svg#generic"/></svg><text x="85" y="119">Compras</text></g>
+    <g transform="translate(220 110)"><rect width="170" height="145" rx="18" fill="#fff" stroke="#dce7e1"/><svg x="45" y="12" width="80" height="80" viewBox="0 0 64 64"><use href="category-icons.svg#dairy"/></svg><text x="85" y="119">Lácteos</text></g>
+    <g transform="translate(410 110)"><rect width="170" height="145" rx="18" fill="#fff" stroke="#dce7e1"/><svg x="45" y="12" width="80" height="80" viewBox="0 0 64 64"><use href="category-icons.svg#bakery"/></svg><text x="85" y="119">Panadería</text></g>
+    <g transform="translate(600 110)"><rect width="170" height="145" rx="18" fill="#fff" stroke="#dce7e1"/><svg x="45" y="12" width="80" height="80" viewBox="0 0 64 64"><use href="category-icons.svg#snacks"/></svg><text x="85" y="119">Dulces y snacks</text></g>
+    <g transform="translate(30 275)"><rect width="170" height="145" rx="18" fill="#fff" stroke="#dce7e1"/><svg x="45" y="12" width="80" height="80" viewBox="0 0 64 64"><use href="category-icons.svg#meat"/></svg><text x="85" y="119">Carnes</text></g>
+    <g transform="translate(220 275)"><rect width="170" height="145" rx="18" fill="#fff" stroke="#dce7e1"/><svg x="45" y="12" width="80" height="80" viewBox="0 0 64 64"><use href="category-icons.svg#produce"/></svg><text x="85" y="119">Frutas y verduras</text></g>
+    <g transform="translate(410 275)"><rect width="170" height="145" rx="18" fill="#fff" stroke="#dce7e1"/><svg x="45" y="12" width="80" height="80" viewBox="0 0 64 64"><use href="category-icons.svg#beverages"/></svg><text x="85" y="119">Bebidas</text></g>
+    <g transform="translate(600 275)"><rect width="170" height="145" rx="18" fill="#fff" stroke="#dce7e1"/><svg x="45" y="12" width="80" height="80" viewBox="0 0 64 64"><use href="category-icons.svg#pantry"/></svg><text x="85" y="119">Despensa</text></g>
+    <g transform="translate(30 440)"><rect width="170" height="145" rx="18" fill="#fff" stroke="#dce7e1"/><svg x="45" y="12" width="80" height="80" viewBox="0 0 64 64"><use href="category-icons.svg#cleaning"/></svg><text x="85" y="119">Limpieza</text></g>
+    <g transform="translate(220 440)"><rect width="170" height="145" rx="18" fill="#fff" stroke="#dce7e1"/><svg x="45" y="12" width="80" height="80" viewBox="0 0 64 64"><use href="category-icons.svg#household"/></svg><text x="85" y="119">Hogar y papel</text></g>
+    <g transform="translate(410 440)"><rect width="170" height="145" rx="18" fill="#fff" stroke="#dce7e1"/><svg x="45" y="12" width="80" height="80" viewBox="0 0 64 64"><use href="category-icons.svg#frozen"/></svg><text x="85" y="119">Congelados</text></g>
+    <g transform="translate(600 440)"><rect width="170" height="145" rx="18" fill="#fff" stroke="#dce7e1"/><svg x="45" y="12" width="80" height="80" viewBox="0 0 64 64"><use href="category-icons.svg#personal-care"/></svg><text x="85" y="119">Cuidado personal</text></g>
+    <g transform="translate(30 605)"><rect width="170" height="145" rx="18" fill="#fff" stroke="#dce7e1"/><svg x="45" y="12" width="80" height="80" viewBox="0 0 64 64"><use href="category-icons.svg#baby"/></svg><text x="85" y="119">Bebé</text></g>
+    <g transform="translate(220 605)"><rect width="170" height="145" rx="18" fill="#fff" stroke="#dce7e1"/><svg x="45" y="12" width="80" height="80" viewBox="0 0 64 64"><use href="category-icons.svg#pets"/></svg><text x="85" y="119">Mascotas</text></g>
+    <g transform="translate(410 605)"><rect width="170" height="145" rx="18" fill="#fff" stroke="#dce7e1"/><svg x="45" y="12" width="80" height="80" viewBox="0 0 64 64"><use href="category-icons.svg#pharmacy"/></svg><text x="85" y="119">Farmacia</text></g>
+    <g transform="translate(600 605)"><rect width="170" height="145" rx="18" fill="#fff" stroke="#dce7e1"/><svg x="45" y="12" width="80" height="80" viewBox="0 0 64 64"><use href="category-icons.svg#eggs"/></svg><text x="85" y="119">Huevos</text></g>
+  </g>
+</svg>

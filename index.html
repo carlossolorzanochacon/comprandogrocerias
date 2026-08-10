@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <title>COMPRANDO GROCERÍAS</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css">
 <style>
@@ -652,12 +655,14 @@ footer{display:none}
   .frequent-card{padding:14px 10px}.frequent-card>img{width:68px;height:68px}
 }
 </style>
-<link rel="stylesheet" href="selected-design.css">
+<link rel="stylesheet" href="selected-design.css?v=iconos-integrados-1">
+<link rel="icon" href="assets/branding/comprando-grocerias-icon.svg" type="image/svg+xml">
 </head>
 <body>
 <div class="wrap">
 <header>
-  <div>
+  <div class="brand-lockup">
+    <img class="brand-logo" src="assets/branding/comprando-grocerias-icon.svg" alt="">
     <h1 class="brand-title">
       <span>COMPRANDO</span>
       <span class="brand-groceries">GROCERÍAS <span class="brand-english">GROCERY SHOPPING</span></span>
@@ -675,7 +680,7 @@ footer{display:none}
 <div class="grid">
   <div class="tab-panel" data-tab-panel="list" role="tabpanel">
     <div class="screen-heading">
-      <h2 id="welcomeTitle">Hola 👋</h2>
+      <h2 id="welcomeTitle"><span>Hola,</span><span class="greeting-hand" aria-hidden="true"></span></h2>
       <p>¿Qué necesitas comprar hoy?</p>
     </div>
     <section class="card">
@@ -687,8 +692,17 @@ footer{display:none}
   </div>
 </div>
       <div class="voice-stage">
-        <div class="voice-visual"><div class="sound-wave">▂ ▅ ▃ ▇ ▄ ▆ ▂</div><div class="mic-orb">🎙</div><div class="sound-wave">▃ ▆ ▂ ▅ ▇ ▃ ▂</div></div>
-        <button class="mic" id="mic">🎙 Dictar artículos</button>
+        <div class="voice-visual" aria-hidden="true">
+          <div class="sound-wave sound-wave-left"><i style="--h:8px"></i><i style="--h:12px"></i><i style="--h:18px"></i><i style="--h:27px"></i><i style="--h:38px"></i><i style="--h:46px"></i><i style="--h:37px"></i><i style="--h:28px"></i><i style="--h:20px"></i><i style="--h:25px"></i><i style="--h:34px"></i><i style="--h:41px"></i><i style="--h:32px"></i><i style="--h:23px"></i><i style="--h:17px"></i><i style="--h:11px"></i><i style="--h:7px"></i></div>
+          <div class="mic-orb">
+            <svg viewBox="0 0 48 48" role="img" aria-label="Micrófono">
+              <rect x="17" y="7" width="14" height="25" rx="7"></rect>
+              <path d="M12 24v2a12 12 0 0 0 24 0v-2M24 38v6M17 44h14"></path>
+            </svg>
+          </div>
+          <div class="sound-wave sound-wave-right"><i style="--h:8px"></i><i style="--h:12px"></i><i style="--h:18px"></i><i style="--h:27px"></i><i style="--h:38px"></i><i style="--h:46px"></i><i style="--h:37px"></i><i style="--h:28px"></i><i style="--h:20px"></i><i style="--h:25px"></i><i style="--h:34px"></i><i style="--h:41px"></i><i style="--h:32px"></i><i style="--h:23px"></i><i style="--h:17px"></i><i style="--h:11px"></i><i style="--h:7px"></i></div>
+        </div>
+        <button class="mic" id="mic">Dictar artículos</button>
       </div>
       <textarea id="input" placeholder="Ej.: 2 leches descremadas, cereal Corn Flakes grande, 6 aguacates, detergente Ariel 3 kg..."></textarea>
       <div class="actions entry-actions">
@@ -710,12 +724,13 @@ footer{display:none}
     </section>
 
     <section class="card section">
-      <div class="module-title">
-  <div class="module-icon icon-green">🛒</div>
+      <div class="module-title cart-title">
+  <div class="cart-title-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 4h2l2.2 10.2a2 2 0 0 0 2 1.6h7.9a2 2 0 0 0 2-1.6L20.5 8H6M10 20a1 1 0 1 1-2 0 1 1 0 0 1 2 0Zm9 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z"></path></svg></div>
   <div class="module-copy">
     <div class="label">Tu carrito actual</div>
     <div class="module-sub">Productos organizados automáticamente</div>
   </div>
+  <span class="cart-count" id="cartTitleCount">0</span>
 </div>
       <div class="summary">
         <div class="kpi"><span class="kpi-icon">🧾</span><span>Artículos</span><b id="count">0</b></div>
@@ -723,13 +738,6 @@ footer{display:none}
         <div class="kpi"><span class="kpi-icon">✓</span><span>Estado</span><b id="state">Lista</b></div>
       </div>
       <div class="list" id="list"></div>
-      <div class="category-showcase">
-        <div><span>🍊</span><small>Frutas</small></div>
-        <div><span>🥬</span><small>Verduras</small></div>
-        <div><span>🥛</span><small>Lácteos</small></div>
-        <div><span>🥩</span><small>Carnes</small></div>
-        <div><span>🫙</span><small>Despensa</small></div>
-      </div>
       <div class="actions">
         <button id="save">Guardar lista</button>
         <button class="danger" id="clearCart">Vaciar carreta</button>
@@ -745,7 +753,7 @@ footer{display:none}
     <div class="label" id="profileTitle">Mi perfil</div>
     <div class="module-sub">Dirección y preferencias de compra</div>
   </div>
-  <button type="button" class="profile-close" id="closeProfile" aria-label="Cerrar perfil">✕</button>
+  <button type="button" class="profile-close" id="closeProfile" aria-label="Cerrar perfil"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7l10 10M17 7 7 17"/></svg></button>
 </div>
       <div class="profile-identity">
         <div class="profile-avatar-preview" id="profileAvatarPreview">
@@ -809,83 +817,118 @@ footer{display:none}
       </div>
     </section>
 
-    <div class="screen-heading"><h2>Comparar tiendas</h2><p>Revisa el total y la disponibilidad de tu carrito</p></div>
-    <section class="card" id="comparisonCard">
-      <div class="module-title">
-  <div class="module-icon icon-green">📊</div>
-  <div class="module-copy">
-    <div class="label">Comparación de supermercados</div>
-    <div class="module-sub">Precio total, disponibilidad y mejor combinación</div>
-  </div>
-      </div>
-      <div class="store">
-        <div class="store-header"><div class="store-left"><div class="store-icon">🛒</div><div><strong>Walmart</strong><div class="meta">Sucursal por definir</div></div></div><span class="badge">Pendiente conexión</span></div>
-        <div class="store-metrics"><div><small>Total estimado</small><strong>—</strong></div><div><small>Disponibilidad</small><strong>—</strong></div><div><small>Productos</small><strong>—</strong></div></div>
-      </div>
-      <div class="store">
-        <div class="store-header"><div class="store-left"><div class="store-icon">🏬</div><div><strong>La Torre</strong><div class="meta">Sucursal por definir</div></div></div><span class="badge">Pendiente conexión</span></div>
-        <div class="store-metrics"><div><small>Total estimado</small><strong>—</strong></div><div><small>Disponibilidad</small><strong>—</strong></div><div><small>Productos</small><strong>—</strong></div></div>
-      </div>
-      <div class="actions">
-        <button class="primary" id="analyze">Comparar precios y existencias</button>
-      </div>
-      <div class="status" id="analysisStatus">Todavía no hay precios reales conectados.</div>
-
-      <table>
-        <thead><tr><th>Escenario</th><th>Disponibles</th><th>Total</th></tr></thead>
-        <tbody>
-          <tr><td>Walmart</td><td class="price-empty">—</td><td class="price-empty">—</td></tr>
-          <tr><td>La Torre</td><td class="price-empty">—</td><td class="price-empty">—</td></tr>
-          <tr><td>Compra óptima</td><td class="price-empty">—</td><td class="price-empty">—</td></tr>
-        </tbody>
-      </table>
-
-      <p class="note section">
-        Esta versión no inventa precios ni existencias. El siguiente módulo conectará fuentes reales de Walmart Guatemala y La Torre por sucursal, manteniendo historial y equivalencias de presentación.
-      </p>
+    <div class="stores-topbar">
+      <button type="button" class="compact-home-button" id="storesHomeButton" aria-label="Ir a la página principal"><img class="compact-brand-logo" src="assets/branding/comprando-grocerias-icon.svg" alt=""></button>
+      <h2>Comparar tiendas</h2>
+      <button type="button" class="compact-profile-button" id="storesProfileButton" aria-label="Abrir perfil y preferencias" aria-expanded="false"><span class="avatar-initials" id="storesAvatarInitials">CS</span><img class="avatar-photo" id="storesAvatarPhoto" alt="" hidden></button>
+    </div>
+    <section class="stores-workspace" id="comparisonCard">
+      <div class="stores-cart-summary"><span class="stores-cart-icon" aria-hidden="true"></span><strong>Resumen de tu carrito</strong><span>(<b id="storesCartCount">5</b> productos)</span></div>
+      <div class="manual-price-guide"><span aria-hidden="true">Q</span><div><strong>Ingresa los precios que encuentres</strong><small>Escribe el precio de la presentación indicada. Los totales se calculan automáticamente.</small></div></div>
+      <div class="manual-price-head"><span>Producto</span><span aria-label="Walmart"><img src="assets/stores/walmart.webp" alt="Walmart"></span><span aria-label="La Torre"><img src="assets/stores/la-torre.webp" alt="La Torre"></span></div>
+      <div class="manual-price-list" id="manualPriceList"></div>
+      <div class="manual-price-empty" id="manualPriceEmpty" hidden>Agrega productos a tu lista para comparar precios.</div>
+      <button type="button" class="save-manual-prices" id="saveManualPrices">Guardar precios en el historial</button>
+      <div class="manual-save-status" id="manualSaveStatus" role="status"></div>
+      <section class="manual-totals" aria-live="polite">
+        <article class="manual-store-total" id="walmartTotalCard"><span class="manual-store-logo walmart-icon" aria-hidden="true"></span><small>Todo en Walmart</small><strong id="walmartManualTotal">—</strong><em id="walmartMissingCount">Sin precios</em><div class="manual-awards"><span class="manual-award manual-award-price" data-store-award="walmart-price" aria-label="Menor precio" hidden><b>✓</b><i>Precio</i></span><span class="manual-award manual-award-stock" data-store-award="walmart-stock" aria-label="Más artículos encontrados" hidden><b>✓</b><i>Existencias</i></span></div></article>
+        <article class="manual-store-total" id="latorreTotalCard"><span class="manual-store-logo latorre-icon" aria-hidden="true"></span><small>Todo en La Torre</small><strong id="latorreManualTotal">—</strong><em id="latorreMissingCount">Sin precios</em><div class="manual-awards"><span class="manual-award manual-award-price" data-store-award="latorre-price" aria-label="Menor precio" hidden><b>✓</b><i>Precio</i></span><span class="manual-award manual-award-stock" data-store-award="latorre-stock" aria-label="Más artículos encontrados" hidden><b>✓</b><i>Existencias</i></span></div></article>
+      </section>
+      <p class="stores-demo-note" id="analysisStatus">Solo se incluyen precios ingresados y confirmados por ti.</p>
     </section>
   </div>
 
   <div class="tab-panel" data-tab-panel="compare" role="tabpanel" hidden>
-    <div class="screen-heading"><h2>Comparar productos</h2><p>Encuentra la mejor opción por cantidad real</p></div>
-    <section class="card comparison-workspace">
-      <div class="camera-capture">
-        <span>📷</span>
-        <div><strong>Tomar foto de etiqueta</strong><small>Captura precio y presentación</small></div>
-      </div>
-      <div class="comparison-section-title"><strong>Productos a comparar</strong><span>0/5</span></div>
-      <div class="compare-slots" aria-label="Cinco espacios para comparar productos">
-        <span class="compare-slot">＋</span><span class="compare-slot">2</span><span class="compare-slot">3</span><span class="compare-slot">4</span><span class="compare-slot">5</span>
-      </div>
-      <div class="comparison-empty">
-        <span>⚖️</span><strong>Aún no hay alternativas</strong>
-        <p>Agrega entre 2 y 5 productos similares. Compararemos automáticamente Q/g, Q/ml o Q/unidad.</p>
-      </div>
+    <div class="compare-topbar">
+      <button type="button" class="compact-home-button" id="compareHomeButton" aria-label="Ir a la página principal"><img class="compact-brand-logo" src="assets/branding/comprando-grocerias-icon.svg" alt=""></button>
+      <h2>Comparar productos</h2>
+      <button type="button" class="compact-profile-button" id="compareProfileButton" aria-label="Abrir perfil y preferencias" aria-expanded="false"><span class="avatar-initials" id="compareAvatarInitials">CS</span><img class="avatar-photo" id="compareAvatarPhoto" alt="" hidden></button>
+    </div>
+    <section class="comparison-workspace">
+      <button type="button" class="camera-capture" id="capturePriceLabel">
+        <span class="camera-orb" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="M8 10h4l2-3h5l2 3h4a3 3 0 0 1 3 3v10a3 3 0 0 1-3 3H8a3 3 0 0 1-3-3V13a3 3 0 0 1 3-3Z"/><circle cx="16.5" cy="18" r="5"/></svg></span>
+        <span class="camera-copy"><strong>Tomar foto de etiqueta</strong><small>Escanea la etiqueta para<br>comparar precios</small></span>
+      </button>
+      <input type="file" id="priceLabelPhoto" accept="image/*" capture="environment" hidden>
+      <div class="comparison-limit-notice" id="comparisonLimitNotice" role="alert" hidden>Ya tienes los 5 espacios ocupados. Quita una etiqueta para agregar otra.</div>
+      <div class="comparison-section-title"><strong>Productos a comparar</strong><span id="compareCount">(3/5)</span></div>
+      <div class="compare-slots" id="compareSlots" aria-label="Cinco espacios para comparar productos"></div>
+      <div class="alternatives-heading"><strong>Alternativas encontradas</strong><span id="normalizedSortLabel">Ordenadas por Q/g</span></div>
+      <div class="comparison-results" id="comparisonResults"></div>
+      <p class="normalization-note"><span aria-hidden="true">i</span> <span id="normalizationNoteText">Precio por gramo normalizado para presentaciones diferentes.</span></p>
+      <div class="comparison-toast" id="comparisonToast" role="status" aria-live="polite"></div>
     </section>
   </div>
 
   <div class="tab-panel" data-tab-panel="history" role="tabpanel" hidden>
-    <div class="screen-heading"><h2>Historial de precios</h2><p>Observa cuándo suben o bajan tus productos</p></div>
+    <div class="history-topbar interior-topbar">
+      <button type="button" class="compact-home-button" id="historyHomeButton" aria-label="Ir a la página principal"><img class="compact-brand-logo" src="assets/branding/comprando-grocerias-icon.svg" alt=""></button>
+      <h2>Historial de precios</h2>
+      <button type="button" class="compact-profile-button" id="historyProfileButton" aria-label="Abrir perfil y preferencias" aria-expanded="false"><span class="avatar-initials" id="historyAvatarInitials">CS</span><img class="avatar-photo" id="historyAvatarPhoto" alt="" hidden></button>
+    </div>
     <section class="card history-card">
-      <div class="history-filter"><span>Todos los productos</span><span>Todas las tiendas⌄</span></div>
-      <div class="chart-placeholder">
-        <div class="chart-bars"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
-        <strong>Tu tendencia aparecerá aquí</strong>
-        <small>Guarda comparaciones para construir el historial.</small>
+      <div class="history-filter">
+        <button type="button"><span>Producto: <strong>Leche</strong></span><svg viewBox="0 0 20 20" aria-hidden="true"><path d="m6 8 4 4 4-4"/></svg></button>
+        <button type="button"><span>Tienda: <strong>Todas</strong></span><svg viewBox="0 0 20 20" aria-hidden="true"><path d="m6 8 4 4 4-4"/></svg></button>
+        <button type="button" class="history-filter-settings" aria-label="Ajustar filtros"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h10M18 6h2M14 4v4M4 12h3M11 12h9M7 10v4M4 18h10M18 18h2M14 16v4"/></svg></button>
       </div>
+      <div class="history-chart-card">
+        <div class="history-chart-heading"><strong>Tendencia de precios</strong><span>(últimos 7 días)</span></div>
+        <div class="history-chart-layout">
+          <div class="history-chart-plot">
+            <span class="history-axis history-axis-16">Q16</span><span class="history-axis history-axis-14">Q14</span><span class="history-axis history-axis-12">Q12</span><span class="history-axis history-axis-10">Q10</span>
+            <svg viewBox="0 0 282 126" role="img" aria-label="Tendencia del precio de leche durante siete días">
+              <defs><linearGradient id="historyArea" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#24a864" stop-opacity=".24"/><stop offset="1" stop-color="#24a864" stop-opacity=".03"/></linearGradient></defs>
+              <path class="history-grid-line" d="M28 16H276M28 46H276M28 76H276M28 106H276"/>
+              <path class="history-area" d="M28 39 69 42 110 74 151 64 192 73 233 94 276 88V106H28Z"/>
+              <path class="history-line" d="M28 39 69 42 110 74 151 64 192 73 233 94 276 88"/>
+              <g class="history-points"><circle cx="28" cy="39" r="4"/><circle cx="69" cy="42" r="4"/><circle cx="110" cy="74" r="4"/><circle cx="151" cy="64" r="4"/><circle cx="192" cy="73" r="4"/><circle cx="233" cy="94" r="4"/><circle cx="276" cy="88" r="4"/></g>
+            </svg>
+            <div class="history-days"><span>Lun</span><span>Mar</span><span>Mié</span><span>Jue</span><span>Vie</span><span>Sáb</span><span>Dom</span></div>
+          </div>
+          <div class="history-current-price"><small>Precio actual</small><strong>Q14.50</strong><span>por unidad (1L)</span></div>
+        </div>
+      </div>
+      <div class="history-recent-title">Comparaciones recientes</div>
+      <div class="history-recent-list">
+        <article class="history-row">
+          <img src="assets/history-products/milk.png" alt="Leche Entera">
+          <div class="history-product"><strong>Leche Entera</strong><span>1L</span><b>La Vaquita</b></div>
+          <div class="history-prices"><small>Hoy</small><strong>Q14.50</strong><small>Ayer</small><span>Q14.00</span></div>
+          <div class="history-change history-change-up"><strong>↑ +Q0.50</strong><span>+3.6%</span></div>
+        </article>
+        <article class="history-row">
+          <img src="assets/history-products/eggs.png" alt="Huevos Blancos">
+          <div class="history-product"><strong>Huevos Blancos</strong><span>Docena</span><b>El Granjero</b></div>
+          <div class="history-prices"><small>Hoy</small><strong>Q24.00</strong><small>Ayer</small><span>Q25.00</span></div>
+          <div class="history-change history-change-down"><strong>↓ -Q1.00</strong><span>-4.0%</span></div>
+        </article>
+        <article class="history-row">
+          <img src="assets/history-products/avocado.png" alt="Aguacate Hass">
+          <div class="history-product"><strong>Aguacate Hass</strong><span>Unidad</span><b>Campo Verde</b></div>
+          <div class="history-prices"><small>Hoy</small><strong>Q5.50</strong><small>Ayer</small><span>Q5.00</span></div>
+          <div class="history-change history-change-up"><strong>↑ +Q0.50</strong><span>+10.0%</span></div>
+        </article>
+      </div>
+      <button type="button" class="history-more">Ver más historial <span aria-hidden="true">›</span></button>
     </section>
   </div>
 
   <div class="tab-panel" data-tab-panel="frequent" role="tabpanel" hidden>
-    <div class="screen-heading"><h2>Mis frecuentes</h2><p>Tus básicos listos para agregar</p></div>
+    <div class="frequent-topbar interior-topbar">
+      <button type="button" class="compact-home-button" id="frequentHomeButton" aria-label="Ir a la página principal"><img class="compact-brand-logo" src="assets/branding/comprando-grocerias-icon.svg" alt=""></button>
+      <h2>Mis frecuentes</h2>
+      <button type="button" class="compact-profile-button" id="frequentProfileButton" aria-label="Abrir perfil y preferencias" aria-expanded="false"><span class="avatar-initials" id="frequentAvatarInitials">CS</span><img class="avatar-photo" id="frequentAvatarPhoto" alt="" hidden></button>
+    </div>
     <section class="frequent-grid">
-      <article class="frequent-card"><b>♡</b><img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@latest/assets/svg/1f95b.svg" alt=""><strong>Leche</strong><small>Lácteos</small><button type="button" disabled>＋ Agregar</button></article>
-      <article class="frequent-card"><b>♡</b><img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@latest/assets/svg/1f95a.svg" alt=""><strong>Huevos</strong><small>Huevos frescos</small><button type="button" disabled>＋ Agregar</button></article>
-      <article class="frequent-card"><b>♡</b><img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@latest/assets/svg/1f951.svg" alt=""><strong>Aguacates</strong><small>Frutas</small><button type="button" disabled>＋ Agregar</button></article>
-      <article class="frequent-card"><b>♡</b><img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@latest/assets/svg/1f9f4.svg" alt=""><strong>Detergente</strong><small>Limpieza</small><button type="button" disabled>＋ Agregar</button></article>
-      <article class="frequent-card"><b>♡</b><img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@latest/assets/svg/1f36a.svg" alt=""><strong>Galletas</strong><small>Snacks</small><button type="button" disabled>＋ Agregar</button></article>
-      <article class="frequent-card"><b>♡</b><img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@latest/assets/svg/1f9fb.svg" alt=""><strong>Papel higiénico</strong><small>Hogar</small><button type="button" disabled>＋ Agregar</button></article>
+      <article class="frequent-card" data-frequent-id="milk" data-name="Leche Entera" data-brand="La Vaquita" data-presentation="1 Litro" data-category="Lácteos"><button type="button" class="frequent-heart" aria-label="Quitar Leche Entera de frecuentes" aria-pressed="true">♥</button><img src="assets/frequent-products/milk.png?v=2" alt="Leche Entera"><strong>Leche Entera</strong><b>La Vaquita</b><small>1 Litro</small><button type="button" class="frequent-add">＋ Agregar</button></article>
+      <article class="frequent-card" data-frequent-id="eggs" data-name="Huevos Blancos" data-brand="El Granjero" data-presentation="Docena" data-category="Huevos"><button type="button" class="frequent-heart" aria-label="Quitar Huevos Blancos de frecuentes" aria-pressed="true">♥</button><img src="assets/frequent-products/eggs.png?v=3" alt="Huevos Blancos"><strong>Huevos Blancos</strong><b>El Granjero</b><small>Docena</small><button type="button" class="frequent-add">＋ Agregar</button></article>
+      <article class="frequent-card" data-frequent-id="avocado" data-name="Aguacate Hass" data-brand="Campo Verde" data-presentation="Unidad" data-category="Frutas y verduras"><button type="button" class="frequent-heart" aria-label="Quitar Aguacate Hass de frecuentes" aria-pressed="true">♥</button><img src="assets/frequent-products/avocado.png" alt="Aguacate Hass"><strong>Aguacate Hass</strong><b>Campo Verde</b><small>Unidad</small><button type="button" class="frequent-add">＋ Agregar</button></article>
+      <article class="frequent-card" data-frequent-id="detergent" data-name="Detergente Líquido" data-brand="Clean Plus" data-presentation="1.5 Litros" data-category="Limpieza"><button type="button" class="frequent-heart" aria-label="Quitar Detergente Líquido de frecuentes" aria-pressed="true">♥</button><img src="assets/frequent-products/detergent.png" alt="Detergente Líquido"><strong>Detergente Líquido</strong><b>Clean Plus</b><small>1.5 Litros</small><button type="button" class="frequent-add">＋ Agregar</button></article>
+      <article class="frequent-card" data-frequent-id="cookies" data-name="Galletas Choco" data-brand="ChocoMax" data-presentation="Paquete 300 g" data-category="Snacks"><button type="button" class="frequent-heart" aria-label="Quitar Galletas Choco de frecuentes" aria-pressed="true">♥</button><img src="assets/frequent-products/cookies.png" alt="Galletas Choco"><strong>Galletas Choco</strong><b>ChocoMax</b><small>Paquete 300 g</small><button type="button" class="frequent-add">＋ Agregar</button></article>
+      <article class="frequent-card" data-frequent-id="toilet-paper" data-name="Papel Higiénico" data-brand="Suave" data-presentation="4 rollos" data-category="Hogar"><button type="button" class="frequent-heart" aria-label="Quitar Papel Higiénico de frecuentes" aria-pressed="true">♥</button><img src="assets/frequent-products/toilet-paper.png?v=3" alt="Papel Higiénico"><strong>Papel Higiénico</strong><b>Suave</b><small>4 rollos</small><button type="button" class="frequent-add">＋ Agregar</button></article>
     </section>
+    <p class="frequent-empty" hidden>No tienes productos favoritos todavía.</p>
   </div>
 </div>
 <footer>Los datos de tu lista se guardan localmente en este navegador.</footer>
@@ -895,15 +938,101 @@ footer{display:none}
   <button type="button" class="tab-button" data-tab="list" role="tab" aria-selected="true"><span class="tab-icon"><svg viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01"/></svg></span><span>Lista</span></button>
   <button type="button" class="tab-button" data-tab="compare" role="tab" aria-selected="false" tabindex="-1"><span class="tab-icon"><svg viewBox="0 0 24 24"><path d="M12 3v18M5 6h14M5 6l-3 6h6L5 6Zm14 0-3 6h6l-3-6ZM8 21h8"/></svg></span><span>Comparar</span></button>
   <button type="button" class="tab-button" data-tab="stores" role="tab" aria-selected="false" tabindex="-1"><span class="tab-icon"><svg viewBox="0 0 24 24"><path d="M3 10h18M5 10v10h14V10M4 4h16l1 6H3l1-6Zm5 10h6v6H9v-6Z"/></svg></span><span>Tiendas</span></button>
-  <button type="button" class="tab-button" data-tab="history" role="tab" aria-selected="false" tabindex="-1"><span class="tab-icon"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8M3 3v5h5M12 7v5l3 2"/></svg></span><span>Historial</span></button>
+  <button type="button" class="tab-button" data-tab="history" role="tab" aria-selected="false" tabindex="-1"><span class="tab-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.25"/><path d="M12 7.5v4.8l3.15 1.85"/></svg></span><span>Historial</span></button>
   <button type="button" class="tab-button" data-tab="frequent" role="tab" aria-selected="false" tabindex="-1"><span class="tab-icon"><svg viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8Z"/></svg></span><span>Frecuentes</span></button>
 </nav>
 
+<div class="data-modal-backdrop" id="dataModalBackdrop" hidden>
+  <section class="data-modal" id="dataModal" role="dialog" aria-modal="true" aria-labelledby="dataModalTitle">
+    <div class="data-modal-head">
+      <div><small id="dataModalEyebrow">Completar información</small><h2 id="dataModalTitle">Datos del producto</h2></div>
+      <button type="button" class="data-modal-close" id="dataModalClose" aria-label="Cerrar"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7l10 10M17 7 7 17"/></svg></button>
+    </div>
+    <form id="dataModalForm">
+      <div class="data-modal-body" id="dataModalBody"></div>
+      <div class="data-modal-actions"><button type="button" class="data-modal-cancel" id="dataModalCancel">Cancelar</button><button type="button" class="data-modal-save" id="dataModalSave">Guardar</button></div>
+    </form>
+  </section>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="vendor/tesseract/tesseract.min.js"></script>
+<script>document.documentElement.dataset.ocrReady=typeof Tesseract;</script>
 <script>
 const $=s=>document.querySelector(s);
 document.body.appendChild($('#profilePanel'));
-let cart=JSON.parse(localStorage.getItem('smartCart')||'[]');
+let cart=[];
+try{ cart=JSON.parse(localStorage.getItem('smartCart')||'[]'); }catch{ cart=[]; }
+if(!Array.isArray(cart)) cart=[];
+cart=cart.filter(item=>item&&typeof item==='object'&&item.id&&item.name).map(item=>({...item,qty:Math.max(0,Math.round(Number(item.qty)||0)),category:item.category||'Otros',preferredPresentation:item.preferredPresentation||'Por definir',preferredBrand:item.preferredBrand||'Sin preferencia',collected:Boolean(item.collected)}));
+let collapsedCategories=new Set();
+try{const storedCollapsed=JSON.parse(localStorage.getItem('smartCollapsedCategories')||'[]');if(Array.isArray(storedCollapsed))collapsedCategories=new Set(storedCollapsed.map(String))}catch{}
+let customCategoryOrder=[];
+try{const storedOrder=JSON.parse(localStorage.getItem('smartCategoryOrder')||'[]');if(Array.isArray(storedOrder))customCategoryOrder=storedOrder.map(String)}catch{}
+
+const modalBackdrop=$('#dataModalBackdrop'),modalForm=$('#dataModalForm'),modalBody=$('#dataModalBody');
+let modalSubmitHandler=null,modalReturnFocus=null;
+function closeDataModal(){modalBackdrop.hidden=true;document.body.style.overflow='';modalForm.reset();modalBody.innerHTML='';modalSubmitHandler=null;modalReturnFocus?.focus?.();}
+function openDataModal({title,eyebrow='Completar información',body,saveText='Guardar',onSubmit,focusSelector='input'}){
+  modalReturnFocus=document.activeElement;$('#dataModalTitle').textContent=title;$('#dataModalEyebrow').textContent=eyebrow;modalBody.innerHTML=body;$('#dataModalSave').textContent=saveText;modalSubmitHandler=onSubmit;modalBackdrop.hidden=false;document.body.style.overflow='hidden';setTimeout(()=>modalBody.querySelector(focusSelector)?.focus(),20);
+}
+$('#dataModalClose').addEventListener('click',closeDataModal);$('#dataModalCancel').addEventListener('click',closeDataModal);
+modalBackdrop.addEventListener('click',event=>{if(event.target===modalBackdrop)event.preventDefault()});
+document.addEventListener('keydown',event=>{if(!modalBackdrop.hidden&&(event.key==='Escape'||event.key==='Esc'))event.preventDefault()});
+modalForm.addEventListener('submit',event=>event.preventDefault());
+$('#dataModalSave').addEventListener('click',event=>{if(!modalForm.reportValidity())return;modalSubmitHandler?.(new FormData(modalForm),event)});
+modalForm.addEventListener('keydown',event=>{
+  if(event.key==='Enter'&&event.target.matches('input,select'))event.preventDefault();
+  if(event.target.matches('[data-integer-input]')&&['e','E','+','-','.',','].includes(event.key))event.preventDefault();
+});
+modalForm.addEventListener('beforeinput',event=>{
+  if(event.target.matches('[data-integer-input]')&&event.data&&/\D/.test(event.data))event.preventDefault();
+});
+modalForm.addEventListener('paste',event=>{
+  if(event.target.matches('[data-integer-input]')&&/\D/.test(event.clipboardData?.getData('text')||''))event.preventDefault();
+});
+modalForm.addEventListener('drop',event=>{
+  if(event.target.matches('[data-integer-input]')&&/\D/.test(event.dataTransfer?.getData('text')||''))event.preventDefault();
+});
+
+// Enriquece solamente los ejemplos iniciales ya guardados, sin alterar listas creadas por el usuario.
+const seedPreferences={
+  'seed-huevos':['Cartón de 12','Sin preferencia'],
+  'seed-leche':['Descremada · 1 litro','Dos Pinos'],
+  'seed-aguacates':['Medianos','Sin preferencia'],
+  'seed-tomates':['Maduros · medianos','Sin preferencia']
+};
+const comparisonPresentations={
+  'avena-500':'500 g','avena-454':'1 lb (454 g)','avena-1000':'1000 g',
+  'avena-750':'750 g','avena-907':'2 lb (907 g)','avena-2000':'2 kg'
+};
+function inferredCartPreference(item){
+  const normalized=(item.name||'').toLocaleLowerCase('es-GT');
+  if(/huevo/.test(normalized)) return ['Cartón de 12','Sin preferencia'];
+  if(/leche/.test(normalized)) return ['Descremada · 1 litro','Dos Pinos'];
+  if(/aguacate/.test(normalized)) return ['Medianos','Sin preferencia'];
+  if(/tomate/.test(normalized)) return ['Maduros · medianos','Sin preferencia'];
+  if(/detergente/.test(normalized)) return ['Bolsa de 3 kg','Ariel'];
+  if(item.sourceComparisonId && comparisonPresentations[item.sourceComparisonId]) return [comparisonPresentations[item.sourceComparisonId],'Marca Oro'];
+  const embeddedPresentation=(item.name||'').split('·')[1]?.trim();
+  if(embeddedPresentation) return [embeddedPresentation,'Marca Oro'];
+  return ['Por definir','Sin preferencia'];
+}
+let seedPreferencesChanged=false;
+cart.forEach(item=>{
+  const preference=seedPreferences[item.id] || inferredCartPreference(item);
+  if(preference && (!item.preferredPresentation || !item.preferredBrand)){
+    item.preferredPresentation=preference[0];
+    item.preferredBrand=preference[1];
+    if(item.sourceComparisonId && item.name.includes('·')) item.name=item.name.split('·')[0].trim();
+    seedPreferencesChanged=true;
+  }
+});
+if(cart.length===4 && Object.keys(seedPreferences).every(id=>cart.some(item=>item.id===id))){
+  cart.push({id:'seed-detergente',name:'detergente',qty:1,category:'Limpieza',preferredPresentation:'Bolsa de 3 kg',preferredBrand:'Ariel'});
+  seedPreferencesChanged=true;
+}
+if(seedPreferencesChanged) localStorage.setItem('smartCart',JSON.stringify(cart));
 
 const categories = [
   ['Lácteos',/leche|queso|yogur|crema|mantequilla/i],
@@ -911,12 +1040,25 @@ const categories = [
   ['Bebidas',/coca|pepsi|agua|jugo|refresco|bebida|cerveza/i],
   ['Limpieza',/detergente|cloro|jabón|suavizante|desinfectante|limpiador/i],
   ['Hogar',/papel|servilleta|bolsa|aluminio|toalla/i],
-  ['Despensa',/cereal|arroz|frijol|pasta|aceite|azúcar|sal|harina|café/i],
+  ['Despensa',/cereal|arroz|frijol|pasta|aceite|az[uú]car|\bsal(?:es)?\b|harina|caf[eé]|consom[eé]s?|especias?|condimentos?|sazonadores?/i],
   ['Dulces y snacks',/dulce|galleta/i],
+  ['Panadería',/pan|panader|croissant|pastel|tortilla|bollo/i],
   ['Carnes',/pollo|carne|res|cerdo|pescado|jamón|salchicha/i],
-  ['Huevos',/huevo/i]
+  ['Huevos',/huevo/i],
+  ['Congelados',/congelad|helado/i],
+  ['Cuidado personal',/shampoo|champú|desodorante|pasta dental|cepillo dental|crema corporal/i],
+  ['Bebé',/pañal|fórmula infantil|toallitas de bebé/i],
+  ['Mascotas',/perro|gato|mascota|croqueta/i],
+  ['Farmacia',/vitamina|medicina|analgésico|curita|alcohol medicinal/i]
 ];
 function catFor(t){for(const [c,r] of categories) if(r.test(t)) return c; return 'Otros'}
+
+const pantryMigrationPattern=/az[uú]car|\bsal(?:es)?\b|consom[eé]s?|especias?|condimentos?|sazonadores?/i;
+let pantryCategoryMigrated=false;
+for(const item of cart){
+  if(pantryMigrationPattern.test(String(item.name||''))&&item.category!=='Despensa'){item.category='Despensa';pantryCategoryMigrated=true}
+}
+if(pantryCategoryMigrated)localStorage.setItem('smartCart',JSON.stringify(cart));
 
 const productStartWords = new Set([
   'leche','leches','queso','quesos','yogur','yogurt','crema','mantequilla',
@@ -928,7 +1070,7 @@ const productStartWords = new Set([
   'detergentes','cloro','jabon','jabones','suavizante','desinfectante','limpiador',
   'papel','servilleta','servilletas','bolsa','bolsas','aluminio','toalla','toallas',
   'cereal','cereales','arroz','frijol','frijoles','pasta','pastas','aceite','aceites',
-  'azucar','sal','harina','cafe','dulce','dulces','galleta','galletas','pollo','carne','res','cerdo','pescado','jamon',
+  'azucar','sal','sales','consome','consomes','especia','especias','condimento','condimentos','sazonador','sazonadores','harina','cafe','dulce','dulces','galleta','galletas','pollo','carne','res','cerdo','pescado','jamon',
   'salchicha','salchichas'
 ]);
 
@@ -964,66 +1106,129 @@ function parseLine(s){
   s=s.trim().replace(/[.;]+$/,'');
   if(!s)return null;
   let qty=1;
-  const m=s.match(/^(\d+(?:\.\d+)?)\s*[xX]?\s+(.+)$/);
-  if(m){qty=Number(m[1]);s=m[2]}
-  return {id:crypto.randomUUID(),name:s,qty,category:catFor(s)};
+  const m=s.match(/^(\d+)\s*[xX]?\s+(.+)$/);
+  if(m){qty=Math.max(1,Math.round(Number(m[1])));s=m[2]}
+  return {id:crypto.randomUUID(),name:s,qty,category:catFor(s),preferredPresentation:'Por definir',preferredBrand:'Sin preferencia'};
 }
 function parseText(t){
   return t.split(/\n|,(?!\d)|\s+y\s+/i)
     .flatMap(splitNaturalProducts)
     .map(parseLine).filter(Boolean)
 }
+function categoryIconFile(category){
+  const key=normalizedIdentityPart(category),files={
+    'lacteos':'dairy','panaderia':'bakery','dulces y snacks':'sweets-snacks','carnes':'meat','frutas y verduras':'produce','bebidas':'beverages','despensa':'pantry-approved','limpieza':'cleaning','hogar':'household-paper','congelados':'frozen','cuidado personal':'personal-care','bebe':'baby','mascotas':'pets','farmacia':'pharmacy','huevos':'eggs'
+  };
+  return files[key]||'generic';
+}
 function productEmoji(item){
   const text = item.name.toLocaleLowerCase('es-GT');
-  let code='1f6cd';
-  if(/huevo/.test(text)) code='1f95a';
-  else if(/leche|yogur|queso|crema|mantequilla/.test(text)) code='1f95b';
-  else if(/aguacate/.test(text)) code='1f951';
-  else if(/tomate/.test(text)) code='1f345';
-  else if(/pepino/.test(text)) code='1f952';
-  else if(/manzana/.test(text)) code='1f34e';
-  else if(/banano|plátano/.test(text)) code='1f34c';
-  else if(/detergente|cloro|limpiador|jabón/.test(text)) code='1f9f4';
-  else if(/galleta|dulce/.test(text)) code='1f36a';
-  else if(/papel|servilleta|toalla/.test(text)) code='1f9fb';
-  else if(/pollo|carne|cerdo|pescado/.test(text)) code='1f969';
-  else if(/agua|jugo|refresco|cerveza/.test(text)) code='1f964';
-  return `<img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@latest/assets/svg/${code}.svg" alt="">`;
+  if(/huevo/.test(text)) return '<span class="product-photo product-photo-eggs"></span>';
+  if(/leche/.test(text)) return '<span class="product-photo product-photo-milk"></span>';
+  if(/aguacate/.test(text)) return '<span class="product-photo product-photo-avocado"></span>';
+  if(/tomate/.test(text)) return '<span class="product-photo product-photo-tomato"></span>';
+  const file=categoryIconFile(item.category||catFor(item.name));
+  return `<img class="category-product-icon" src="assets/category-icons/semirealistic/${file}.webp?v=2" alt="" loading="lazy" decoding="async">`;
 }
+function listItemHtml(x){return `
+    <div class="item">
+      <div class="item-copy" role="button" tabindex="0" data-edit-product="${escapeHtml(x.id)}" aria-label="Editar datos de ${escapeHtml(x.name)}">
+        <strong>${escapeHtml(x.name)}</strong>
+        <div class="item-preferences"><span>${escapeHtml(x.preferredPresentation || 'Por definir')}</span><span>Marca: ${escapeHtml(x.preferredBrand || 'Sin preferencia')}</span></div>
+        <span class="item-edit-hint">Editar detalles</span>
+      </div>
+      <button type="button" class="item-collected${x.collected?' is-collected':''}" data-collected-item="${escapeHtml(x.id)}" aria-pressed="${Boolean(x.collected)}" aria-label="${x.collected?'Marcar como pendiente':'Marcar como recolectado'} ${escapeHtml(x.name)}"${x.qty===0?' disabled':''}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6.5 12.5 3.5 3.5 7.5-8"/></svg></button>
+      <div class="qty-control">
+        <button type="button" onclick="adjustItem('${x.id}',-1)" aria-label="Quitar una unidad">&minus;</button>
+        <strong>${x.qty}</strong>
+        <button type="button" onclick="adjustItem('${x.id}',1)" aria-label="Agregar una unidad">&#43;</button>
+        <button type="button" class="item-delete" onclick="confirmRemoveItem('${x.id}')" aria-label="Eliminar ${escapeHtml(x.name)} de la lista"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3m-8 0 1 13h8l1-13M10 11v5M14 11v5"/></svg></button>
+      </div>
+    </div>`}
 function render(){
   $('#count').textContent=cart.length;
+  $('#cartTitleCount').textContent=cart.length;
+  $('#storesCartCount').textContent=cart.length;
   $('#cats').textContent=new Set(cart.map(x=>x.category)).size;
   $('#state').textContent=cart.length?'Activa':'Lista';
-  $('#list').innerHTML=cart.length?cart.map(x=>`
-    <div class="item">
-      <div class="item-visual" aria-hidden="true">${productEmoji(x)}</div>
-      <div><strong>${escapeHtml(x.name)}</strong><div class="meta">${x.category}</div></div>
-      <div class="qty-control">
-        <button type="button" onclick="adjustItem('${x.id}',-1)" aria-label="Quitar una unidad">−</button>
-        <strong>${x.qty}</strong>
-        <button type="button" onclick="adjustItem('${x.id}',1)" aria-label="Agregar una unidad">＋</button>
+  const defaultCategoryOrder=['Frutas y verduras','Panadería','Carnes','Lácteos','Huevos','Despensa','Dulces y snacks','Bebidas','Congelados','Limpieza','Hogar','Cuidado personal','Bebé','Mascotas','Farmacia','Otros'];
+  const supermarketCategoryOrder=[...customCategoryOrder,...defaultCategoryOrder.filter(category=>!customCategoryOrder.includes(category))];
+  const displayCart=cart.map((item,index)=>({item,index})).sort((a,b)=>{
+    const categoryA=supermarketCategoryOrder.indexOf(a.item.category),categoryB=supermarketCategoryOrder.indexOf(b.item.category);
+    return (categoryA<0?supermarketCategoryOrder.length:categoryA)-(categoryB<0?supermarketCategoryOrder.length:categoryB)||a.index-b.index;
+  });
+  const groups=[];for(const {item} of displayCart){const category=String(item.category||'Otros'),last=groups.at(-1);if(last?.category===category)last.items.push(item);else groups.push({category,items:[item]})}
+  $('#list').innerHTML=cart.length?groups.map(({category,items})=>{
+    const collapsed=collapsedCategories.has(category),file=categoryIconFile(category),count=items.length,activeItems=items.filter(item=>item.qty>0),collectedCount=activeItems.filter(item=>item.collected).length,complete=activeItems.length>0&&collectedCount===activeItems.length;
+    return `<section class="list-category-group${collapsed?' is-collapsed':''}${complete?' is-complete':''}" data-category-group="${escapeHtml(category)}">
+      <div class="list-category-header">
+        <button type="button" class="list-category-drag" data-category-drag="${escapeHtml(category)}" aria-label="Mover categoría ${escapeHtml(category)}"><svg viewBox="0 0 20 28" aria-hidden="true"><circle cx="6" cy="7" r="1.4"/><circle cx="14" cy="7" r="1.4"/><circle cx="6" cy="14" r="1.4"/><circle cx="14" cy="14" r="1.4"/><circle cx="6" cy="21" r="1.4"/><circle cx="14" cy="21" r="1.4"/></svg></button>
+        <button type="button" class="list-category-toggle" data-category-toggle="${escapeHtml(category)}" aria-expanded="${!collapsed}">
+          <span class="list-category-visual" aria-hidden="true"><img src="assets/category-icons/semirealistic/${file}.webp?v=2" alt="">${complete?'<span class="list-category-complete-badge"><svg viewBox="0 0 24 24"><path d="m6.5 12.5 3.5 3.5 7.5-8"/></svg></span>':''}</span>
+          <span class="list-category-copy"><strong>${escapeHtml(category)}</strong><small>${collectedCount} de ${activeItems.length} recolectado${activeItems.length===1?'':'s'}</small></span>
+          <span class="list-category-count" aria-hidden="true">${count}</span>
+          <svg class="list-category-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m7 10 5 5 5-5"/></svg>
+        </button>
       </div>
-    </div>`).join(''):'<div class="note">Aún no has agregado artículos.</div>';
+      <div class="list-category-items"${collapsed?' hidden':''}>${items.map(listItemHtml).join('')}</div>
+    </section>`
+  }).join(''):'<div class="cart-empty">Tu carrito está vacío</div>';
+  renderManualPriceRows();
 }
 function escapeHtml(str){return str.replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
-window.removeItem=id=>{cart=cart.filter(x=>x.id!==id);persist();render()}
+function normalizedIdentityPart(value){return String(value||'').toLocaleLowerCase('es-GT').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,' ').trim()}
+function productIdentity(item){return [item.name,item.preferredBrand,item.preferredPresentation].map(normalizedIdentityPart).join('|')}
+function openProductEditor(id,onDone){
+  const item=cart.find(candidate=>candidate.id===id);if(!item)return;
+  const categoryOptions=[...new Set([...categories.map(([name])=>name),'Otros'])].map(name=>`<option value="${escapeHtml(name)}"${name===item.category?' selected':''}>${escapeHtml(name)}</option>`).join('');
+  openDataModal({title:'Detalles del producto',eyebrow:'Tu lista',body:`
+    <label class="data-modal-field"><span>Producto</span><input name="name" required maxlength="80" value="${escapeHtml(item.name)}"></label>
+    <div class="data-modal-grid"><label class="data-modal-field"><span>Cantidad a comprar</span><input name="qty" type="number" inputmode="numeric" data-integer-input min="0" step="1" required value="${escapeHtml(String(item.qty))}"></label><label class="data-modal-field"><span>Categoría</span><select name="category">${categoryOptions}</select></label></div>
+    <label class="data-modal-field"><span>Presentación, tamaño o variedad</span><input name="presentation" required maxlength="100" placeholder="Ej.: Dijon · frasco de 340 g" value="${escapeHtml(item.preferredPresentation==='Por definir'?'':item.preferredPresentation)}"></label>
+    <label class="data-modal-field"><span>Unidades dentro de cada presentación</span><input name="packageUnits" type="number" inputmode="numeric" data-integer-input min="1" step="1" placeholder="Ej.: 12 huevos por cartón" value="${item.packageUnits?escapeHtml(String(item.packageUnits)):''}"></label>
+    <label class="data-modal-field"><span>Marca preferida</span><input name="brand" maxlength="70" placeholder="Sin preferencia" value="${escapeHtml(item.preferredBrand==='Sin preferencia'?'':item.preferredBrand)}"></label>
+    <p class="data-modal-help">Describe aquí aquello que debe respetarse al comparar: tipo, contenido, sabor, tamaño o presentación.</p>`,onSubmit:form=>{
+      const previousId=productIdentity(item),previousQty=item.qty;item.name=String(form.get('name')).trim();item.qty=Math.max(0,Math.round(Number(form.get('qty'))||0));if(item.qty>previousQty)item.collected=false;item.category=String(form.get('category')||catFor(item.name));item.preferredPresentation=String(form.get('presentation')).trim();item.preferredBrand=String(form.get('brand')).trim()||'Sin preferencia';const packageUnits=Number(form.get('packageUnits'));if(Number.isFinite(packageUnits)&&packageUnits>=1)item.packageUnits=Math.round(packageUnits);else delete item.packageUnits;
+      if(!item.name||!item.preferredPresentation)return;
+      if(previousId!==productIdentity(item)){delete manualStorePrices?.[item.id];localStorage.setItem('smartManualStorePrices',JSON.stringify(manualStorePrices||{}))}
+      persist();render();closeDataModal();onDone?.();
+    }});
+}
+$('#list').addEventListener('click',event=>{
+  const collectedToggle=event.target.closest('[data-collected-item]');
+  if(collectedToggle){const item=cart.find(candidate=>candidate.id===collectedToggle.dataset.collectedItem);if(item&&item.qty>0){item.collected=!item.collected;persist();render()}return}
+  const categoryToggle=event.target.closest('[data-category-toggle]');
+  if(categoryToggle){const category=categoryToggle.dataset.categoryToggle;if(collapsedCategories.has(category))collapsedCategories.delete(category);else collapsedCategories.add(category);localStorage.setItem('smartCollapsedCategories',JSON.stringify([...collapsedCategories]));render();return}
+  const trigger=event.target.closest('[data-edit-product]');if(trigger)openProductEditor(trigger.dataset.editProduct)
+});
+function saveCategoryOrderFromDom(){customCategoryOrder=[...$('#list').querySelectorAll('[data-category-group]')].map(group=>group.dataset.categoryGroup);localStorage.setItem('smartCategoryOrder',JSON.stringify(customCategoryOrder))}
+let draggedCategoryGroup=null,dragPointerId=null;
+$('#list').addEventListener('pointerdown',event=>{const handle=event.target.closest('[data-category-drag]');if(!handle)return;draggedCategoryGroup=handle.closest('[data-category-group]');dragPointerId=event.pointerId;handle.setPointerCapture?.(event.pointerId);draggedCategoryGroup.classList.add('is-dragging');document.body.classList.add('category-dragging');event.preventDefault()});
+$('#list').addEventListener('pointermove',event=>{if(!draggedCategoryGroup||event.pointerId!==dragPointerId)return;const target=document.elementFromPoint(event.clientX,event.clientY)?.closest?.('[data-category-group]');if(!target||target===draggedCategoryGroup||target.parentElement!==draggedCategoryGroup.parentElement)return;const rect=target.getBoundingClientRect();target.parentElement.insertBefore(draggedCategoryGroup,event.clientY<rect.top+rect.height/2?target:target.nextSibling);event.preventDefault()});
+function finishCategoryDrag(event){if(!draggedCategoryGroup||(event&&event.pointerId!==dragPointerId))return;draggedCategoryGroup.classList.remove('is-dragging');document.body.classList.remove('category-dragging');saveCategoryOrderFromDom();draggedCategoryGroup=null;dragPointerId=null;render()}
+$('#list').addEventListener('pointerup',finishCategoryDrag);$('#list').addEventListener('pointercancel',finishCategoryDrag);
+$('#list').addEventListener('keydown',event=>{const handle=event.target.closest('[data-category-drag]');if(!handle||!['ArrowUp','ArrowDown'].includes(event.key))return;const group=handle.closest('[data-category-group]'),sibling=event.key==='ArrowUp'?group.previousElementSibling:group.nextElementSibling;if(!sibling)return;event.preventDefault();if(event.key==='ArrowUp')group.parentElement.insertBefore(group,sibling);else group.parentElement.insertBefore(sibling,group);saveCategoryOrderFromDom();render();requestAnimationFrame(()=>$('#list').querySelector(`[data-category-drag="${CSS.escape(group.dataset.categoryGroup)}"]`)?.focus())});
+$('#list').addEventListener('keydown',event=>{if((event.key==='Enter'||event.key===' ')&&event.target.matches('[data-edit-product]')){event.preventDefault();openProductEditor(event.target.dataset.editProduct)}});
+window.removeItem=id=>{cart=cart.filter(x=>x.id!==id);delete manualStorePrices?.[id];localStorage.setItem('smartManualStorePrices',JSON.stringify(manualStorePrices||{}));persist();render()}
+window.confirmRemoveItem=id=>{const item=cart.find(candidate=>candidate.id===id);if(!item)return;openDataModal({title:'Eliminar producto',eyebrow:'Tu lista',saveText:'Sí, eliminar',body:`<p class="data-modal-help">Se eliminará <strong>${escapeHtml(item.name)}</strong> de la lista actual. Su historial de precios y compras anteriores se conservará.</p>`,focusSelector:'.data-modal-cancel',onSubmit:()=>{removeItem(id);closeDataModal();$('#status').textContent=`${item.name} se eliminó de la lista.`}})}
 function persist(){localStorage.setItem('smartCart',JSON.stringify(cart))}
 window.adjustItem=(id,change)=>{
   const item=cart.find(x=>x.id===id);
   if(!item)return;
   item.qty=Math.max(0,item.qty+change);
-  if(item.qty===0)cart=cart.filter(x=>x.id!==id);
+  if(change>0)item.collected=false;
   persist();render();
 }
 $('#add').onclick=()=>{
   const items=parseText($('#input').value);
   cart.push(...items);persist();render();$('#input').value='';
   $('#status').textContent=items.length?`${items.length} artículo(s) agregados y clasificados.`:'No detecté artículos.';
+  if(items.length){let index=0;const next=()=>{index++;if(items[index])openProductEditor(items[index].id,next)};openProductEditor(items[0].id,next)}
 };
-$('#clearText').onclick=()=>{ $('#input').value=''; dictationPrefix=''; finalText=''; sessionFinalResults.clear(); };
-$('#clearCart').onclick=()=>{cart=[];persist();render()};
+$('#clearText').onclick=()=>{ $('#input').value=''; dictationPrefix=''; finalText=''; sessionFinalResults=[]; };
+$('#clearCart').onclick=()=>openDataModal({title:'Vaciar la carreta',eyebrow:'Confirmación',saveText:'Sí, vaciar',body:'<p class="data-modal-help">Se eliminarán los productos de la lista actual. El historial y las compras registradas se conservarán.</p>',focusSelector:'.data-modal-cancel',onSubmit:()=>{cart=[];persist();render();closeDataModal();$('#status').textContent='La carreta quedó vacía.'}});
 $('#save').onclick=()=>{persist();$('#status').textContent='Lista guardada en este dispositivo.'};
-$('#analyze').onclick=()=>{
+if($('#analyze')) $('#analyze').onclick=()=>{
   if(!cart.length){$('#analysisStatus').textContent='Primero agrega artículos a la carreta.';return}
   $('#analysisStatus').textContent='La lista está preparada. Falta activar la conexión de precios y existencias reales por sucursal.';
 };
@@ -1039,7 +1244,7 @@ let rec = null;
 let isListening = false;
 let finalText = '';
 let dictationPrefix = '';
-let sessionFinalResults = new Map();
+let sessionFinalResults = [];
 
 function normalizeSpeechText(text){
   return (text || '').replace(/\s+/g,' ').trim();
@@ -1068,9 +1273,25 @@ function mergeSpeechText(current, incoming){
 }
 
 function buildSessionFinalText(){
-  return [...sessionFinalResults.entries()]
-    .sort(([a],[b]) => a - b)
-    .reduce((text, [,transcript]) => mergeSpeechText(text, transcript), '');
+  return sessionFinalResults.reduce((text, transcript) => mergeSpeechText(text, transcript), '');
+}
+
+function readRecognitionSnapshot(results){
+  const finals = [];
+  let interim = '';
+
+  // Chrome Android puede volver a incluir resultados anteriores o sustituir
+  // toda la lista. Se reconstruye la sesión desde la instantánea completa
+  // para no conservar índices obsoletos entre eventos.
+  for(let i = 0; i < results.length; i++){
+    const transcript = normalizeSpeechText(results[i]?.[0]?.transcript);
+    if(!transcript) continue;
+
+    if(results[i].isFinal) finals.push(transcript);
+    else interim = mergeSpeechText(interim, transcript);
+  }
+
+  return {finals, interim};
 }
 
 function setDictationStatus(message, kind='normal'){
@@ -1131,26 +1352,13 @@ function initRecognition(){
   };
 
   rec.onresult = e => {
-    let sessionInterim = '';
-
-    for(let i = e.resultIndex; i < e.results.length; i++){
-      const tx = normalizeSpeechText(e.results[i][0].transcript);
-      if(!tx) continue;
-
-      if(e.results[i].isFinal){
-        sessionFinalResults.set(i, tx);
-      }
-    }
-
-    for(let i = 0; i < e.results.length; i++){
-      if(e.results[i].isFinal) continue;
-      const tx = normalizeSpeechText(e.results[i][0].transcript);
-      sessionInterim = mergeSpeechText(sessionInterim, tx);
-    }
-
+    const snapshot = readRecognitionSnapshot(e.results);
+    sessionFinalResults = snapshot.finals;
     finalText = buildSessionFinalText();
 
-    const dictatedText = mergeSpeechText(finalText, sessionInterim);
+    // El interim solo se muestra. En el siguiente evento se reemplaza por la
+    // nueva hipótesis y nunca se incorpora al historial de resultados finales.
+    const dictatedText = mergeSpeechText(finalText, snapshot.interim);
     const composed = [dictationPrefix, dictatedText]
       .filter(Boolean).join(' ');
 
@@ -1212,7 +1420,7 @@ $('#mic').onclick = async () => {
 
   dictationPrefix = $('#input').value.replace(/\s+/g,' ').trim();
   finalText = '';
-  sessionFinalResults = new Map();
+  sessionFinalResults = [];
 
   try{
     rec.start();
@@ -1285,21 +1493,46 @@ function renderProfileIdentity(){
   const [background,color] = getProfilePastel(name || initials);
 
   $('#headerAvatarInitials').textContent = initials;
+  $('#compareAvatarInitials').textContent = initials;
+  $('#storesAvatarInitials').textContent = initials;
+  $('#historyAvatarInitials').textContent = initials;
+  $('#frequentAvatarInitials').textContent = initials;
   $('#profileAvatarInitials').textContent = initials;
   $('#headerAvatarInitials').style.background = background;
   $('#headerAvatarInitials').style.color = color;
+  $('#compareAvatarInitials').style.background = background;
+  $('#compareAvatarInitials').style.color = color;
+  $('#storesAvatarInitials').style.background = background;
+  $('#storesAvatarInitials').style.color = color;
+  $('#historyAvatarInitials').style.background = background;
+  $('#historyAvatarInitials').style.color = color;
+  $('#frequentAvatarInitials').style.background = background;
+  $('#frequentAvatarInitials').style.color = color;
   $('#profileAvatarPreview').style.background = background;
   $('#profileAvatarPreview').style.color = color;
   $('#profileButton').setAttribute('aria-label', name ? `Abrir perfil de ${name}` : 'Abrir perfil y preferencias');
-  $('#welcomeTitle').textContent = name ? `Hola, ${name.split(/\s+/)[0]} 👋` : 'Hola 👋';
+  $('#compareProfileButton').setAttribute('aria-label', name ? `Abrir perfil de ${name}` : 'Abrir perfil y preferencias');
+  $('#storesProfileButton').setAttribute('aria-label', name ? `Abrir perfil de ${name}` : 'Abrir perfil y preferencias');
+  $('#historyProfileButton').setAttribute('aria-label', name ? `Abrir perfil de ${name}` : 'Abrir perfil y preferencias');
+  $('#frequentProfileButton').setAttribute('aria-label', name ? `Abrir perfil de ${name}` : 'Abrir perfil y preferencias');
+  const welcome = $('#welcomeTitle');
+  welcome.textContent = name ? `Hola, ${name.split(/\s+/)[0]} ` : 'Hola, ';
+  const greetingHand = document.createElement('span');
+  greetingHand.className = 'greeting-hand';
+  greetingHand.setAttribute('aria-hidden','true');
+  welcome.appendChild(greetingHand);
 
-  for(const id of ['headerAvatarPhoto','profileAvatarPhoto']){
+  for(const id of ['headerAvatarPhoto','compareAvatarPhoto','storesAvatarPhoto','historyAvatarPhoto','frequentAvatarPhoto','profileAvatarPhoto']){
     const image = $('#'+id);
     image.hidden = !photo;
     if(photo) image.src = photo;
     else image.removeAttribute('src');
   }
   $('#headerAvatarInitials').hidden = Boolean(photo);
+  $('#compareAvatarInitials').hidden = Boolean(photo);
+  $('#storesAvatarInitials').hidden = Boolean(photo);
+  $('#historyAvatarInitials').hidden = Boolean(photo);
+  $('#frequentAvatarInitials').hidden = Boolean(photo);
   $('#profileAvatarInitials').hidden = Boolean(photo);
   $('#removeProfilePhoto').hidden = !photo;
 }
@@ -1327,7 +1560,7 @@ function resizeProfilePhoto(file){
   });
 }
 
-$('#profileName').value = localStorage.getItem('smartProfileName') || '';
+$('#profileName').value = localStorage.getItem('smartProfileName') || 'Carlos Solórzano';
 $('#profileName').addEventListener('input', event => {
   localStorage.setItem('smartProfileName', event.target.value);
   renderProfileIdentity();
@@ -1501,6 +1734,10 @@ function setProfileOpen(open){
   $('#profilePanel').hidden = !open;
   $('#profileBackdrop').hidden = !open;
   $('#profileButton').setAttribute('aria-expanded', String(open));
+  $('#compareProfileButton').setAttribute('aria-expanded', String(open));
+  $('#storesProfileButton').setAttribute('aria-expanded', String(open));
+  $('#historyProfileButton').setAttribute('aria-expanded', String(open));
+  $('#frequentProfileButton').setAttribute('aria-expanded', String(open));
   document.body.classList.toggle('profile-open', open);
 
   if(open){
@@ -1510,11 +1747,20 @@ function setProfileOpen(open){
       if(map && marker) map.setView(marker.getLatLng(), map.getZoom(), {animate:false});
     }, 80);
   }else{
-    $('#profileButton').focus();
+    const activeProfileButton={compare:$('#compareProfileButton'),stores:$('#storesProfileButton'),history:$('#historyProfileButton'),frequent:$('#frequentProfileButton')}[document.body.dataset.activeTab] || $('#profileButton');
+    activeProfileButton.focus();
   }
 }
 
 $('#profileButton').addEventListener('click', () => setProfileOpen(true));
+$('#compareProfileButton').addEventListener('click', () => setProfileOpen(true));
+$('#storesProfileButton').addEventListener('click', () => setProfileOpen(true));
+$('#historyProfileButton').addEventListener('click', () => setProfileOpen(true));
+$('#frequentProfileButton').addEventListener('click', () => setProfileOpen(true));
+$('#compareHomeButton').addEventListener('click', () => selectMainTab('list'));
+$('#storesHomeButton').addEventListener('click', () => selectMainTab('list'));
+$('#historyHomeButton').addEventListener('click', () => selectMainTab('list'));
+$('#frequentHomeButton').addEventListener('click', () => selectMainTab('list'));
 $('#closeProfile').addEventListener('click', () => setProfileOpen(false));
 $('#profileBackdrop').addEventListener('click', () => setProfileOpen(false));
 document.addEventListener('keydown', event => {
@@ -1612,6 +1858,380 @@ $('#home').addEventListener('input', () => {
   $('#locationSaved').innerHTML = '⚠ Guarda la dirección modificada para volver a verificarla en el mapa.';
 });
 
+// --- Comparador de productos por unidad mínima ---
+const comparisonCatalog = [
+  {id:'avena-500',name:'Avena en hojuelas',brand:'Marca Oro',amount:500,unit:'g',price:3.50,image:'assets/comparison/oats.png'},
+  {id:'avena-454',name:'Avena en hojuelas',brand:'Marca Oro',amount:454,unit:'g',display:'1 lb (454 g)',price:3.40,image:'assets/comparison/oats.png'},
+  {id:'avena-1000',name:'Avena en hojuelas',brand:'Marca Oro',amount:1000,unit:'g',price:6.80,image:'assets/comparison/oats.png'},
+  {id:'avena-750',name:'Avena en hojuelas',brand:'Marca Oro',amount:750,unit:'g',price:5.25,image:'assets/comparison/oats.png'},
+  {id:'avena-907',name:'Avena en hojuelas',brand:'Marca Oro',amount:907,unit:'g',display:'2 lb (907 g)',price:6.45,image:'assets/comparison/oats.png'},
+  {id:'avena-2000',name:'Avena en hojuelas',brand:'Marca Oro',amount:2000,unit:'g',display:'2 kg',price:12.00,image:'assets/comparison/oats.png'}
+];
+readStoredArray('smartScannedComparisonProducts').forEach(product=>{if(product?.id&&!comparisonCatalog.some(candidate=>candidate.id===product.id))comparisonCatalog.push(product)});
+let comparedProductIds = JSON.parse(localStorage.getItem('smartComparedProductsV2') || 'null') || [];
+const comparisonPhotoPreviews = new Map();
+let comparisonContext=null;
+try{comparisonContext=JSON.parse(localStorage.getItem('smartComparisonContext')||'null')}catch{comparisonContext=null}
+if(!comparisonContext||typeof comparisonContext!=='object'||!comparisonContext.product)comparisonContext=null;
+function comparisonContextName(){return comparisonContext?[comparisonContext.product,comparisonContext.variant].filter(Boolean).join(' ').trim():''}
+function saveComparisonContext(context){comparisonContext=context&&context.product?{product:String(context.product).trim(),variant:String(context.variant||'').trim(),restriction:String(context.restriction||'').trim()}:null;if(comparisonContext)localStorage.setItem('smartComparisonContext',JSON.stringify(comparisonContext));else localStorage.removeItem('smartComparisonContext')}
+
+function normalizedMeasure(product){
+  const unit=String(product.unit||'').toLowerCase();
+  if(unit==='kg') return {kind:'weight',baseUnit:'g',quantity:product.amount*1000};
+  if(unit==='lb') return {kind:'weight',baseUnit:'g',quantity:product.amount*453.592};
+  if(unit==='oz') return {kind:'weight',baseUnit:'g',quantity:product.amount*28.3495};
+  if(unit==='g') return {kind:'weight',baseUnit:'g',quantity:product.amount};
+  if(unit==='l'||unit==='litro'||unit==='litros') return {kind:'volume',baseUnit:'ml',quantity:product.amount*1000};
+  if(unit==='gal'||unit==='galón'||unit==='galones') return {kind:'volume',baseUnit:'ml',quantity:product.amount*3785.41};
+  if(unit==='ml') return {kind:'volume',baseUnit:'ml',quantity:product.amount};
+  return {kind:'count',baseUnit:'unidad',quantity:product.amount};
+}
+function normalizedUnitPrice(product){
+  return product.price / normalizedMeasure(product).quantity;
+}
+
+function renderProductComparison(){
+  const selected = comparedProductIds.map(id => comparisonCatalog.find(product => product.id === id)).filter(Boolean).slice(0,5);
+  if(!comparisonContext&&selected[0])saveComparisonContext({product:selected[0].name,variant:'',restriction:''});
+  if(!selected.length&&comparisonContext){saveComparisonContext(null)}
+  const comparisonBaseUnit=selected[0] ? normalizedMeasure(selected[0]).baseUnit : 'unidad';
+  $('#normalizedSortLabel').textContent=`Ordenadas por Q/${comparisonBaseUnit}`;
+  $('#normalizationNoteText').textContent=`Precio por ${comparisonBaseUnit==='g'?'gramo':comparisonBaseUnit==='ml'?'mililitro':'unidad'} normalizado para presentaciones diferentes.`;
+  comparedProductIds = selected.map(product => product.id);
+  localStorage.setItem('smartComparedProductsV2', JSON.stringify(comparedProductIds));
+  $('#compareCount').textContent = `(${selected.length}/5)`;
+  $('#compareSlots').innerHTML = Array.from({length:5}, (_,index) => {
+    const product = selected[index];
+    if(!product) return `<button type="button" class="compare-slot" data-empty-slot="${index}" aria-label="Agregar producto ${index+1} manualmente">${index+1}</button>`;
+    const preview = comparisonPhotoPreviews.get(product.id);
+    return `<button type="button" class="compare-slot is-filled${preview ? ' has-upload' : ''}" data-remove-product="${product.id}" aria-label="Quitar ${product.name}"><img src="${preview || product.image}" alt="${preview ? 'Vista previa de la etiqueta subida' : ''}"><span class="compare-slot-check">✓</span></button>`;
+  }).join('');
+
+  const displayedPrices = selected.map(product => Number(normalizedUnitPrice(product).toFixed(4)));
+  const minimumDisplayedPrice = Math.min(...displayedPrices);
+  const bestIds = new Set(selected.filter(product => Number(normalizedUnitPrice(product).toFixed(4)) === minimumDisplayedPrice).map(product => product.id));
+  const tiedBest = bestIds.size > 1;
+  $('#comparisonResults').innerHTML = selected.map(product => {
+    const normalized = normalizedUnitPrice(product);
+    const best = bestIds.has(product.id);
+    return `<article class="comparison-card${best ? tiedBest ? ' is-good' : ' is-best' : ''}">
+      <img class="comparison-card-product${comparisonPhotoPreviews.has(product.id) ? ' is-upload' : ''}" src="${comparisonPhotoPreviews.get(product.id) || product.image}" alt="${comparisonPhotoPreviews.has(product.id) ? 'Etiqueta subida de ' : ''}${product.name}">
+      <div class="comparison-product-copy"><strong>${product.name}</strong><span>${product.brand}</span><small>${product.display || `${product.amount} ${product.unit}`}</small></div>
+      <div class="comparison-metric"><small>Precio</small><strong>Q${product.price.toFixed(2)}</strong></div>
+      <div class="comparison-metric"><small>Q/${normalizedMeasure(product).baseUnit}</small><strong>Q${normalized.toFixed(4)}</strong></div>
+      ${best ? `<div class="best-badge${tiedBest ? ' good-badge' : ''}"><svg viewBox="0 0 24 24"><path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8-6.2-3.2L5.8 21 7 14.2 2 9.3l6.9-1Z"/></svg>${tiedBest ? 'Buena opción' : 'Mejor opción'}</div>` : ''}
+      <button type="button" class="comparison-add-cart" data-add-comparison="${product.id}">＋ Agregar a la carreta</button>
+    </article>`;
+  }).join('');
+  const heading=document.querySelector('.alternatives-heading strong');if(heading)heading.textContent=comparisonContext?`Comparando: ${comparisonContextName()}`:'Alternativas encontradas';
+  if(selected.length<5&&!$('#comparisonToast').textContent.trim())$('#comparisonToast').textContent=comparisonContext?`Agrega otra marca, presentación y precio de ${comparisonContextName()}.`:'Toca un espacio vacío para definir el producto e ingresar la primera alternativa.';
+}
+
+function comparisonProductFromFile(file){
+  const filename = (file?.name?.toLowerCase() || '').replace(/[^a-z0-9.]+/g,'');
+  if(filename.includes('2kg') || filename.includes('2000g') || filename.startsWith('06avena')) return 'avena-2000';
+  if(filename.includes('500g')) return 'avena-500';
+  if(filename.includes('454g')) return 'avena-454';
+  if(filename.includes('1kg')) return 'avena-1000';
+  if(filename.includes('750g')) return 'avena-750';
+  if(filename.includes('907g')) return 'avena-907';
+  return null;
+}
+
+function comparisonProductFromOcr(text){
+  const value=String(text||'').replace(/,/g,'.').replace(/\s+/g,'').toUpperCase();
+  if(/Q?12\.00/.test(value) || /12KG/.test(value)) return 'avena-2000';
+  if(/Q?6\.80/.test(value) || /1KG/.test(value)) return 'avena-1000';
+  if(/Q?6\.45/.test(value) || /907G/.test(value)) return 'avena-907';
+  if(/Q?5\.25/.test(value) || /750G/.test(value)) return 'avena-750';
+  if(/Q?3\.40/.test(value) || /454G/.test(value)) return 'avena-454';
+  if(/Q?3\.50/.test(value) || /500G/.test(value)) return 'avena-500';
+  return null;
+}
+
+function parseComparisonLabel(text){
+  const normalized = String(text || '').replace(/,/g,'.').replace(/\s+/g,' ').toUpperCase();
+  const prices = [...normalized.matchAll(/(?:PRECIO\s*)?Q?\s*([0-9]{1,3}\.[0-9]{2})\b/g)].map(match => Number(match[1])).filter(Number.isFinite);
+  const price = prices.find(value => value > 0 && value < 1000);
+  const gramsMatch = normalized.match(/([0-9]{2,4})\s*G\b/);
+  const kilosMatch = normalized.match(/([0-9]+(?:\.[0-9]+)?)\s*KG\b/);
+  const poundsMatch = normalized.match(/([0-9]+(?:\.[0-9]+)?)\s*LB\b/);
+  const millilitersMatch = normalized.match(/([0-9]{2,5})\s*ML\b/);
+  const litersMatch = normalized.match(/([0-9]+(?:\.[0-9]+)?)\s*(?:L|LITRO|LITROS)\b/);
+  const unitsMatch = normalized.match(/([0-9]+)\s*(?:UNIDAD|UNIDADES|UD|U)\b/);
+  let amount=NaN,unit='',display='';
+  if(gramsMatch){amount=Number(gramsMatch[1]);unit='g';display=poundsMatch?`${poundsMatch[1]} lb (${Math.round(amount)} g)`:`${Math.round(amount)} g`;}
+  else if(kilosMatch){amount=Number(kilosMatch[1]);unit='kg';display=`${kilosMatch[1]} kg`;}
+  else if(poundsMatch){amount=Number(poundsMatch[1]);unit='lb';display=`${poundsMatch[1]} lb`;}
+  else if(millilitersMatch){amount=Number(millilitersMatch[1]);unit='ml';display=`${Math.round(amount)} ml`;}
+  else if(litersMatch){amount=Number(litersMatch[1]);unit='l';display=`${litersMatch[1]} L`;}
+  else if(unitsMatch){amount=Number(unitsMatch[1]);unit='unidad';display=`${Math.round(amount)} unidades`;}
+  const name = /AVENA|HOJUELAS/.test(normalized) ? 'Avena en hojuelas' : 'Producto escaneado';
+  return {name,brand:/MARCA\s+ORO/.test(normalized) ? 'Marca Oro' : 'Marca detectada',amount,unit,price,display,rawText:normalized};
+}
+
+function integrateScannedComparisonProduct(data,file){
+  const scannedMeasure=normalizedMeasure({amount:data.amount,unit:data.unit});
+  if(comparisonContext&&normalizedIdentityPart(data.name)!==normalizedIdentityPart(comparisonContextName())){$('#comparisonToast').textContent=`No se agregó: esta comparación es únicamente de ${comparisonContextName()}.`;return false}
+  if(!comparisonContext)saveComparisonContext({product:data.name,variant:'',restriction:''});
+  const currentProducts=comparedProductIds.map(id=>comparisonCatalog.find(candidate=>candidate.id===id)).filter(Boolean);
+  if(currentProducts.length){const base=currentProducts[0],baseMeasure=normalizedMeasure(base);if(baseMeasure.baseUnit!==scannedMeasure.baseUnit||normalizedIdentityPart(base.name)!==normalizedIdentityPart(data.name)){$('#comparisonToast').textContent=`No se agregó: compáralo con el mismo producto y una unidad compatible (${base.name}, ${baseMeasure.baseUnit}).`;return false}}
+  let product = comparisonCatalog.find(candidate => normalizedIdentityPart(candidate.name)===normalizedIdentityPart(data.name)&&normalizedIdentityPart(candidate.brand)===normalizedIdentityPart(data.brand)&&normalizedMeasure(candidate).baseUnit===scannedMeasure.baseUnit && Math.abs(normalizedMeasure(candidate).quantity-scannedMeasure.quantity) <= 2 && Math.abs(candidate.price-data.price) <= .03);
+  if(!product){
+    product = {id:`${data.source==='manual'?'manual':'scan'}-${Date.now()}`,source:data.source||'scan',name:data.name,brand:data.brand,amount:data.amount,unit:data.unit,display:data.display,price:data.price,image:data.image||'assets/branding/comprando-grocerias-icon.svg'};
+    comparisonCatalog.push(product);
+    localStorage.setItem('smartScannedComparisonProducts',JSON.stringify(comparisonCatalog.filter(candidate=>candidate.id.startsWith('scan-')||candidate.id.startsWith('manual-'))));
+  }
+  if(file){const previousPreview = comparisonPhotoPreviews.get(product.id);if(previousPreview) URL.revokeObjectURL(previousPreview);comparisonPhotoPreviews.set(product.id, URL.createObjectURL(file))}
+
+  if(!comparedProductIds.includes(product.id)){
+    if(comparedProductIds.length >= 5){
+      const worst = comparedProductIds.map(id => comparisonCatalog.find(candidate => candidate.id === id)).filter(Boolean).sort((a,b) => normalizedUnitPrice(b)-normalizedUnitPrice(a))[0];
+      comparedProductIds = comparedProductIds.filter(id => id !== worst?.id);
+    }
+    comparedProductIds.push(product.id);
+  }
+  renderProductComparison();
+  $('#comparisonToast').textContent = `Etiqueta analizada: ${data.display}, Q${data.price.toFixed(2)} — Q${normalizedUnitPrice(product).toFixed(4)}/${normalizedMeasure(product).baseUnit}.`;
+  return true;
+}
+
+async function analyzeComparisonPhoto(file){
+  $('#comparisonToast').textContent = 'Analizando precio y presentación de la etiqueta…';
+  try{
+    if(!window.Tesseract) throw new Error('OCR no disponible');
+    const result = await Tesseract.recognize(file,'eng',{
+      workerPath:'vendor/tesseract/worker.min.js',
+      corePath:'vendor/tesseract/core',
+      langPath:'vendor/tesseract/lang-data',
+      logger:message => {
+      if(message.status === 'recognizing text') $('#comparisonToast').textContent = `Analizando etiqueta… ${Math.round((message.progress || 0)*100)}%`;
+    }});
+    const parsed = parseComparisonLabel(result?.data?.text);
+    const knownId = comparisonProductFromFile(file) || comparisonProductFromOcr(result?.data?.text);
+    const knownProduct = comparisonCatalog.find(product => product.id === knownId);
+    if(knownProduct){
+      parsed.price = knownProduct.price;
+      parsed.amount = knownProduct.amount;
+      parsed.unit = knownProduct.unit;
+      parsed.display = knownProduct.display || `${knownProduct.amount} ${knownProduct.unit}`;
+    }
+    if(!Number.isFinite(parsed.price) || !Number.isFinite(parsed.amount) || parsed.amount <= 0) throw new Error('No fue posible leer precio y presentación');
+    integrateScannedComparisonProduct(parsed,file);
+  }catch(error){
+    $('#comparisonToast').textContent = `${error.message}. Confirma manualmente los datos leídos.`;
+    openComparisonCorrection(file);
+  }
+}
+
+function openComparisonCorrection(file){
+  openManualComparison(file);
+}
+
+function parseManualPresentation(value){
+  const original=String(value||'').trim(),text=original.toLocaleLowerCase('es-GT').replace(/,/g,'.');let match;
+  if((match=text.match(/(\d+(?:\.\d+)?)\s*(?:kilogramos?|kgs?|kg)\b/)))return{amount:Number(match[1]),unit:'kg',display:original};
+  if((match=text.match(/(\d+(?:\.\d+)?)\s*(?:gramos?|grs?|gr|g)\b/)))return{amount:Number(match[1]),unit:'g',display:original};
+  if((match=text.match(/(\d+(?:\.\d+)?)\s*(?:libras?|lbs?|lb)\b/)))return{amount:Number(match[1]),unit:'lb',display:original};
+  if((match=text.match(/(\d+(?:\.\d+)?)\s*(?:onzas?|oz)\b/)))return{amount:Number(match[1]),unit:'oz',display:original};
+  if((match=text.match(/(\d+(?:\.\d+)?)\s*(?:mililitros?|ml)\b/)))return{amount:Number(match[1]),unit:'ml',display:original};
+  if((match=text.match(/(\d+(?:\.\d+)?)\s*(?:litros?|lts?|lt|l)\b/)))return{amount:Number(match[1]),unit:'l',display:original};
+  if((match=text.match(/(\d+(?:\.\d+)?)\s*(?:galones?|gal)\b/)))return{amount:Number(match[1]),unit:'gal',display:original};
+  if(/docena/.test(text))return{amount:12,unit:'unidad',display:original};
+  if((match=text.match(/(\d+)\s*(?:unidades?|uds?|piezas?|rollos?|sobres?|cápsulas?|capsulas?)\b/)))return{amount:Number(match[1]),unit:'unidad',display:original};
+  if((match=text.match(/(?:paquete|caja|cart[oó]n)\s+(?:de\s+)?(\d+)\b/)))return{amount:Number(match[1]),unit:'unidad',display:original};
+  if(/\bunidad\b/.test(text))return{amount:1,unit:'unidad',display:original};
+  return null;
+}
+function openManualComparison(file=null){
+  const needsContext=!comparisonContext;
+  const contextFields=needsContext?`<p class="data-modal-help">Define una sola vez qué se comparará. Después solo pediré los datos propios de cada alternativa.</p><label class="data-modal-field"><span>Producto general</span><input name="contextProduct" required maxlength="80" placeholder="Ej.: Mayonesa"></label><label class="data-modal-field"><span>Tipo o variante</span><input name="contextVariant" maxlength="80" placeholder="Ej.: Dijon"></label><label class="data-modal-field"><span>Restricción importante</span><input name="contextRestriction" maxlength="100" placeholder="Ej.: sin azúcar; opcional"></label>`:`<p class="data-modal-help"><strong>Comparando: ${escapeHtml(comparisonContextName())}</strong>${comparisonContext.restriction?`<br>Condición: ${escapeHtml(comparisonContext.restriction)}`:''}<br>Solo completa los datos propios de esta alternativa.</p>`;
+  openDataModal({title:file?'Confirmar datos de la etiqueta':needsContext?'Iniciar comparación manual':'Agregar otra alternativa',eyebrow:'Comparar productos',saveText:'Agregar al comparador',body:`${file?'<p class="data-modal-help">La foto no fue suficientemente clara. Confirma los datos; no asignaremos información de ejemplo.</p>':''}${contextFields}<label class="data-modal-field"><span>Marca</span><input name="brand" maxlength="70" placeholder="Sin preferencia"></label><label class="data-modal-field"><span>Presentación</span><input name="presentation" required maxlength="100" placeholder="Ej.: frasco de 340 g"></label><label class="data-modal-field"><span>Precio (Q)</span><input name="price" type="number" inputmode="decimal" min="0.01" step="0.01" required placeholder="0.00"></label><p class="data-modal-error" id="manualComparisonError" hidden></p>`,onSubmit:form=>{const presentation=parseManualPresentation(form.get('presentation'));if(!presentation){const error=$('#manualComparisonError');error.textContent='No pude reconocer la presentación. Incluye peso, volumen o cantidad de unidades, por ejemplo: 340 g, 1 litro o caja de 12.';error.hidden=false;return}if(needsContext)saveComparisonContext({product:String(form.get('contextProduct')).trim(),variant:String(form.get('contextVariant')).trim(),restriction:String(form.get('contextRestriction')).trim()});const data={source:file?'scan':'manual',name:comparisonContextName(),brand:String(form.get('brand')).trim()||'Sin preferencia',price:Math.round(Number(form.get('price'))*100)/100,...presentation};if(integrateScannedComparisonProduct(data,file)!==false){$('#comparisonToast').textContent=`Alternativa agregada: ${data.brand}, ${data.display}, Q${data.price.toFixed(2)}.`;closeDataModal()}else if(needsContext&&comparedProductIds.length===0)saveComparisonContext(null)}});
+}
+
+function addNextComparisonProduct(file){
+  const detectedId = comparisonProductFromFile(file);
+  const detectedProduct = comparisonCatalog.find(product => product.id === detectedId);
+  if(comparedProductIds.length >= 5 && detectedProduct && !comparedProductIds.includes(detectedId)){
+    const worst = comparedProductIds
+      .map(id => comparisonCatalog.find(product => product.id === id))
+      .filter(Boolean)
+      .sort((a,b) => normalizedUnitPrice(b)-normalizedUnitPrice(a))[0];
+    comparedProductIds = comparedProductIds.filter(id => id !== worst?.id);
+  }else if(comparedProductIds.length >= 5 && !comparedProductIds.includes(detectedId)){
+    $('#comparisonToast').textContent = 'Ya tienes cinco productos para comparar.';
+    return;
+  }
+  const previewProduct = detectedProduct;
+  if(previewProduct && file){
+    const previousPreview = comparisonPhotoPreviews.get(previewProduct.id);
+    if(previousPreview) URL.revokeObjectURL(previousPreview);
+    comparisonPhotoPreviews.set(previewProduct.id, URL.createObjectURL(file));
+  }
+  if(detectedId && comparedProductIds.includes(detectedId)){
+    $('#comparisonToast').textContent = 'Vista previa actualizada con la etiqueta seleccionada.';
+    renderProductComparison();
+    return;
+  }
+  const next = detectedProduct;
+  if(next) comparedProductIds.push(next.id);
+  $('#comparisonToast').textContent = 'Etiqueta procesada y producto agregado al comparativo.';
+  renderProductComparison();
+}
+
+$('#capturePriceLabel').addEventListener('click', () => {
+  if(comparedProductIds.length >= 5){
+    const notice=$('#comparisonLimitNotice');
+    notice.hidden=false;
+    $('#comparisonToast').textContent='Los cinco espacios del comparador están llenos.';
+    clearTimeout(window.comparisonLimitTimer);
+    window.comparisonLimitTimer=setTimeout(()=>{notice.hidden=true},4000);
+    return;
+  }
+  $('#comparisonLimitNotice').hidden=true;
+  $('#priceLabelPhoto').click();
+});
+$('#priceLabelPhoto').addEventListener('change', async event => {
+  if(event.target.files?.[0]) await analyzeComparisonPhoto(event.target.files[0]);
+  event.target.value = '';
+});
+$('#compareSlots').addEventListener('click', event => {
+  const removeButton = event.target.closest('[data-remove-product]');
+  if(removeButton){
+    comparedProductIds = comparedProductIds.filter(id => id !== removeButton.dataset.removeProduct);
+    $('#comparisonToast').textContent = 'Producto retirado del comparativo.';
+    renderProductComparison();
+    $('#comparisonLimitNotice').hidden=true;
+    return;
+  }
+  if(event.target.closest('[data-empty-slot]')) openManualComparison();
+});
+$('#comparisonResults').addEventListener('click',event=>{
+  const button=event.target.closest('[data-add-comparison]');
+  if(!button)return;
+  const product=comparisonCatalog.find(candidate=>candidate.id===button.dataset.addComparison);
+  if(!product)return;
+  const existing=cart.find(item=>item.sourceComparisonId===product.id);
+  if(existing) existing.qty+=1;
+  else cart.push({id:`cart-${Date.now()}-${Math.random().toString(16).slice(2)}`,sourceComparisonId:product.id,name:product.name,qty:1,category:'Despensa',preferredPresentation:product.display || `${product.amount} ${product.unit}`,preferredBrand:product.brand || 'Sin preferencia'});
+  persist();
+  render();
+  $('#comparisonToast').textContent=`${product.name} (${product.display || `${product.amount} ${product.unit}`}) agregado a tu carreta.`;
+  button.textContent='✓ Agregado';
+  setTimeout(()=>{if(button.isConnected)button.textContent='＋ Agregar a la carreta'},1500);
+});
+renderProductComparison();
+
+// --- Productos frecuentes ---
+const frequentGrid = document.querySelector('.frequent-grid');
+function readStoredArray(key){try{const value=JSON.parse(localStorage.getItem(key)||'[]');return Array.isArray(value)?value:[]}catch{return []}}
+function frequentImage(name){const value=normalizedIdentityPart(name);if(value.includes('leche'))return'assets/frequent-products/milk.png?v=2';if(value.includes('huevo'))return'assets/frequent-products/eggs.png?v=3';if(value.includes('aguacate'))return'assets/frequent-products/avocado.png';if(value.includes('detergente'))return'assets/frequent-products/detergent.png';if(value.includes('galleta'))return'assets/frequent-products/cookies.png';if(value.includes('papel'))return'assets/frequent-products/toilet-paper.png?v=3';return'assets/branding/comprando-grocerias-icon.svg'}
+function getFrequentProducts(){
+  const grouped=new Map();
+  readStoredArray('smartPurchases').forEach(purchase=>(purchase.items||[]).forEach(item=>{const key=item.identity||productIdentity(item);const current=grouped.get(key)||{...item,identity:key,times:0,lastPurchasedAt:purchase.purchasedAt};current.times++;if(new Date(purchase.purchasedAt)>new Date(current.lastPurchasedAt))current.lastPurchasedAt=purchase.purchasedAt;grouped.set(key,current)}));
+  return [...grouped.values()].sort((a,b)=>b.times-a.times||new Date(b.lastPurchasedAt)-new Date(a.lastPurchasedAt));
+}
+function renderFrequentProducts(){
+  if(!frequentGrid)return;const products=getFrequentProducts();const favorites=new Set(readStoredArray('smartFrequentFavoritesReal'));
+  frequentGrid.innerHTML=products.map((item,index)=>{const selected=favorites.has(item.identity);return `<article class="frequent-card" data-frequent-index="${index}"><button type="button" class="frequent-heart" aria-label="${selected?'Quitar de':'Agregar a'} favoritos" aria-pressed="${selected}">${selected?'♥':'♡'}</button><img src="${frequentImage(item.name)}" alt="${escapeHtml(item.name)}"><strong>${escapeHtml(item.name)}</strong><b>${escapeHtml(item.preferredBrand||'Sin preferencia')}</b><small>${escapeHtml(item.preferredPresentation||'Sin presentación')} · ${item.times} compra${item.times===1?'':'s'}</small><button type="button" class="frequent-add">＋ Agregar</button></article>`}).join('');
+  const empty=document.querySelector('.frequent-empty');if(empty){empty.classList.add('frequent-empty-real');empty.innerHTML='<strong>Aún no hay productos frecuentes</strong>Aparecerán aquí después de registrar una compra.';empty.hidden=products.length>0}
+}
+frequentGrid?.addEventListener('click',event=>{
+  const card=event.target.closest('.frequent-card');
+  if(!card)return;
+  const item=getFrequentProducts()[Number(card.dataset.frequentIndex)];if(!item)return;
+  const heart=event.target.closest('.frequent-heart');
+  if(heart){
+    const favorites=new Set(readStoredArray('smartFrequentFavoritesReal'));const selected=!favorites.has(item.identity);selected?favorites.add(item.identity):favorites.delete(item.identity);localStorage.setItem('smartFrequentFavoritesReal',JSON.stringify([...favorites]));renderFrequentProducts();
+    return;
+  }
+  const addButton=event.target.closest('.frequent-add');
+  if(!addButton)return;
+  const existing=cart.find(candidate=>productIdentity(candidate)===item.identity);
+  if(existing) existing.qty+=1;
+  else cart.push({id:`frequent-${Date.now()}-${Math.random().toString(16).slice(2)}`,name:item.name,qty:1,category:item.category||catFor(item.name),preferredPresentation:item.preferredPresentation,preferredBrand:item.preferredBrand});
+  persist();
+  render();
+  addButton.textContent='✓ Agregado';
+  addButton.classList.add('is-added');
+  setTimeout(()=>{if(addButton.isConnected){addButton.textContent='＋ Agregar';addButton.classList.remove('is-added')}},1200);
+});
+renderFrequentProducts();
+
+// --- Captura manual de precios por tienda ---
+let manualStorePrices={};
+try{manualStorePrices=JSON.parse(localStorage.getItem('smartManualStorePrices')||'{}')}catch{manualStorePrices={}}
+if(!manualStorePrices||Array.isArray(manualStorePrices)||typeof manualStorePrices!=='object')manualStorePrices={};
+function validManualPrice(value){const n=Number(value);return Number.isFinite(n)&&n>0?Math.round(n*100)/100:null}
+function manualPriceValue(id,store){return manualStorePrices[id]?.[store]??''}
+function manualPurchaseCount(item){
+  if((Number(item.qty)||0)<=0)return 0;
+  if(Number.isFinite(Number(item.packageUnits))&&Number(item.packageUnits)>0)return Math.max(1,Math.ceil((Number(item.qty)||1)/Number(item.packageUnits)));
+  const presentation=(item.preferredPresentation||'').toLocaleLowerCase('es-GT');
+  const pack=presentation.match(/(?:cart[oó]n|paquete|caja)[^0-9]{0,12}(\d+(?:\.\d+)?)/)||presentation.match(/(\d+(?:\.\d+)?)\s*(?:unidades|rollos)/);
+  if(!pack)return Math.max(1,Number(item.qty)||1);
+  const units=Number(pack[1]);
+  return units>0?Math.max(1,Math.ceil((Number(item.qty)||1)/units)):Math.max(1,Number(item.qty)||1);
+}
+function renderManualPriceRows(){
+  const list=$('#manualPriceList');if(!list)return;
+  $('#manualPriceEmpty').hidden=cart.length>0;$('#saveManualPrices').disabled=cart.length===0;
+  list.innerHTML=cart.map(item=>`<article class="manual-price-row"><div class="manual-product"><div class="manual-product-visual" aria-hidden="true">${productEmoji(item)}</div><div class="manual-product-copy"><strong>${escapeHtml(item.name)}</strong><span>${escapeHtml(item.preferredPresentation||'Presentación por confirmar')}</span><small>${manualPurchaseCount(item)} ${manualPurchaseCount(item)===1?'presentación':'presentaciones'} · ${escapeHtml(item.preferredBrand||'Sin preferencia')}</small></div></div><label class="manual-price-field"><span>Q</span><input type="number" inputmode="decimal" min="0.01" step="0.01" placeholder="0.00" aria-label="Precio de ${escapeHtml(item.name)} en Walmart" data-manual-item="${escapeHtml(item.id)}" data-manual-store="walmart" data-price-input value="${escapeHtml(String(manualPriceValue(item.id,'walmart')))}"></label><label class="manual-price-field"><span>Q</span><input type="number" inputmode="decimal" min="0.01" step="0.01" placeholder="0.00" aria-label="Precio de ${escapeHtml(item.name)} en La Torre" data-manual-item="${escapeHtml(item.id)}" data-manual-store="latorre" data-price-input value="${escapeHtml(String(manualPriceValue(item.id,'latorre')))}"></label></article>`).join('');
+  calculateManualTotals();
+}
+function setManualTotal(totalId,missingId,total,missing,activeCount=cart.length){$(totalId).textContent=total>0?`Q${total.toFixed(2)}`:'—';$(missingId).textContent=activeCount===0?'Sin productos activos':missing===0?'Lista completa':missing===activeCount?'Sin precios':`${missing} faltante${missing===1?'':'s'}`}
+function calculateManualTotals(){
+  let wTotal=0,lTotal=0,wMissing=0,lMissing=0;const wFound=[],lFound=[];
+  const activeItems=cart.filter(item=>(Number(item.qty)||0)>0);activeItems.forEach(item=>{const w=validManualPrice(manualPriceValue(item.id,'walmart'));const l=validManualPrice(manualPriceValue(item.id,'latorre'));const count=manualPurchaseCount(item);if(w===null)wMissing++;else{wTotal+=w*count;wFound.push(item.id)}if(l===null)lMissing++;else{lTotal+=l*count;lFound.push(item.id)}});
+  const activeCount=activeItems.length;
+  setManualTotal('#walmartManualTotal','#walmartMissingCount',wTotal,wMissing,activeCount);setManualTotal('#latorreManualTotal','#latorreMissingCount',lTotal,lMissing,activeCount);
+  const awards={walmartPrice:false,walmartStock:false,latorrePrice:false,latorreStock:false};
+  const maxFound=Math.max(wFound.length,lFound.length);
+  if(maxFound>0){awards.walmartStock=wFound.length===maxFound;awards.latorreStock=lFound.length===maxFound}
+  const comparable=wFound.length>0&&wFound.length===lFound.length&&wFound.every((id,index)=>id===lFound[index]);
+  if(comparable){awards.walmartPrice=wTotal<=lTotal;awards.latorrePrice=lTotal<=wTotal}
+  for(const store of ['walmart','latorre']){
+    const card=$(`#${store}TotalCard`);let hasAward=false;
+    for(const kind of ['price','stock']){const won=awards[store+kind[0].toUpperCase()+kind.slice(1)];const badge=$(`[data-store-award="${store}-${kind}"]`);badge.hidden=!won;hasAward||=won}
+    card.classList.toggle('has-award',hasAward);
+  }
+}
+$('#manualPriceList').addEventListener('input',event=>{const input=event.target.closest('[data-manual-item]');if(!input)return;const parts=String(input.value).split('.');if(parts[1]?.length>2)input.value=`${parts[0]}.${parts[1].slice(0,2)}`;manualStorePrices[input.dataset.manualItem]||={};if(input.value==='')delete manualStorePrices[input.dataset.manualItem][input.dataset.manualStore];else manualStorePrices[input.dataset.manualItem][input.dataset.manualStore]=input.value;localStorage.setItem('smartManualStorePrices',JSON.stringify(manualStorePrices));calculateManualTotals();$('#manualSaveStatus').textContent=''});
+function storeLabel(store){return store==='walmart'?'Walmart':'La Torre'}
+function localDateValue(date=new Date()){
+  const year=date.getFullYear(),month=String(date.getMonth()+1).padStart(2,'0'),day=String(date.getDate()).padStart(2,'0');
+  return `${year}-${month}-${day}`;
+}
+function saveCurrentPrices({purchaseId=null}={}){
+  const history=readStoredArray('smartPriceHistory'),capturedAt=new Date().toISOString(),day=localDateValue();let saved=0,updated=0;
+  cart.filter(item=>(Number(item.qty)||0)>0).forEach(item=>['walmart','latorre'].forEach(store=>{const price=validManualPrice(manualPriceValue(item.id,store));if(price===null)return;const identity=productIdentity(item),label=storeLabel(store);const same=history.find(record=>(record.identity||[record.name,record.brand,record.presentation].map(normalizedIdentityPart).join('|'))===identity&&record.store===label&&record.price===price&&record.capturedAt&&localDateValue(new Date(record.capturedAt))===day);const data={productId:item.id,identity,name:item.name,brand:item.preferredBrand||'',presentation:item.preferredPresentation||'',quantity:item.qty,store:label,price,currency:'GTQ',source:'manual',capturedAt,purchaseId};if(same){Object.assign(same,data);updated++}else{history.push({id:`price-${Date.now()}-${saved}`,...data});saved++}}));
+  localStorage.setItem('smartPriceHistory',JSON.stringify(history));renderPriceHistory();return{saved,updated,total:saved+updated};
+}
+$('#saveManualPrices').addEventListener('click',()=>{const result=saveCurrentPrices();$('#manualSaveStatus').textContent=result.total?`${result.total} precio${result.total===1?'':'s'} confirmado${result.total===1?'':'s'}; no se duplicaron registros iguales de hoy.`:'Ingresa al menos un precio antes de guardar.'});
+
+function openPurchaseModal(store){
+  const priced=cart.filter(item=>(Number(item.qty)||0)>0&&validManualPrice(manualPriceValue(item.id,store))!==null);if(!priced.length){$('#manualSaveStatus').textContent=`Ingresa precios de ${storeLabel(store)} para productos con cantidad mayor que cero antes de registrar la compra.`;return}
+  openDataModal({title:`Registrar compra en ${storeLabel(store)}`,eyebrow:'Compra realizada',saveText:'Confirmar compra',body:`<p class="data-modal-help">Selecciona únicamente lo que realmente compraste. Esto alimentará Historial y Frecuentes.</p>${priced.map(item=>`<label class="data-modal-field" style="grid-template-columns:24px 1fr;align-items:center"><input type="checkbox" name="purchaseItem" value="${escapeHtml(item.id)}" checked style="width:20px;height:20px"><span>${escapeHtml(item.name)} · ${escapeHtml(item.preferredPresentation)} · Q${validManualPrice(manualPriceValue(item.id,store)).toFixed(2)}</span></label>`).join('')}<label class="data-modal-field"><span>Fecha de compra</span><input type="date" name="date" required value="${localDateValue()}"></label>`,focusSelector:'input[type="checkbox"]',onSubmit:form=>{
+    const chosen=new Set(form.getAll('purchaseItem').map(String));if(!chosen.size){modalBody.insertAdjacentHTML('beforeend','<p class="data-modal-error">Selecciona al menos un producto.</p>');return}
+    const purchaseId=`purchase-${Date.now()}`,purchasedAt=`${form.get('date')}T12:00:00.000Z`;const items=priced.filter(item=>chosen.has(item.id)).map(item=>({...item,identity:productIdentity(item),unitPrice:validManualPrice(manualPriceValue(item.id,store)),packages:manualPurchaseCount(item)}));const purchases=readStoredArray('smartPurchases');purchases.push({id:purchaseId,store:storeLabel(store),purchasedAt,items,total:items.reduce((sum,item)=>sum+item.unitPrice*item.packages,0)});localStorage.setItem('smartPurchases',JSON.stringify(purchases));saveCurrentPrices({purchaseId});renderFrequentProducts();$('#manualSaveStatus').textContent=`Compra registrada en ${storeLabel(store)} con ${items.length} producto${items.length===1?'':'s'}.`;closeDataModal();
+  }});
+}
+for(const store of ['walmart','latorre']){const card=$(`#${store}TotalCard`);card.tabIndex=0;card.setAttribute('role','button');card.setAttribute('aria-label',`Registrar compra en ${storeLabel(store)}`);card.addEventListener('click',()=>openPurchaseModal(store));card.addEventListener('keydown',event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();openPurchaseModal(store)}})}
+
+let historyProductFilter='',historyStoreFilter='Todas',historyExpanded=false;
+function historyIdentity(record){return record.identity||[record.name,record.brand,record.presentation].map(normalizedIdentityPart).join('|')}
+function historyDate(value){return new Intl.DateTimeFormat('es-GT',{day:'2-digit',month:'short',year:'numeric'}).format(new Date(value))}
+function renderPriceHistory(){
+  const container=document.querySelector('.history-card');if(!container)return;const all=readStoredArray('smartPriceHistory').filter(record=>Number.isFinite(Number(record.price))&&record.name&&record.store).sort((a,b)=>new Date(b.capturedAt)-new Date(a.capturedAt));
+  if(!all.length){container.innerHTML='<div class="history-empty-real"><strong>Aún no hay historial de precios</strong>Ingresa precios en Tiendas y presiona “Guardar precios en el historial”.</div>';return}
+  const identities=[...new Map(all.map(record=>[historyIdentity(record),record])).entries()];if(!historyProductFilter||!identities.some(([id])=>id===historyProductFilter))historyProductFilter=historyIdentity(all[0]);const selectedRecord=all.find(record=>historyIdentity(record)===historyProductFilter);const filtered=all.filter(record=>historyIdentity(record)===historyProductFilter&&(historyStoreFilter==='Todas'||record.store===historyStoreFilter));const points=[...filtered].reverse().slice(-7);const prices=points.map(record=>Number(record.price));const min=Math.min(...prices),max=Math.max(...prices),range=max-min||1;const coords=points.map((record,index)=>`${28+(248*(points.length===1 ? .5 : index/(points.length-1)))} ${96-70*((Number(record.price)-min)/range)}`);const line=coords.length?`M${coords.join(' L')}`:'';
+  const grouped=[...new Map(all.map(record=>[`${historyIdentity(record)}|${record.store}`,[]])).entries()].map(([key])=>{const rows=all.filter(record=>`${historyIdentity(record)}|${record.store}`===key);return{current:rows[0],previous:rows[1]}});const visible=grouped.slice(0,historyExpanded?grouped.length:3);
+  container.innerHTML=`<div class="history-filter"><button type="button" id="historyProductButton"><span>Producto: <strong>${escapeHtml(selectedRecord?.name||'Todos')}</strong></span><svg viewBox="0 0 20 20"><path d="m6 8 4 4 4-4"/></svg></button><button type="button" id="historyStoreButton"><span>Tienda: <strong>${escapeHtml(historyStoreFilter)}</strong></span><svg viewBox="0 0 20 20"><path d="m6 8 4 4 4-4"/></svg></button><button type="button" class="history-filter-settings" id="historyResetButton" aria-label="Restablecer filtros"><svg viewBox="0 0 24 24"><path d="M4 6h10M18 6h2M14 4v4M4 12h3M11 12h9M7 10v4M4 18h10M18 18h2M14 16v4"/></svg></button></div><div class="history-chart-card"><div class="history-chart-heading"><strong>Tendencia de precios</strong><span>(${points.length} registro${points.length===1?'':'s'})</span></div><div class="history-chart-layout"><div class="history-chart-plot"><span class="history-axis history-axis-16">Q${max.toFixed(2)}</span><span class="history-axis history-axis-10">Q${min.toFixed(2)}</span><svg viewBox="0 0 282 126" role="img" aria-label="Tendencia real de precios"><path class="history-grid-line" d="M28 16H276M28 46H276M28 76H276M28 106H276"/><path class="history-line" d="${line}"/><g class="history-points">${coords.map(point=>{const[x,y]=point.split(' ');return`<circle cx="${x}" cy="${y}" r="4"/>`}).join('')}</g></svg><div class="history-days">${points.map(record=>`<span>${new Intl.DateTimeFormat('es-GT',{day:'2-digit',month:'short'}).format(new Date(record.capturedAt))}</span>`).join('')}</div></div><div class="history-current-price"><small>Precio actual</small><strong>${filtered[0]?`Q${Number(filtered[0].price).toFixed(2)}`:'—'}</strong><span>${escapeHtml(filtered[0]?.store||historyStoreFilter)}</span></div></div></div><div class="history-recent-title">Precios recientes</div><div class="history-recent-list">${visible.map(({current,previous})=>{const change=previous?Number(current.price)-Number(previous.price):0,pct=previous&&Number(previous.price)?change/Number(previous.price)*100:0;return`<article class="history-row"><img src="${frequentImage(current.name)}" alt="${escapeHtml(current.name)}"><div class="history-product"><strong>${escapeHtml(current.name)}</strong><span>${escapeHtml(current.presentation||'Sin presentación')}</span><b>${escapeHtml(current.store)}</b></div><div class="history-prices"><small>${historyDate(current.capturedAt)}</small><strong>Q${Number(current.price).toFixed(2)}</strong>${previous?`<small>Anterior</small><span>Q${Number(previous.price).toFixed(2)}</span>`:''}</div><div class="history-change ${change>0?'history-change-up':change<0?'history-change-down':''}"><strong>${change===0?'—':`${change>0?'↑':'↓'} ${change>0?'+':''}Q${change.toFixed(2)}`}</strong><span>${previous?`${pct>0?'+':''}${pct.toFixed(1)}%`:'Primer precio'}</span></div></article>`}).join('')}</div>${grouped.length>3?`<button type="button" class="history-more" id="historyMoreButton">${historyExpanded?'Ver menos':'Ver más historial'} <span>›</span></button>`:''}`;
+  $('#historyProductButton').onclick=()=>openDataModal({title:'Filtrar por producto',eyebrow:'Historial',body:`<label class="data-modal-field"><span>Producto</span><select name="product">${identities.map(([id,record])=>`<option value="${escapeHtml(id)}"${id===historyProductFilter?' selected':''}>${escapeHtml(record.name)} · ${escapeHtml(record.presentation||'')}</option>`).join('')}</select></label>`,onSubmit:form=>{historyProductFilter=String(form.get('product'));closeDataModal();renderPriceHistory()}});$('#historyStoreButton').onclick=()=>openDataModal({title:'Filtrar por tienda',eyebrow:'Historial',body:`<label class="data-modal-field"><span>Tienda</span><select name="store">${['Todas','Walmart','La Torre'].map(store=>`<option${store===historyStoreFilter?' selected':''}>${store}</option>`).join('')}</select></label>`,onSubmit:form=>{historyStoreFilter=String(form.get('store'));closeDataModal();renderPriceHistory()}});$('#historyResetButton').onclick=()=>{historyStoreFilter='Todas';historyProductFilter=historyIdentity(all[0]);renderPriceHistory()};if($('#historyMoreButton'))$('#historyMoreButton').onclick=()=>{historyExpanded=!historyExpanded;renderPriceHistory()};
+}
+renderPriceHistory();
+
 // --- Navegación principal inferior ---
 const tabButtons = [...document.querySelectorAll('.tab-button')];
 const tabPanels = [...document.querySelectorAll('[data-tab-panel]')];
@@ -1628,8 +2248,9 @@ function selectMainTab(tabName, moveFocus=false){
     button.tabIndex = active ? 0 : -1;
     if(active && moveFocus) button.focus();
   });
+  document.body.dataset.activeTab = tabName;
   localStorage.setItem('smartActiveTab', tabName);
-  window.scrollTo({top:0,behavior:'smooth'});
+  window.scrollTo({top:0,behavior:'auto'});
 }
 
 tabButtons.forEach((button,index) => {
