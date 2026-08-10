@@ -251,6 +251,14 @@ Actualmente se usa `localStorage` para:
 
 Esto está bien para MVP.
 
+Política de conservación local:
+- Todos los datos creados por el usuario deben conservarse localmente entre recargas y versiones.
+- Ninguna migración puede borrar, sustituir ni volver a sembrar datos existentes.
+- No ejecutar limpiezas automáticas de `localStorage`, IndexedDB ni futuros almacenes locales.
+- Un restablecimiento total solo puede realizarse cuando el usuario lo pida expresamente y confirme el alcance.
+- Las eliminaciones individuales deben responder siempre a una acción deliberada del usuario.
+- Recordar que `file://`, Netlify y cada navegador/perfil son orígenes distintos y no comparten automáticamente sus datos locales.
+
 Más adelante se puede evolucionar a backend/base de datos si se requiere:
 - sincronización entre dispositivos
 - historial permanente
@@ -281,6 +289,12 @@ Netlify:
 - Deploy automático desde GitHub.
 - Dominio actual:
   `https://comprandogrocerias.netlify.app`
+
+Política temporal de despliegue:
+- Trabajar y probar localmente.
+- Se permiten commits locales para conservar avances.
+- NO hacer push a `origin/main` ni activar un deploy público sin autorización expresa del usuario.
+- Agrupar cambios y publicar solo cuando el usuario indique claramente que desea desplegar.
 
 Flujo requerido:
 1. Codex modifica archivos localmente.
