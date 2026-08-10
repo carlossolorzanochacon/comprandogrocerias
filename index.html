@@ -1036,7 +1036,7 @@ if(seedPreferencesChanged) localStorage.setItem('smartCart',JSON.stringify(cart)
 
 const categories = [
   ['Lácteos',/leche|queso|yogur|crema|mantequilla/i],
-  ['Frutas y verduras',/aguacate|tomate|pepino|cebolla|papa|manzana|banano|plátano|lechuga|zanahoria|limón|naranja/i],
+  ['Frutas y verduras',/aguacate|tomate|pepino|cebolla|papa|manzana|banano|plátano|lechuga|zanahoria|limón|naranja|\bajos?\b|br[oó]col(?:i|o)?s?|espinacas?/i],
   ['Bebidas',/coca|pepsi|agua|jugo|refresco|bebida|cerveza/i],
   ['Limpieza',/detergente|cloro|jabón|suavizante|desinfectante|limpiador/i],
   ['Hogar',/papel|servilleta|bolsa|aluminio|toalla/i],
@@ -1060,12 +1060,19 @@ for(const item of cart){
 }
 if(pantryCategoryMigrated)localStorage.setItem('smartCart',JSON.stringify(cart));
 
+const produceMigrationPattern=/\bajos?\b|br[oó]col(?:i|o)?s?|espinacas?/i;
+let produceCategoryMigrated=false;
+for(const item of cart){
+  if(produceMigrationPattern.test(String(item.name||''))&&item.category!=='Frutas y verduras'){item.category='Frutas y verduras';produceCategoryMigrated=true}
+}
+if(produceCategoryMigrated)localStorage.setItem('smartCart',JSON.stringify(cart));
+
 const productStartWords = new Set([
   'leche','leches','queso','quesos','yogur','yogurt','crema','mantequilla',
   'huevo','huevos','aguacate','aguacates','tomate','tomates','pepino','pepinos',
   'cebolla','cebollas','papa','papas','manzana','manzanas','banano','bananos',
   'platano','platanos','lechuga','lechugas','zanahoria','zanahorias','limon','limones',
-  'naranja','naranjas','coca-cola','cocacola','pepsi','agua','aguas','jugo','jugos',
+  'naranja','naranjas','ajo','ajos','brocoli','brocolis','brocolo','brocolos','espinaca','espinacas','coca-cola','cocacola','pepsi','agua','aguas','jugo','jugos',
   'refresco','refrescos','bebida','bebidas','cerveza','cervezas','detergente',
   'detergentes','cloro','jabon','jabones','suavizante','desinfectante','limpiador',
   'papel','servilleta','servilletas','bolsa','bolsas','aluminio','toalla','toallas',
