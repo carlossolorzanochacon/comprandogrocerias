@@ -1,13 +1,13 @@
 const CACHE_VERSION='comprando-grocerias-v1';
 const APP_SHELL=[
-  '/',
-  '/index.html',
-  '/selected-design.css?v=pwa-1',
-  '/manifest.webmanifest',
-  '/assets/branding/comprando-grocerias-icon.svg',
-  '/assets/branding/comprando-grocerias-192.png',
-  '/assets/branding/comprando-grocerias-512.png',
-  '/vendor/tesseract/tesseract.min.js',
+  './',
+  './index.html',
+  './selected-design.css?v=pwa-1',
+  './manifest.webmanifest',
+  './assets/branding/comprando-grocerias-icon.svg',
+  './assets/branding/comprando-grocerias-192.png',
+  './assets/branding/comprando-grocerias-512.png',
+  './vendor/tesseract/tesseract.min.js',
   'https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css',
   'https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js'
 ];
@@ -39,10 +39,10 @@ self.addEventListener('fetch',event=>{
     event.respondWith((async()=>{
       try{
         const response=await fetch(request);
-        if(response.ok)(await caches.open(CACHE_VERSION)).put('/index.html',response.clone());
+        if(response.ok)(await caches.open(CACHE_VERSION)).put('./index.html',response.clone());
         return response;
       }catch{
-        return (await caches.match('/index.html')) || Response.error();
+        return (await caches.match('./index.html')) || Response.error();
       }
     })());
     return;

@@ -2316,7 +2316,7 @@ if(isInstalled){
 }
 
 if('serviceWorker' in navigator && ['http:','https:'].includes(location.protocol)){
-  window.addEventListener('load',()=>navigator.serviceWorker.register('/sw.js').catch(error=>{
+  window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(error=>{
     console.warn('[PWA] No se pudo activar el modo offline.',error);
   }));
 }
