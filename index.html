@@ -6,6 +6,9 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
+<meta name="theme-color" content="#087f46">
+<meta name="application-name" content="Comprando Grocerías">
+<meta name="mobile-web-app-capable" content="yes">
 <title>COMPRANDO GROCERÍAS</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css">
 <style>
@@ -655,7 +658,8 @@ footer{display:none}
   .frequent-card{padding:14px 10px}.frequent-card>img{width:68px;height:68px}
 }
 </style>
-<link rel="stylesheet" href="selected-design.css?v=iconos-integrados-1">
+<link rel="stylesheet" href="selected-design.css?v=pwa-1">
+<link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="assets/branding/comprando-grocerias-icon.svg" type="image/svg+xml">
 </head>
 <body>
@@ -770,6 +774,13 @@ footer{display:none}
           </div>
           <div class="status" id="profileIdentityStatus">El nombre se guarda automáticamente.</div>
         </div>
+      </div>
+      <div class="install-app-card section" id="installAppCard">
+        <div>
+          <strong>Instalar Comprando Grocerías</strong>
+          <p id="installAppStatus">Instálala en tu teléfono para abrirla como una aplicación.</p>
+        </div>
+        <button type="button" class="primary" id="installApp" hidden>Instalar app</button>
       </div>
       <div class="section" style="margin-top:16px">
         <div class="input-head">
@@ -2272,6 +2283,43 @@ tabButtons.forEach((button,index) => {
 });
 
 selectMainTab(localStorage.getItem('smartActiveTab') || 'list');
+
+let deferredInstallPrompt=null;
+const installAppButton=$('#installApp');
+const installAppStatus=$('#installAppStatus');
+const isInstalled=window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone===true;
+
+if(isInstalled){
+  installAppStatus.textContent='La aplicación ya está instalada en este dispositivo.';
+}else{
+  window.addEventListener('beforeinstallprompt',event=>{
+    event.preventDefault();
+    deferredInstallPrompt=event;
+    installAppButton.hidden=false;
+    installAppStatus.textContent='Lista para instalarse en tu teléfono.';
+  });
+  installAppButton.addEventListener('click',async()=>{
+    if(!deferredInstallPrompt)return;
+    deferredInstallPrompt.prompt();
+    const choice=await deferredInstallPrompt.userChoice;
+    deferredInstallPrompt=null;
+    installAppButton.hidden=true;
+    installAppStatus.textContent=choice.outcome==='accepted'
+      ? 'Instalación iniciada. Busca el icono en tu pantalla principal.'
+      : 'Puedes instalarla después desde este mismo perfil.';
+  });
+  window.addEventListener('appinstalled',()=>{
+    deferredInstallPrompt=null;
+    installAppButton.hidden=true;
+    installAppStatus.textContent='La aplicación quedó instalada en este dispositivo.';
+  });
+}
+
+if('serviceWorker' in navigator && ['http:','https:'].includes(location.protocol)){
+  window.addEventListener('load',()=>navigator.serviceWorker.register('/sw.js').catch(error=>{
+    console.warn('[PWA] No se pudo activar el modo offline.',error);
+  }));
+}
 
 render();
 </script>
