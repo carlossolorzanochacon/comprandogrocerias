@@ -658,7 +658,7 @@ footer{display:none}
   .frequent-card{padding:14px 10px}.frequent-card>img{width:68px;height:68px}
 }
 </style>
-<link rel="stylesheet" href="selected-design.css?v=pwa-1">
+<link rel="stylesheet" href="selected-design.css?v=real-test-fixes-3">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="assets/branding/comprando-grocerias-icon.svg" type="image/svg+xml">
 </head>
@@ -1047,14 +1047,14 @@ if(seedPreferencesChanged) localStorage.setItem('smartCart',JSON.stringify(cart)
 
 const categories = [
   ['Lácteos',/leche|queso|yogur|crema|mantequilla/i],
-  ['Frutas y verduras',/aguacate|tomate|pepino|cebolla|papa|manzana|banano|plátano|lechuga|zanahoria|limón|naranja|\bajos?\b|br[oó]col(?:i|o)?s?|espinacas?/i],
+  ['Frutas y verduras',/aguacate|tomate|pepino|cebolla|papa|manzana|banano|plátano|lechuga|zanahoria|lim[oó]n|naranja|pi[nñ]a|\bajos?\b|br[oó]col(?:i|o)?s?|espinacas?/i],
   ['Bebidas',/coca|pepsi|agua|jugo|refresco|bebida|cerveza/i],
   ['Limpieza',/detergente|cloro|jabón|suavizante|desinfectante|limpiador/i],
   ['Hogar',/papel|servilleta|bolsa|aluminio|toalla/i],
   ['Despensa',/cereal|arroz|frijol|pasta|aceite|az[uú]car|\bsal(?:es)?\b|harina|caf[eé]|consom[eé]s?|especias?|condimentos?|sazonadores?/i],
   ['Dulces y snacks',/dulce|galleta/i],
   ['Panadería',/pan|panader|croissant|pastel|tortilla|bollo/i],
-  ['Carnes',/pollo|carne|res|cerdo|pescado|jamón|salchicha/i],
+  ['Carnes',/pollo|carne|res|cerdo|pescado|jam[oó]n|salchicha/i],
   ['Huevos',/huevo/i],
   ['Congelados',/congelad|helado/i],
   ['Cuidado personal',/shampoo|champú|desodorante|pasta dental|cepillo dental|crema corporal/i],
@@ -1077,6 +1077,18 @@ for(const item of cart){
   if(produceMigrationPattern.test(String(item.name||''))&&item.category!=='Frutas y verduras'){item.category='Frutas y verduras';produceCategoryMigrated=true}
 }
 if(produceCategoryMigrated)localStorage.setItem('smartCart',JSON.stringify(cart));
+
+const correctedCategoryMigrations=[
+  ['Frutas y verduras',/lim[oó]n/i],
+  ['Frutas y verduras',/pi[nñ]a/i],
+  ['Carnes',/jam[oó]n/i]
+];
+let correctedCategoriesChanged=false;
+for(const item of cart){
+  const corrected=correctedCategoryMigrations.find(([,pattern])=>pattern.test(String(item.name||'')));
+  if(corrected&&item.category!==corrected[0]){item.category=corrected[0];correctedCategoriesChanged=true}
+}
+if(correctedCategoriesChanged)localStorage.setItem('smartCart',JSON.stringify(cart));
 
 const productStartWords = new Set([
   'leche','leches','queso','quesos','yogur','yogurt','crema','mantequilla',
@@ -1163,19 +1175,24 @@ function listItemHtml(x){return `
         <button type="button" class="item-delete" onclick="confirmRemoveItem('${x.id}')" aria-label="Eliminar ${escapeHtml(x.name)} de la lista"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3m-8 0 1 13h8l1-13M10 11v5M14 11v5"/></svg></button>
       </div>
     </div>`}
+const defaultCategoryOrder=['Frutas y verduras','Panadería','Carnes','Lácteos','Huevos','Despensa','Dulces y snacks','Bebidas','Congelados','Limpieza','Hogar','Cuidado personal','Bebé','Mascotas','Farmacia','Otros'];
+function orderedCartGroups(){
+  const categoryOrder=[...customCategoryOrder,...defaultCategoryOrder.filter(category=>!customCategoryOrder.includes(category))];
+  const sorted=cart.map((item,index)=>({item,index})).sort((a,b)=>{
+    const categoryA=categoryOrder.indexOf(a.item.category),categoryB=categoryOrder.indexOf(b.item.category);
+    return (categoryA<0?categoryOrder.length:categoryA)-(categoryB<0?categoryOrder.length:categoryB)||a.index-b.index;
+  });
+  const groups=[];
+  for(const {item} of sorted){const category=String(item.category||'Otros'),last=groups.at(-1);if(last?.category===category)last.items.push(item);else groups.push({category,items:[item]})}
+  return groups;
+}
 function render(){
   $('#count').textContent=cart.length;
   $('#cartTitleCount').textContent=cart.length;
   $('#storesCartCount').textContent=cart.length;
   $('#cats').textContent=new Set(cart.map(x=>x.category)).size;
   $('#state').textContent=cart.length?'Activa':'Lista';
-  const defaultCategoryOrder=['Frutas y verduras','Panadería','Carnes','Lácteos','Huevos','Despensa','Dulces y snacks','Bebidas','Congelados','Limpieza','Hogar','Cuidado personal','Bebé','Mascotas','Farmacia','Otros'];
-  const supermarketCategoryOrder=[...customCategoryOrder,...defaultCategoryOrder.filter(category=>!customCategoryOrder.includes(category))];
-  const displayCart=cart.map((item,index)=>({item,index})).sort((a,b)=>{
-    const categoryA=supermarketCategoryOrder.indexOf(a.item.category),categoryB=supermarketCategoryOrder.indexOf(b.item.category);
-    return (categoryA<0?supermarketCategoryOrder.length:categoryA)-(categoryB<0?supermarketCategoryOrder.length:categoryB)||a.index-b.index;
-  });
-  const groups=[];for(const {item} of displayCart){const category=String(item.category||'Otros'),last=groups.at(-1);if(last?.category===category)last.items.push(item);else groups.push({category,items:[item]})}
+  const groups=orderedCartGroups();
   $('#list').innerHTML=cart.length?groups.map(({category,items})=>{
     const collapsed=collapsedCategories.has(category),file=categoryIconFile(category),count=items.length,activeItems=items.filter(item=>item.qty>0),collectedCount=activeItems.filter(item=>item.collected).length,complete=activeItems.length>0&&collectedCount===activeItems.length;
     return `<section class="list-category-group${collapsed?' is-collapsed':''}${complete?' is-complete':''}" data-category-group="${escapeHtml(category)}">
@@ -1886,8 +1903,10 @@ const comparisonCatalog = [
   {id:'avena-2000',name:'Avena en hojuelas',brand:'Marca Oro',amount:2000,unit:'g',display:'2 kg',price:12.00,image:'assets/comparison/oats.png'}
 ];
 readStoredArray('smartScannedComparisonProducts').forEach(product=>{if(product?.id&&!comparisonCatalog.some(candidate=>candidate.id===product.id))comparisonCatalog.push(product)});
+readStoredArray('smartComparisonProductOverrides').forEach(override=>{const product=comparisonCatalog.find(candidate=>candidate.id===override?.id);if(product)Object.assign(product,override)});
 let comparedProductIds = JSON.parse(localStorage.getItem('smartComparedProductsV2') || 'null') || [];
 const comparisonPhotoPreviews = new Map();
+let comparisonPendingPreview='',comparisonPendingFile=null,isAnalyzingComparisonPhoto=false;
 let comparisonContext=null;
 try{comparisonContext=JSON.parse(localStorage.getItem('smartComparisonContext')||'null')}catch{comparisonContext=null}
 if(!comparisonContext||typeof comparisonContext!=='object'||!comparisonContext.product)comparisonContext=null;
@@ -1909,6 +1928,31 @@ function normalizedUnitPrice(product){
   return product.price / normalizedMeasure(product).quantity;
 }
 
+function persistComparisonProduct(product){
+  if(product.id.startsWith('scan-')||product.id.startsWith('manual-')){
+    localStorage.setItem('smartScannedComparisonProducts',JSON.stringify(comparisonCatalog.filter(candidate=>candidate.id.startsWith('scan-')||candidate.id.startsWith('manual-'))));
+    return;
+  }
+  const overrides=readStoredArray('smartComparisonProductOverrides').filter(candidate=>candidate?.id!==product.id);
+  overrides.push({id:product.id,name:product.name,brand:product.brand,amount:product.amount,unit:product.unit,display:product.display,price:product.price});
+  localStorage.setItem('smartComparisonProductOverrides',JSON.stringify(overrides));
+}
+
+function setPendingComparisonPhoto(file){
+  if(comparisonPendingPreview)URL.revokeObjectURL(comparisonPendingPreview);
+  comparisonPendingFile=file;
+  comparisonPendingPreview=URL.createObjectURL(file);
+  renderProductComparison();
+}
+
+function takePendingComparisonPreview(file){
+  if(file!==comparisonPendingFile||!comparisonPendingPreview)return URL.createObjectURL(file);
+  const preview=comparisonPendingPreview;
+  comparisonPendingPreview='';
+  comparisonPendingFile=null;
+  return preview;
+}
+
 function renderProductComparison(){
   const selected = comparedProductIds.map(id => comparisonCatalog.find(product => product.id === id)).filter(Boolean).slice(0,5);
   if(!comparisonContext&&selected[0])saveComparisonContext({product:selected[0].name,variant:'',restriction:''});
@@ -1918,9 +1962,11 @@ function renderProductComparison(){
   $('#normalizationNoteText').textContent=`Precio por ${comparisonBaseUnit==='g'?'gramo':comparisonBaseUnit==='ml'?'mililitro':'unidad'} normalizado para presentaciones diferentes.`;
   comparedProductIds = selected.map(product => product.id);
   localStorage.setItem('smartComparedProductsV2', JSON.stringify(comparedProductIds));
-  $('#compareCount').textContent = `(${selected.length}/5)`;
+  const occupiedCount=Math.min(5,selected.length+(comparisonPendingPreview?1:0));
+  $('#compareCount').textContent = `(${occupiedCount}/5)`;
   $('#compareSlots').innerHTML = Array.from({length:5}, (_,index) => {
     const product = selected[index];
+    if(!product&&comparisonPendingPreview&&index===selected.length)return `<span class="compare-slot is-filled is-analyzing" aria-label="Etiqueta capturada y en análisis"><img src="${comparisonPendingPreview}" alt="Etiqueta capturada"><span class="compare-slot-spinner" aria-hidden="true"></span><small>Analizando</small></span>`;
     if(!product) return `<button type="button" class="compare-slot" data-empty-slot="${index}" aria-label="Agregar producto ${index+1} manualmente">${index+1}</button>`;
     const preview = comparisonPhotoPreviews.get(product.id);
     return `<button type="button" class="compare-slot is-filled${preview ? ' has-upload' : ''}" data-remove-product="${product.id}" aria-label="Quitar ${product.name}"><img src="${preview || product.image}" alt="${preview ? 'Vista previa de la etiqueta subida' : ''}"><span class="compare-slot-check">✓</span></button>`;
@@ -1939,6 +1985,7 @@ function renderProductComparison(){
       <div class="comparison-metric"><small>Precio</small><strong>Q${product.price.toFixed(2)}</strong></div>
       <div class="comparison-metric"><small>Q/${normalizedMeasure(product).baseUnit}</small><strong>Q${normalized.toFixed(4)}</strong></div>
       ${best ? `<div class="best-badge${tiedBest ? ' good-badge' : ''}"><svg viewBox="0 0 24 24"><path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8-6.2-3.2L5.8 21 7 14.2 2 9.3l6.9-1Z"/></svg>${tiedBest ? 'Buena opción' : 'Mejor opción'}</div>` : ''}
+      <button type="button" class="comparison-edit" data-edit-comparison="${product.id}">Editar</button>
       <button type="button" class="comparison-add-cart" data-add-comparison="${product.id}">＋ Agregar a la carreta</button>
     </article>`;
   }).join('');
@@ -2001,7 +2048,7 @@ function integrateScannedComparisonProduct(data,file){
     comparisonCatalog.push(product);
     localStorage.setItem('smartScannedComparisonProducts',JSON.stringify(comparisonCatalog.filter(candidate=>candidate.id.startsWith('scan-')||candidate.id.startsWith('manual-'))));
   }
-  if(file){const previousPreview = comparisonPhotoPreviews.get(product.id);if(previousPreview) URL.revokeObjectURL(previousPreview);comparisonPhotoPreviews.set(product.id, URL.createObjectURL(file))}
+  if(file){const previousPreview = comparisonPhotoPreviews.get(product.id);if(previousPreview) URL.revokeObjectURL(previousPreview);comparisonPhotoPreviews.set(product.id,takePendingComparisonPreview(file))}
 
   if(!comparedProductIds.includes(product.id)){
     if(comparedProductIds.length >= 5){
@@ -2016,6 +2063,11 @@ function integrateScannedComparisonProduct(data,file){
 }
 
 async function analyzeComparisonPhoto(file){
+  if(isAnalyzingComparisonPhoto)return;
+  isAnalyzingComparisonPhoto=true;
+  $('#capturePriceLabel').disabled=true;
+  $('#capturePriceLabel .camera-copy strong').textContent='Procesando etiqueta…';
+  setPendingComparisonPhoto(file);
   $('#comparisonToast').textContent = 'Analizando precio y presentación de la etiqueta…';
   try{
     if(!window.Tesseract) throw new Error('OCR no disponible');
@@ -2036,15 +2088,32 @@ async function analyzeComparisonPhoto(file){
       parsed.display = knownProduct.display || `${knownProduct.amount} ${knownProduct.unit}`;
     }
     if(!Number.isFinite(parsed.price) || !Number.isFinite(parsed.amount) || parsed.amount <= 0) throw new Error('No fue posible leer precio y presentación');
-    integrateScannedComparisonProduct(parsed,file);
+    if(integrateScannedComparisonProduct(parsed,file)===false)openComparisonCorrection(file);
   }catch(error){
     $('#comparisonToast').textContent = `${error.message}. Confirma manualmente los datos leídos.`;
     openComparisonCorrection(file);
+  }finally{
+    isAnalyzingComparisonPhoto=false;
+    $('#capturePriceLabel').disabled=false;
+    $('#capturePriceLabel .camera-copy strong').textContent='Tomar foto de etiqueta';
   }
 }
 
 function openComparisonCorrection(file){
   openManualComparison(file);
+}
+
+function openComparisonEditor(product){
+  const presentation=product.display||`${product.amount} ${product.unit}`;
+  openDataModal({title:'Editar artículo comparado',eyebrow:'Comparar productos',saveText:'Guardar cambios',body:`<p class="data-modal-help"><strong>${escapeHtml(product.name)}</strong><br>Corrige los datos de esta alternativa sin volver a tomar la fotografía.</p><label class="data-modal-field"><span>Marca</span><input name="brand" maxlength="70" value="${escapeHtml(product.brand||'')}"></label><label class="data-modal-field"><span>Presentación</span><input name="presentation" required maxlength="100" value="${escapeHtml(presentation)}"></label><label class="data-modal-field"><span>Precio (Q)</span><input name="price" type="number" inputmode="decimal" min="0.01" step="0.01" required value="${Number(product.price).toFixed(2)}"></label><p class="data-modal-error" id="manualComparisonError" hidden></p>`,onSubmit:form=>{
+    const parsed=parseManualPresentation(form.get('presentation'));
+    if(!parsed){const error=$('#manualComparisonError');error.textContent='Incluye peso, volumen o cantidad, por ejemplo: 340 g, 1 litro o caja de 12.';error.hidden=false;return}
+    Object.assign(product,parsed,{brand:String(form.get('brand')).trim()||'Sin preferencia',price:Math.round(Number(form.get('price'))*100)/100});
+    persistComparisonProduct(product);
+    cart.filter(item=>item.sourceComparisonId===product.id).forEach(item=>{item.preferredPresentation=product.display;item.preferredBrand=product.brand});
+    persist();render();renderProductComparison();closeDataModal();
+    $('#comparisonToast').textContent='Cambios guardados en el artículo comparado.';
+  }});
 }
 
 function parseManualPresentation(value){
@@ -2126,6 +2195,8 @@ $('#compareSlots').addEventListener('click', event => {
   if(event.target.closest('[data-empty-slot]')) openManualComparison();
 });
 $('#comparisonResults').addEventListener('click',event=>{
+  const editButton=event.target.closest('[data-edit-comparison]');
+  if(editButton){const product=comparisonCatalog.find(candidate=>candidate.id===editButton.dataset.editComparison);if(product)openComparisonEditor(product);return}
   const button=event.target.closest('[data-add-comparison]');
   if(!button)return;
   const product=comparisonCatalog.find(candidate=>candidate.id===button.dataset.addComparison);
@@ -2195,7 +2266,7 @@ function manualPurchaseCount(item){
 function renderManualPriceRows(){
   const list=$('#manualPriceList');if(!list)return;
   $('#manualPriceEmpty').hidden=cart.length>0;$('#saveManualPrices').disabled=cart.length===0;
-  list.innerHTML=cart.map(item=>`<article class="manual-price-row"><div class="manual-product"><div class="manual-product-visual" aria-hidden="true">${productEmoji(item)}</div><div class="manual-product-copy"><strong>${escapeHtml(item.name)}</strong><span>${escapeHtml(item.preferredPresentation||'Presentación por confirmar')}</span><small>${manualPurchaseCount(item)} ${manualPurchaseCount(item)===1?'presentación':'presentaciones'} · ${escapeHtml(item.preferredBrand||'Sin preferencia')}</small></div></div><label class="manual-price-field"><span>Q</span><input type="number" inputmode="decimal" min="0.01" step="0.01" placeholder="0.00" aria-label="Precio de ${escapeHtml(item.name)} en Walmart" data-manual-item="${escapeHtml(item.id)}" data-manual-store="walmart" data-price-input value="${escapeHtml(String(manualPriceValue(item.id,'walmart')))}"></label><label class="manual-price-field"><span>Q</span><input type="number" inputmode="decimal" min="0.01" step="0.01" placeholder="0.00" aria-label="Precio de ${escapeHtml(item.name)} en La Torre" data-manual-item="${escapeHtml(item.id)}" data-manual-store="latorre" data-price-input value="${escapeHtml(String(manualPriceValue(item.id,'latorre')))}"></label></article>`).join('');
+  list.innerHTML=orderedCartGroups().map(({category,items})=>`<section class="manual-category-group" data-store-category="${escapeHtml(category)}"><div class="manual-category-heading"><img src="assets/category-icons/semirealistic/${categoryIconFile(category)}.webp?v=2" alt=""><strong>${escapeHtml(category)}</strong><span>${items.length}</span></div>${items.map(item=>{const count=manualPurchaseCount(item);return `<article class="manual-price-row"><div class="manual-product"><div class="manual-product-copy"><strong>${escapeHtml(item.name)}</strong><span>${escapeHtml(item.preferredPresentation||'Presentación por confirmar')}</span><small>${count} × precio${count!==Number(item.qty)?` para ${Number(item.qty)||0} unidades`:''} · ${escapeHtml(item.preferredBrand||'Sin preferencia')}</small></div></div><label class="manual-price-field"><span>Q</span><input type="number" inputmode="decimal" min="0.01" step="0.01" placeholder="0.00" aria-label="Precio de ${escapeHtml(item.name)} en Walmart" data-manual-item="${escapeHtml(item.id)}" data-manual-store="walmart" data-price-input value="${escapeHtml(String(manualPriceValue(item.id,'walmart')))}"></label><label class="manual-price-field"><span>Q</span><input type="number" inputmode="decimal" min="0.01" step="0.01" placeholder="0.00" aria-label="Precio de ${escapeHtml(item.name)} en La Torre" data-manual-item="${escapeHtml(item.id)}" data-manual-store="latorre" data-price-input value="${escapeHtml(String(manualPriceValue(item.id,'latorre')))}"></label></article>`}).join('')}</section>`).join('');
   calculateManualTotals();
 }
 function setManualTotal(totalId,missingId,total,missing,activeCount=cart.length){$(totalId).textContent=total>0?`Q${total.toFixed(2)}`:'—';$(missingId).textContent=activeCount===0?'Sin productos activos':missing===0?'Lista completa':missing===activeCount?'Sin precios':`${missing} faltante${missing===1?'':'s'}`}
