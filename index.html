@@ -855,7 +855,7 @@ footer{display:none}
       <p class="normalization-note"><span aria-hidden="true">i</span> <span id="normalizationNoteText">Precio por gramo normalizado para presentaciones diferentes.</span></p>
       <div class="comparison-toast" id="comparisonToast" role="status" aria-live="polite"></div>
       <section class="ocr-test-panel" id="ocrTestPanel" data-state="idle" aria-live="polite">
-        <div class="ocr-test-heading"><strong>Control OCR · etapa de pruebas <small>v17</small></strong><span id="ocrTestState">Esperando fotografía</span></div>
+        <div class="ocr-test-heading"><strong>Control OCR · etapa de pruebas <small>v18</small></strong><span id="ocrTestState">Esperando fotografía</span></div>
         <div class="ocr-test-values"><span><b>Producto</b><em id="ocrTestProduct">—</em></span><span><b>Categoría</b><em id="ocrTestCategory">—</em></span><span><b>Presentación</b><em id="ocrTestPresentation">—</em></span><span><b>Precio</b><em id="ocrTestPrice">—</em></span></div>
         <div class="ocr-test-reason" id="ocrTestReason">Aquí aparecerá exactamente lo que logre interpretar el lector.</div>
         <details class="ocr-test-raw" open><summary>Texto bruto capturado por OCR</summary><code id="ocrTestRaw">Aún no se ha procesado una etiqueta.</code></details>
@@ -2159,6 +2159,13 @@ function parseComparisonLabel(text){
       const score=(/PRECIO/.test(source)?100:0)+(/\bQ/.test(source)?70:0)+(/OFERTA|AHORRO/.test(source)?-25:0)-index*.01;
       priceCandidates.push({value,score});
     }
+    if(!/(?:KG|LB|ML|GRAM|SKU|UPC)/.test(source)&&source.length<=28){
+      for(const match of source.matchAll(/(?:^|[^0-9])([0-9]{1,3})\s+([0-9]{2})(?:[^0-9]|$)/g)){
+        const value=Number(`${match[1]}.${match[2]}`);if(!Number.isFinite(value)||value<=0||value>=1000)continue;
+        const score=(/PRECIO/.test(source)?95:0)+(/[QOA]\s*[0-9]/.test(source)?45:0)+12-index*.01;
+        priceCandidates.push({value,score});
+      }
+    }
   });
   if(!priceCandidates.length)for(const match of numericText.matchAll(/\b([0-9]{1,3}\.[0-9]{2})\b/g)){const value=Number(match[1]);if(value>0&&value<1000)priceCandidates.push({value,score:1})}
   priceCandidates.sort((a,b)=>b.score-a.score);
@@ -2169,7 +2176,8 @@ function parseComparisonLabel(text){
   const gramsMatch = measurementText.match(/\b([1-9][0-9]{1,3})\s*(?:G|GR|GRAMOS?|6|9)\b/);
   const kilosMatch = normalized.match(/([0-9]+(?:\.[0-9]+)?)\s*KG\b/);
   const poundsCandidate = normalized.match(/\b([1-9][0-9]?(?:\.[0-9]+)?)\s*LB\b/);
-  const poundsMatch = poundsCandidate && Number(poundsCandidate[1]) <= 100 ? poundsCandidate : null;
+  let poundsMatch = poundsCandidate && Number(poundsCandidate[1]) <= 100 ? poundsCandidate : null;
+  if(!poundsMatch&&gramsMatch&&Number(gramsMatch[1])>=450&&Number(gramsMatch[1])<=455&&/\b1\s*B\b/.test(normalized))poundsMatch=['1B','1'];
   const millilitersMatch = normalized.match(/([0-9]{2,5})\s*ML\b/);
   const litersMatch = normalized.match(/([0-9]+(?:\.[0-9]+)?)\s*(?:L|LITRO|LITROS)\b/);
   const unitsMatch = normalized.match(/([0-9]+)\s*(?:UNIDAD|UNIDADES|UD|U)\b/);
@@ -2237,6 +2245,11 @@ async function preprocessComparisonOcrImage(file){
 
 function integrateScannedComparisonProduct(data,file){
   const scannedMeasure=normalizedMeasure({amount:data.amount,unit:data.unit});
+  const genericContext=comparisonContext&&normalizedIdentityPart(comparisonContextName())==='producto escaneado'&&normalizedIdentityPart(data.name)!=='producto escaneado';
+  if(genericContext){
+    saveComparisonContext({product:data.name,variant:'',restriction:comparisonContext.restriction||''});
+    comparedProductIds.map(id=>comparisonCatalog.find(candidate=>candidate.id===id)).filter(product=>product&&normalizedIdentityPart(product.name)==='producto escaneado').forEach(product=>{product.name=data.name;product.category=data.category||catFor(data.name);persistComparisonProduct(product)});
+  }
   if(comparisonContext&&normalizedIdentityPart(data.name)!==normalizedIdentityPart(comparisonContextName())){$('#comparisonToast').textContent=`No se agregó: esta comparación es únicamente de ${comparisonContextName()}.`;return false}
   if(!comparisonContext)saveComparisonContext({product:data.name,variant:'',restriction:''});
   const currentProducts=comparedProductIds.map(id=>comparisonCatalog.find(candidate=>candidate.id===id)).filter(Boolean);
