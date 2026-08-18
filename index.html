@@ -855,7 +855,7 @@ footer{display:none}
       <p class="normalization-note"><span aria-hidden="true">i</span> <span id="normalizationNoteText">Precio por gramo normalizado para presentaciones diferentes.</span></p>
       <div class="comparison-toast" id="comparisonToast" role="status" aria-live="polite"></div>
       <section class="ocr-test-panel" id="ocrTestPanel" data-state="idle" aria-live="polite">
-        <div class="ocr-test-heading"><strong>Control OCR · etapa de pruebas <small>v19</small></strong><span id="ocrTestState">Esperando fotografía</span></div>
+        <div class="ocr-test-heading"><strong>Control OCR · etapa de pruebas <small>v20</small></strong><span id="ocrTestState">Esperando fotografía</span></div>
         <div class="ocr-test-values"><span><b>Producto</b><em id="ocrTestProduct">—</em></span><span><b>Categoría</b><em id="ocrTestCategory">—</em></span><span><b>Presentación</b><em id="ocrTestPresentation">—</em></span><span><b>Precio</b><em id="ocrTestPrice">—</em></span></div>
         <div class="ocr-test-reason" id="ocrTestReason">Aquí aparecerá exactamente lo que logre interpretar el lector.</div>
         <details class="ocr-test-raw" open><summary>Texto bruto capturado por OCR</summary><code id="ocrTestRaw">Aún no se ha procesado una etiqueta.</code></details>
@@ -2112,7 +2112,7 @@ function renderProductComparison(){
       <div class="comparison-metric"><small>Precio</small><strong>Q${product.price.toFixed(2)}</strong></div>
       <div class="comparison-metric"><small>Q/${normalizedMeasure(product).baseUnit}</small><strong>Q${normalized.toFixed(4)}</strong></div>
       ${best ? `<div class="best-badge${tiedBest ? ' good-badge' : ''}"><svg viewBox="0 0 24 24"><path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8-6.2-3.2L5.8 21 7 14.2 2 9.3l6.9-1Z"/></svg>${tiedBest ? 'Buena opción' : 'Mejor opción'}</div>` : ''}
-      <button type="button" class="comparison-edit" data-edit-comparison="${product.id}">Editar</button>
+      <button type="button" class="comparison-edit" style="left:118px!important;bottom:5px!important" data-edit-comparison="${product.id}">Editar</button>
       <button type="button" class="comparison-add-cart" data-add-comparison="${product.id}">＋ Agregar a la carreta</button>
     </article>`;
   }).join('');

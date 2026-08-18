@@ -1,4 +1,4 @@
-const CACHE_VERSION='comprando-grocerias-v19';
+const CACHE_VERSION='comprando-grocerias-v20';
 const APP_SHELL=[
   './',
   './index.html',
