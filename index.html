@@ -658,7 +658,7 @@ footer{display:none}
   .frequent-card{padding:14px 10px}.frequent-card>img{width:68px;height:68px}
 }
 </style>
-<link rel="stylesheet" href="selected-design.css?v=unified-list-4">
+<link rel="stylesheet" href="selected-design.css?v=unified-list-5">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="assets/branding/comprando-grocerias-icon.svg" type="image/svg+xml">
 </head>
@@ -707,6 +707,7 @@ footer{display:none}
           <div class="sound-wave sound-wave-right"><i style="--h:8px"></i><i style="--h:12px"></i><i style="--h:18px"></i><i style="--h:27px"></i><i style="--h:38px"></i><i style="--h:46px"></i><i style="--h:37px"></i><i style="--h:28px"></i><i style="--h:20px"></i><i style="--h:25px"></i><i style="--h:34px"></i><i style="--h:41px"></i><i style="--h:32px"></i><i style="--h:23px"></i><i style="--h:17px"></i><i style="--h:11px"></i><i style="--h:7px"></i></div>
         </div>
         <button class="mic" id="mic">Dictar artículos</button>
+        <div class="dictation-live-status" id="dictationLiveStatus" role="status" aria-live="polite">Pulsa el botón y comienza a hablar.</div>
       </div>
       <textarea id="input" placeholder="Ej.: 2 leches descremadas, cereal Corn Flakes grande, 6 aguacates, detergente Ariel 3 kg..."></textarea>
       <div class="actions entry-actions">
@@ -1352,6 +1353,8 @@ function setDictationStatus(message, kind='normal'){
     kind === 'error' ? '#a33a3a' :
     kind === 'warn' ? 'var(--orange-dark)' :
     'var(--muted)';
+  const live=$('#dictationLiveStatus');
+  if(live){live.textContent=message;live.dataset.kind=kind}
 }
 
 function showPermissionHelp(show=true){
@@ -1366,11 +1369,18 @@ function stopDictationUI(){
 }
 
 async function requestMicPermissionIfPossible(){
-  // PRUEBA LOCAL:
-  // No usamos getUserMedia() aquí porque en archivos file:// de Android
-  // puede fallar aunque Chrome ya tenga permiso del micrófono.
-  // SpeechRecognition gestionará directamente su propio acceso/errores.
-  return true;
+  if(location.protocol!=='https:'||!navigator.mediaDevices?.getUserMedia)return true;
+  try{
+    const stream=await navigator.mediaDevices.getUserMedia({audio:true});
+    stream.getTracks().forEach(track=>track.stop());
+    showPermissionHelp(false);
+    return true;
+  }catch(error){
+    const blocked=error?.name==='NotAllowedError'||error?.name==='SecurityError';
+    setDictationStatus(blocked?'El micrófono está bloqueado para este sitio. Abre los permisos del sitio y selecciona “Permitir”.':'No fue posible abrir el micrófono. Revisa que ninguna otra aplicación lo esté utilizando.','error');
+    showPermissionHelp(true);
+    return false;
+  }
 }
 
 function initRecognition(){
@@ -1418,8 +1428,8 @@ function initRecognition(){
   rec.onerror = e => {
     const code = e.error || 'desconocido';
     const messages = {
-      'not-allowed': 'El reconocimiento de voz fue bloqueado para este archivo/origen. Chrome sí puede tener permiso de Android, pero el HTML local puede seguir restringido.',
-      'service-not-allowed': 'Chrome bloqueó el servicio de reconocimiento de voz para este archivo/origen.',
+      'not-allowed': 'El micrófono fue bloqueado para este sitio. En Chrome abre los permisos del sitio y selecciona “Permitir”.',
+      'service-not-allowed': 'Chrome bloqueó el servicio de reconocimiento de voz. Revisa el permiso de micrófono del sitio.',
       'audio-capture': 'SpeechRecognition no pudo abrir el micrófono, aunque Chrome tenga permiso del sistema.',
       'no-speech': 'No detecté voz. Pulsa Dictar e intenta nuevamente.',
       'network': 'El reconocimiento de voz necesita conexión a internet en este navegador.',
@@ -1427,7 +1437,7 @@ function initRecognition(){
       'language-not-supported': 'El navegador no admite español de Guatemala; probaremos con español general al publicar.'
     };
     setDictationStatus(messages[code] || `Error de dictado: ${code}`, code === 'aborted' ? 'warn' : 'error');
-    if(code === 'audio-capture'){
+    if(['audio-capture','not-allowed','service-not-allowed'].includes(code)){
       showPermissionHelp(true);
     }else{
       showPermissionHelp(false);
@@ -1458,13 +1468,14 @@ if (window.isSecureContext && location.protocol === 'https:') {
 
 
 $('#mic').onclick = async () => {
-  if(!rec) return;
+  if(!rec){setDictationStatus('Este navegador no tiene disponible el reconocimiento de voz. Abre la aplicación desde Chrome Android.','error');return}
 
   if(isListening){
     try{ rec.stop(); }catch(e){}
     return;
   }
 
+  setDictationStatus('Preparando el micrófono…','normal');
   const allowed = await requestMicPermissionIfPossible();
   if(!allowed) return;
 
