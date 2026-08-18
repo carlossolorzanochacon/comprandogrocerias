@@ -658,7 +658,7 @@ footer{display:none}
   .frequent-card{padding:14px 10px}.frequent-card>img{width:68px;height:68px}
 }
 </style>
-<link rel="stylesheet" href="selected-design.css?v=real-test-fixes-3">
+<link rel="stylesheet" href="selected-design.css?v=unified-list-4">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="assets/branding/comprando-grocerias-icon.svg" type="image/svg+xml">
 </head>
@@ -743,13 +743,16 @@ footer{display:none}
       </div>
       <div class="list" id="list"></div>
       <div class="actions">
-        <button id="save">Guardar lista</button>
         <button class="danger" id="clearCart">Vaciar carreta</button>
       </div>
     </section>
+    <section class="list-total-bar" id="listTotalBar" aria-live="polite">
+      <div class="list-total-summary"><span>Monto total</span><strong id="listGrandTotal">Q0.00</strong><small id="listCheckoutStatus">Tu carrito está vacío</small></div>
+      <div class="list-total-actions"><button type="button" id="saveListPrices">Guardar precios</button><button type="button" id="finishPurchase" disabled>Finalizar compra</button></div>
+    </section>
   </div>
 
-  <div class="tab-panel" data-tab-panel="stores" role="tabpanel" hidden>
+  <div data-legacy-panel="stores" hidden>
     <section class="card profile-panel" id="profilePanel" role="dialog" aria-modal="true" aria-labelledby="profileTitle" hidden>
       <div class="module-title">
   <div class="module-icon icon-blue">⚙</div>
@@ -828,25 +831,6 @@ footer{display:none}
       </div>
     </section>
 
-    <div class="stores-topbar">
-      <button type="button" class="compact-home-button" id="storesHomeButton" aria-label="Ir a la página principal"><img class="compact-brand-logo" src="assets/branding/comprando-grocerias-icon.svg" alt=""></button>
-      <h2>Comparar tiendas</h2>
-      <button type="button" class="compact-profile-button" id="storesProfileButton" aria-label="Abrir perfil y preferencias" aria-expanded="false"><span class="avatar-initials" id="storesAvatarInitials">CS</span><img class="avatar-photo" id="storesAvatarPhoto" alt="" hidden></button>
-    </div>
-    <section class="stores-workspace" id="comparisonCard">
-      <div class="stores-cart-summary"><span class="stores-cart-icon" aria-hidden="true"></span><strong>Resumen de tu carrito</strong><span>(<b id="storesCartCount">5</b> productos)</span></div>
-      <div class="manual-price-guide"><span aria-hidden="true">Q</span><div><strong>Ingresa los precios que encuentres</strong><small>Escribe el precio de la presentación indicada. Los totales se calculan automáticamente.</small></div></div>
-      <div class="manual-price-head"><span>Producto</span><span aria-label="Walmart"><img src="assets/stores/walmart.webp" alt="Walmart"></span><span aria-label="La Torre"><img src="assets/stores/la-torre.webp" alt="La Torre"></span></div>
-      <div class="manual-price-list" id="manualPriceList"></div>
-      <div class="manual-price-empty" id="manualPriceEmpty" hidden>Agrega productos a tu lista para comparar precios.</div>
-      <button type="button" class="save-manual-prices" id="saveManualPrices">Guardar precios en el historial</button>
-      <div class="manual-save-status" id="manualSaveStatus" role="status"></div>
-      <section class="manual-totals" aria-live="polite">
-        <article class="manual-store-total" id="walmartTotalCard"><span class="manual-store-logo walmart-icon" aria-hidden="true"></span><small>Todo en Walmart</small><strong id="walmartManualTotal">—</strong><em id="walmartMissingCount">Sin precios</em><div class="manual-awards"><span class="manual-award manual-award-price" data-store-award="walmart-price" aria-label="Menor precio" hidden><b>✓</b><i>Precio</i></span><span class="manual-award manual-award-stock" data-store-award="walmart-stock" aria-label="Más artículos encontrados" hidden><b>✓</b><i>Existencias</i></span></div></article>
-        <article class="manual-store-total" id="latorreTotalCard"><span class="manual-store-logo latorre-icon" aria-hidden="true"></span><small>Todo en La Torre</small><strong id="latorreManualTotal">—</strong><em id="latorreMissingCount">Sin precios</em><div class="manual-awards"><span class="manual-award manual-award-price" data-store-award="latorre-price" aria-label="Menor precio" hidden><b>✓</b><i>Precio</i></span><span class="manual-award manual-award-stock" data-store-award="latorre-stock" aria-label="Más artículos encontrados" hidden><b>✓</b><i>Existencias</i></span></div></article>
-      </section>
-      <p class="stores-demo-note" id="analysisStatus">Solo se incluyen precios ingresados y confirmados por ti.</p>
-    </section>
   </div>
 
   <div class="tab-panel" data-tab-panel="compare" role="tabpanel" hidden>
@@ -941,6 +925,23 @@ footer{display:none}
     </section>
     <p class="frequent-empty" hidden>No tienes productos favoritos todavía.</p>
   </div>
+
+  <div class="tab-panel" data-tab-panel="howto" role="tabpanel" hidden>
+    <div class="howto-topbar interior-topbar">
+      <button type="button" class="compact-home-button" id="howtoHomeButton" aria-label="Ir a la página principal"><img class="compact-brand-logo" src="assets/branding/comprando-grocerias-icon.svg" alt=""></button>
+      <h2>Cómo usar</h2>
+      <button type="button" class="compact-profile-button" id="howtoProfileButton" aria-label="Abrir perfil y preferencias" aria-expanded="false"><span class="avatar-initials" id="howtoAvatarInitials">CS</span><img class="avatar-photo" id="howtoAvatarPhoto" alt="" hidden></button>
+    </div>
+    <section class="howto-intro">
+      <span class="howto-question-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.7 9a2.5 2.5 0 0 1 4.8 1c0 2-2.5 2.2-2.5 4M12 17.5h.01"/></svg></span>
+      <div><strong>Guía de Comprando Grocerías</strong><p>Aquí encontrarás la explicación gráfica paso a paso de LISTA, COMPARAR, HISTORIAL, FRECUENTES y PERFIL.</p></div>
+    </section>
+    <section class="howto-placeholder">
+      <strong>La guía visual está en preparación</strong>
+      <p>Su diseño y presentación se definirán contigo en el siguiente paso.</p>
+      <small>En LISTA puedes dictar o escribir productos, completar sus detalles, ingresar precios y ver cómo los totales se calculan automáticamente.</small>
+    </section>
+  </div>
 </div>
 <footer>Los datos de tu lista se guardan localmente en este navegador.</footer>
 </div>
@@ -948,9 +949,9 @@ footer{display:none}
 <nav class="bottom-tabs" id="bottomTabs" role="tablist" aria-label="Módulos principales">
   <button type="button" class="tab-button" data-tab="list" role="tab" aria-selected="true"><span class="tab-icon"><svg viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01"/></svg></span><span>Lista</span></button>
   <button type="button" class="tab-button" data-tab="compare" role="tab" aria-selected="false" tabindex="-1"><span class="tab-icon"><svg viewBox="0 0 24 24"><path d="M12 3v18M5 6h14M5 6l-3 6h6L5 6Zm14 0-3 6h6l-3-6ZM8 21h8"/></svg></span><span>Comparar</span></button>
-  <button type="button" class="tab-button" data-tab="stores" role="tab" aria-selected="false" tabindex="-1"><span class="tab-icon"><svg viewBox="0 0 24 24"><path d="M3 10h18M5 10v10h14V10M4 4h16l1 6H3l1-6Zm5 10h6v6H9v-6Z"/></svg></span><span>Tiendas</span></button>
   <button type="button" class="tab-button" data-tab="history" role="tab" aria-selected="false" tabindex="-1"><span class="tab-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.25"/><path d="M12 7.5v4.8l3.15 1.85"/></svg></span><span>Historial</span></button>
   <button type="button" class="tab-button" data-tab="frequent" role="tab" aria-selected="false" tabindex="-1"><span class="tab-icon"><svg viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8Z"/></svg></span><span>Frecuentes</span></button>
+  <button type="button" class="tab-button" data-tab="howto" role="tab" aria-selected="false" tabindex="-1"><span class="tab-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M9.7 9.2a2.5 2.5 0 0 1 4.8.8c0 2-2.5 2.3-2.5 4.2M12 17.6h.01"/></svg></span><span>Cómo usar</span></button>
 </nav>
 
 <div class="data-modal-backdrop" id="dataModalBackdrop" hidden>
@@ -975,7 +976,15 @@ document.body.appendChild($('#profilePanel'));
 let cart=[];
 try{ cart=JSON.parse(localStorage.getItem('smartCart')||'[]'); }catch{ cart=[]; }
 if(!Array.isArray(cart)) cart=[];
-cart=cart.filter(item=>item&&typeof item==='object'&&item.id&&item.name).map(item=>({...item,qty:Math.max(0,Math.round(Number(item.qty)||0)),category:item.category||'Otros',preferredPresentation:item.preferredPresentation||'Por definir',preferredBrand:item.preferredBrand||'Sin preferencia',collected:Boolean(item.collected)}));
+cart=cart.filter(item=>item&&typeof item==='object'&&item.id&&item.name).map(item=>({...item,qty:Math.max(1,Math.round(Number(item.qty)||1)),category:item.category||'Otros',preferredPresentation:item.preferredPresentation||'Por definir',preferredBrand:item.preferredBrand||'Sin preferencia',collected:Boolean(item.collected)}));
+let listPrices={};
+try{listPrices=JSON.parse(localStorage.getItem('smartListPrices')||'{}')}catch{listPrices={}}
+if(!listPrices||Array.isArray(listPrices)||typeof listPrices!=='object')listPrices={};
+try{
+  const legacyPrices=JSON.parse(localStorage.getItem('smartManualStorePrices')||'{}');let migrated=false;
+  for(const item of cart){if(listPrices[item.id]!==undefined)continue;const old=legacyPrices?.[item.id];const candidate=old?.walmart??old?.latorre;if(Number(candidate)>0){listPrices[item.id]=Number(candidate);migrated=true}}
+  if(migrated)localStorage.setItem('smartListPrices',JSON.stringify(listPrices));
+}catch{}
 let collapsedCategories=new Set();
 try{const storedCollapsed=JSON.parse(localStorage.getItem('smartCollapsedCategories')||'[]');if(Array.isArray(storedCollapsed))collapsedCategories=new Set(storedCollapsed.map(String))}catch{}
 let customCategoryOrder=[];
@@ -1160,6 +1169,14 @@ function productEmoji(item){
   const file=categoryIconFile(item.category||catFor(item.name));
   return `<img class="category-product-icon" src="assets/category-icons/semirealistic/${file}.webp?v=2" alt="" loading="lazy" decoding="async">`;
 }
+function validListPrice(value){const number=Number(value);return Number.isFinite(number)&&number>0?Math.round(number*100)/100:null}
+function listPurchaseCount(item){
+  if(Number.isFinite(Number(item.packageUnits))&&Number(item.packageUnits)>0)return Math.max(1,Math.ceil(item.qty/Number(item.packageUnits)));
+  const presentation=(item.preferredPresentation||'').toLocaleLowerCase('es-GT');
+  const pack=presentation.match(/(?:cart[oó]n|paquete|caja)[^0-9]{0,12}(\d+(?:\.\d+)?)/)||presentation.match(/(\d+(?:\.\d+)?)\s*(?:unidades|rollos)/);
+  const units=Number(pack?.[1]);return units>0?Math.max(1,Math.ceil(item.qty/units)):item.qty;
+}
+function itemSubtotal(item){const price=validListPrice(listPrices[item.id]);return price===null?null:price*listPurchaseCount(item)}
 function listItemHtml(x){return `
     <div class="item">
       <div class="item-copy" role="button" tabindex="0" data-edit-product="${escapeHtml(x.id)}" aria-label="Editar datos de ${escapeHtml(x.name)}">
@@ -1167,13 +1184,14 @@ function listItemHtml(x){return `
         <div class="item-preferences"><span>${escapeHtml(x.preferredPresentation || 'Por definir')}</span><span>Marca: ${escapeHtml(x.preferredBrand || 'Sin preferencia')}</span></div>
         <span class="item-edit-hint">Editar detalles</span>
       </div>
-      <button type="button" class="item-collected${x.collected?' is-collected':''}" data-collected-item="${escapeHtml(x.id)}" aria-pressed="${Boolean(x.collected)}" aria-label="${x.collected?'Marcar como pendiente':'Marcar como recolectado'} ${escapeHtml(x.name)}"${x.qty===0?' disabled':''}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6.5 12.5 3.5 3.5 7.5-8"/></svg></button>
+      <button type="button" class="item-collected${x.collected?' is-collected':''}" data-collected-item="${escapeHtml(x.id)}" aria-pressed="${Boolean(x.collected)}" aria-label="${x.collected?'Marcar como pendiente':'Marcar como recolectado'} ${escapeHtml(x.name)}"><svg class="collect-hand-pending" viewBox="0 0 24 24" aria-hidden="true"><path d="M7.5 13.2V8.6a1.4 1.4 0 0 1 2.8 0v3.1-5.2a1.4 1.4 0 0 1 2.8 0v5-3.8a1.4 1.4 0 0 1 2.8 0v4.1-2.4a1.4 1.4 0 0 1 2.8 0v4.7c0 4-2.4 6.4-6.2 6.4-2.8 0-4.5-1.3-5.6-3.2L5 14.2a1.5 1.5 0 0 1 2.5-1Z"/></svg><svg class="collect-hand-done" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10.5v9H4v-9h3Zm3 9h7.1a2 2 0 0 0 1.9-1.4l1.5-5.2a2 2 0 0 0-1.9-2.6h-4.1l.6-3a2.5 2.5 0 0 0-.7-2.3L13 3.8l-4 6.1v7.6a2 2 0 0 0 1 2Z"/></svg></button>
       <div class="qty-control">
-        <button type="button" onclick="adjustItem('${x.id}',-1)" aria-label="Quitar una unidad">&minus;</button>
+        <button type="button" onclick="adjustItem('${x.id}',-1)" aria-label="Quitar una unidad"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10h10"/></svg></button>
         <strong>${x.qty}</strong>
-        <button type="button" onclick="adjustItem('${x.id}',1)" aria-label="Agregar una unidad">&#43;</button>
+        <button type="button" onclick="adjustItem('${x.id}',1)" aria-label="Agregar una unidad"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 5v10M5 10h10"/></svg></button>
         <button type="button" class="item-delete" onclick="confirmRemoveItem('${x.id}')" aria-label="Eliminar ${escapeHtml(x.name)} de la lista"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3m-8 0 1 13h8l1-13M10 11v5M14 11v5"/></svg></button>
       </div>
+      <div class="item-price-line"><label><span>Precio</span><span class="item-price-input"><b>Q</b><input type="number" inputmode="decimal" min="0.01" step="0.01" placeholder="0.00" data-list-price="${escapeHtml(x.id)}" value="${escapeHtml(String(listPrices[x.id]??''))}" aria-label="Precio de ${escapeHtml(x.name)}"></span></label><div><span>Subtotal</span><strong>${itemSubtotal(x)===null?'—':`Q${itemSubtotal(x).toFixed(2)}`}</strong><small>${listPurchaseCount(x)} ${listPurchaseCount(x)===1?'presentación':'presentaciones'}</small></div></div>
     </div>`}
 const defaultCategoryOrder=['Frutas y verduras','Panadería','Carnes','Lácteos','Huevos','Despensa','Dulces y snacks','Bebidas','Congelados','Limpieza','Hogar','Cuidado personal','Bebé','Mascotas','Farmacia','Otros'];
 function orderedCartGroups(){
@@ -1189,7 +1207,6 @@ function orderedCartGroups(){
 function render(){
   $('#count').textContent=cart.length;
   $('#cartTitleCount').textContent=cart.length;
-  $('#storesCartCount').textContent=cart.length;
   $('#cats').textContent=new Set(cart.map(x=>x.category)).size;
   $('#state').textContent=cart.length?'Activa':'Lista';
   const groups=orderedCartGroups();
@@ -1209,6 +1226,7 @@ function render(){
     </section>`
   }).join(''):'<div class="cart-empty">Tu carrito está vacío</div>';
   renderManualPriceRows();
+  renderListTotal();
 }
 function escapeHtml(str){return str.replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
 function normalizedIdentityPart(value){return String(value||'').toLocaleLowerCase('es-GT').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,' ').trim()}
@@ -1218,12 +1236,13 @@ function openProductEditor(id,onDone){
   const categoryOptions=[...new Set([...categories.map(([name])=>name),'Otros'])].map(name=>`<option value="${escapeHtml(name)}"${name===item.category?' selected':''}>${escapeHtml(name)}</option>`).join('');
   openDataModal({title:'Detalles del producto',eyebrow:'Tu lista',body:`
     <label class="data-modal-field"><span>Producto</span><input name="name" required maxlength="80" value="${escapeHtml(item.name)}"></label>
-    <div class="data-modal-grid"><label class="data-modal-field"><span>Cantidad a comprar</span><input name="qty" type="number" inputmode="numeric" data-integer-input min="0" step="1" required value="${escapeHtml(String(item.qty))}"></label><label class="data-modal-field"><span>Categoría</span><select name="category">${categoryOptions}</select></label></div>
+    <div class="data-modal-grid"><label class="data-modal-field"><span>Cantidad a comprar</span><input name="qty" type="number" inputmode="numeric" data-integer-input min="1" step="1" required value="${escapeHtml(String(item.qty))}"></label><label class="data-modal-field"><span>Categoría</span><select name="category">${categoryOptions}</select></label></div>
     <label class="data-modal-field"><span>Presentación, tamaño o variedad</span><input name="presentation" required maxlength="100" placeholder="Ej.: Dijon · frasco de 340 g" value="${escapeHtml(item.preferredPresentation==='Por definir'?'':item.preferredPresentation)}"></label>
     <label class="data-modal-field"><span>Unidades dentro de cada presentación</span><input name="packageUnits" type="number" inputmode="numeric" data-integer-input min="1" step="1" placeholder="Ej.: 12 huevos por cartón" value="${item.packageUnits?escapeHtml(String(item.packageUnits)):''}"></label>
     <label class="data-modal-field"><span>Marca preferida</span><input name="brand" maxlength="70" placeholder="Sin preferencia" value="${escapeHtml(item.preferredBrand==='Sin preferencia'?'':item.preferredBrand)}"></label>
+    <label class="data-modal-field"><span>Precio de esta presentación (opcional)</span><input name="price" type="number" inputmode="decimal" min="0.01" step="0.01" placeholder="Puedes ingresarlo después" value="${escapeHtml(String(listPrices[item.id]??''))}"></label>
     <p class="data-modal-help">Describe aquí aquello que debe respetarse al comparar: tipo, contenido, sabor, tamaño o presentación.</p>`,onSubmit:form=>{
-      const previousId=productIdentity(item),previousQty=item.qty;item.name=String(form.get('name')).trim();item.qty=Math.max(0,Math.round(Number(form.get('qty'))||0));if(item.qty>previousQty)item.collected=false;item.category=String(form.get('category')||catFor(item.name));item.preferredPresentation=String(form.get('presentation')).trim();item.preferredBrand=String(form.get('brand')).trim()||'Sin preferencia';const packageUnits=Number(form.get('packageUnits'));if(Number.isFinite(packageUnits)&&packageUnits>=1)item.packageUnits=Math.round(packageUnits);else delete item.packageUnits;
+      const previousId=productIdentity(item),previousQty=item.qty;item.name=String(form.get('name')).trim();item.qty=Math.max(1,Math.round(Number(form.get('qty'))||1));if(item.qty>previousQty)item.collected=false;item.category=String(form.get('category')||catFor(item.name));item.preferredPresentation=String(form.get('presentation')).trim();item.preferredBrand=String(form.get('brand')).trim()||'Sin preferencia';const packageUnits=Number(form.get('packageUnits'));if(Number.isFinite(packageUnits)&&packageUnits>=1)item.packageUnits=Math.round(packageUnits);else delete item.packageUnits;const price=validListPrice(form.get('price'));if(price===null)delete listPrices[item.id];else listPrices[item.id]=price;localStorage.setItem('smartListPrices',JSON.stringify(listPrices));
       if(!item.name||!item.preferredPresentation)return;
       if(previousId!==productIdentity(item)){delete manualStorePrices?.[item.id];localStorage.setItem('smartManualStorePrices',JSON.stringify(manualStorePrices||{}))}
       persist();render();closeDataModal();onDone?.();
@@ -1236,6 +1255,7 @@ $('#list').addEventListener('click',event=>{
   if(categoryToggle){const category=categoryToggle.dataset.categoryToggle;if(collapsedCategories.has(category))collapsedCategories.delete(category);else collapsedCategories.add(category);localStorage.setItem('smartCollapsedCategories',JSON.stringify([...collapsedCategories]));render();return}
   const trigger=event.target.closest('[data-edit-product]');if(trigger)openProductEditor(trigger.dataset.editProduct)
 });
+$('#list').addEventListener('input',event=>{const input=event.target.closest('[data-list-price]');if(!input)return;const parts=String(input.value).split('.');if(parts[1]?.length>2)input.value=`${parts[0]}.${parts[1].slice(0,2)}`;const price=validListPrice(input.value);if(price===null)delete listPrices[input.dataset.listPrice];else listPrices[input.dataset.listPrice]=price;localStorage.setItem('smartListPrices',JSON.stringify(listPrices));const item=cart.find(candidate=>candidate.id===input.dataset.listPrice),row=input.closest('.item');if(item&&row){const subtotal=itemSubtotal(item);row.querySelector('.item-price-line>div strong').textContent=subtotal===null?'—':`Q${subtotal.toFixed(2)}`}renderListTotal()});
 function saveCategoryOrderFromDom(){customCategoryOrder=[...$('#list').querySelectorAll('[data-category-group]')].map(group=>group.dataset.categoryGroup);localStorage.setItem('smartCategoryOrder',JSON.stringify(customCategoryOrder))}
 let draggedCategoryGroup=null,dragPointerId=null;
 $('#list').addEventListener('pointerdown',event=>{const handle=event.target.closest('[data-category-drag]');if(!handle)return;draggedCategoryGroup=handle.closest('[data-category-group]');dragPointerId=event.pointerId;handle.setPointerCapture?.(event.pointerId);draggedCategoryGroup.classList.add('is-dragging');document.body.classList.add('category-dragging');event.preventDefault()});
@@ -1244,13 +1264,13 @@ function finishCategoryDrag(event){if(!draggedCategoryGroup||(event&&event.point
 $('#list').addEventListener('pointerup',finishCategoryDrag);$('#list').addEventListener('pointercancel',finishCategoryDrag);
 $('#list').addEventListener('keydown',event=>{const handle=event.target.closest('[data-category-drag]');if(!handle||!['ArrowUp','ArrowDown'].includes(event.key))return;const group=handle.closest('[data-category-group]'),sibling=event.key==='ArrowUp'?group.previousElementSibling:group.nextElementSibling;if(!sibling)return;event.preventDefault();if(event.key==='ArrowUp')group.parentElement.insertBefore(group,sibling);else group.parentElement.insertBefore(sibling,group);saveCategoryOrderFromDom();render();requestAnimationFrame(()=>$('#list').querySelector(`[data-category-drag="${CSS.escape(group.dataset.categoryGroup)}"]`)?.focus())});
 $('#list').addEventListener('keydown',event=>{if((event.key==='Enter'||event.key===' ')&&event.target.matches('[data-edit-product]')){event.preventDefault();openProductEditor(event.target.dataset.editProduct)}});
-window.removeItem=id=>{cart=cart.filter(x=>x.id!==id);delete manualStorePrices?.[id];localStorage.setItem('smartManualStorePrices',JSON.stringify(manualStorePrices||{}));persist();render()}
+window.removeItem=id=>{cart=cart.filter(x=>x.id!==id);delete listPrices[id];localStorage.setItem('smartListPrices',JSON.stringify(listPrices));delete manualStorePrices?.[id];localStorage.setItem('smartManualStorePrices',JSON.stringify(manualStorePrices||{}));persist();render()}
 window.confirmRemoveItem=id=>{const item=cart.find(candidate=>candidate.id===id);if(!item)return;openDataModal({title:'Eliminar producto',eyebrow:'Tu lista',saveText:'Sí, eliminar',body:`<p class="data-modal-help">Se eliminará <strong>${escapeHtml(item.name)}</strong> de la lista actual. Su historial de precios y compras anteriores se conservará.</p>`,focusSelector:'.data-modal-cancel',onSubmit:()=>{removeItem(id);closeDataModal();$('#status').textContent=`${item.name} se eliminó de la lista.`}})}
 function persist(){localStorage.setItem('smartCart',JSON.stringify(cart))}
 window.adjustItem=(id,change)=>{
   const item=cart.find(x=>x.id===id);
   if(!item)return;
-  item.qty=Math.max(0,item.qty+change);
+  item.qty=Math.max(1,item.qty+change);
   if(change>0)item.collected=false;
   persist();render();
 }
@@ -1262,11 +1282,6 @@ $('#add').onclick=()=>{
 };
 $('#clearText').onclick=()=>{ $('#input').value=''; dictationPrefix=''; finalText=''; sessionFinalResults=[]; };
 $('#clearCart').onclick=()=>openDataModal({title:'Vaciar la carreta',eyebrow:'Confirmación',saveText:'Sí, vaciar',body:'<p class="data-modal-help">Se eliminarán los productos de la lista actual. El historial y las compras registradas se conservarán.</p>',focusSelector:'.data-modal-cancel',onSubmit:()=>{cart=[];persist();render();closeDataModal();$('#status').textContent='La carreta quedó vacía.'}});
-$('#save').onclick=()=>{persist();$('#status').textContent='Lista guardada en este dispositivo.'};
-if($('#analyze')) $('#analyze').onclick=()=>{
-  if(!cart.length){$('#analysisStatus').textContent='Primero agrega artículos a la carreta.';return}
-  $('#analysisStatus').textContent='La lista está preparada. Falta activar la conexión de precios y existencias reales por sucursal.';
-};
 
 // ============================================================
 // MÓDULO DE DICTADO PROVISIONAL PARA PRUEBA LOCAL
@@ -1529,7 +1544,7 @@ function renderProfileIdentity(){
 
   $('#headerAvatarInitials').textContent = initials;
   $('#compareAvatarInitials').textContent = initials;
-  $('#storesAvatarInitials').textContent = initials;
+  $('#howtoAvatarInitials').textContent = initials;
   $('#historyAvatarInitials').textContent = initials;
   $('#frequentAvatarInitials').textContent = initials;
   $('#profileAvatarInitials').textContent = initials;
@@ -1537,8 +1552,8 @@ function renderProfileIdentity(){
   $('#headerAvatarInitials').style.color = color;
   $('#compareAvatarInitials').style.background = background;
   $('#compareAvatarInitials').style.color = color;
-  $('#storesAvatarInitials').style.background = background;
-  $('#storesAvatarInitials').style.color = color;
+  $('#howtoAvatarInitials').style.background = background;
+  $('#howtoAvatarInitials').style.color = color;
   $('#historyAvatarInitials').style.background = background;
   $('#historyAvatarInitials').style.color = color;
   $('#frequentAvatarInitials').style.background = background;
@@ -1547,7 +1562,7 @@ function renderProfileIdentity(){
   $('#profileAvatarPreview').style.color = color;
   $('#profileButton').setAttribute('aria-label', name ? `Abrir perfil de ${name}` : 'Abrir perfil y preferencias');
   $('#compareProfileButton').setAttribute('aria-label', name ? `Abrir perfil de ${name}` : 'Abrir perfil y preferencias');
-  $('#storesProfileButton').setAttribute('aria-label', name ? `Abrir perfil de ${name}` : 'Abrir perfil y preferencias');
+  $('#howtoProfileButton').setAttribute('aria-label', name ? `Abrir perfil de ${name}` : 'Abrir perfil y preferencias');
   $('#historyProfileButton').setAttribute('aria-label', name ? `Abrir perfil de ${name}` : 'Abrir perfil y preferencias');
   $('#frequentProfileButton').setAttribute('aria-label', name ? `Abrir perfil de ${name}` : 'Abrir perfil y preferencias');
   const welcome = $('#welcomeTitle');
@@ -1557,7 +1572,7 @@ function renderProfileIdentity(){
   greetingHand.setAttribute('aria-hidden','true');
   welcome.appendChild(greetingHand);
 
-  for(const id of ['headerAvatarPhoto','compareAvatarPhoto','storesAvatarPhoto','historyAvatarPhoto','frequentAvatarPhoto','profileAvatarPhoto']){
+  for(const id of ['headerAvatarPhoto','compareAvatarPhoto','historyAvatarPhoto','frequentAvatarPhoto','howtoAvatarPhoto','profileAvatarPhoto']){
     const image = $('#'+id);
     image.hidden = !photo;
     if(photo) image.src = photo;
@@ -1565,7 +1580,7 @@ function renderProfileIdentity(){
   }
   $('#headerAvatarInitials').hidden = Boolean(photo);
   $('#compareAvatarInitials').hidden = Boolean(photo);
-  $('#storesAvatarInitials').hidden = Boolean(photo);
+  $('#howtoAvatarInitials').hidden = Boolean(photo);
   $('#historyAvatarInitials').hidden = Boolean(photo);
   $('#frequentAvatarInitials').hidden = Boolean(photo);
   $('#profileAvatarInitials').hidden = Boolean(photo);
@@ -1770,7 +1785,7 @@ function setProfileOpen(open){
   $('#profileBackdrop').hidden = !open;
   $('#profileButton').setAttribute('aria-expanded', String(open));
   $('#compareProfileButton').setAttribute('aria-expanded', String(open));
-  $('#storesProfileButton').setAttribute('aria-expanded', String(open));
+  $('#howtoProfileButton').setAttribute('aria-expanded', String(open));
   $('#historyProfileButton').setAttribute('aria-expanded', String(open));
   $('#frequentProfileButton').setAttribute('aria-expanded', String(open));
   document.body.classList.toggle('profile-open', open);
@@ -1782,18 +1797,18 @@ function setProfileOpen(open){
       if(map && marker) map.setView(marker.getLatLng(), map.getZoom(), {animate:false});
     }, 80);
   }else{
-    const activeProfileButton={compare:$('#compareProfileButton'),stores:$('#storesProfileButton'),history:$('#historyProfileButton'),frequent:$('#frequentProfileButton')}[document.body.dataset.activeTab] || $('#profileButton');
+    const activeProfileButton={compare:$('#compareProfileButton'),history:$('#historyProfileButton'),frequent:$('#frequentProfileButton'),howto:$('#howtoProfileButton')}[document.body.dataset.activeTab] || $('#profileButton');
     activeProfileButton.focus();
   }
 }
 
 $('#profileButton').addEventListener('click', () => setProfileOpen(true));
 $('#compareProfileButton').addEventListener('click', () => setProfileOpen(true));
-$('#storesProfileButton').addEventListener('click', () => setProfileOpen(true));
+$('#howtoProfileButton').addEventListener('click', () => setProfileOpen(true));
 $('#historyProfileButton').addEventListener('click', () => setProfileOpen(true));
 $('#frequentProfileButton').addEventListener('click', () => setProfileOpen(true));
 $('#compareHomeButton').addEventListener('click', () => selectMainTab('list'));
-$('#storesHomeButton').addEventListener('click', () => selectMainTab('list'));
+$('#howtoHomeButton').addEventListener('click', () => selectMainTab('list'));
 $('#historyHomeButton').addEventListener('click', () => selectMainTab('list'));
 $('#frequentHomeButton').addEventListener('click', () => selectMainTab('list'));
 $('#closeProfile').addEventListener('click', () => setProfileOpen(false));
@@ -2215,6 +2230,26 @@ renderProductComparison();
 // --- Productos frecuentes ---
 const frequentGrid = document.querySelector('.frequent-grid');
 function readStoredArray(key){try{const value=JSON.parse(localStorage.getItem(key)||'[]');return Array.isArray(value)?value:[]}catch{return []}}
+function renderListTotal(){
+  const total=cart.reduce((sum,item)=>sum+(itemSubtotal(item)||0),0),missing=cart.filter(item=>validListPrice(listPrices[item.id])===null).length,collected=cart.filter(item=>item.collected).length,ready=cart.length>0&&missing===0&&collected===cart.length;
+  $('#listGrandTotal').textContent=`Q${total.toFixed(2)}`;
+  $('#listCheckoutStatus').textContent=!cart.length?'Tu carrito está vacío':ready?'Lista lista para caja':`${collected} de ${cart.length} recolectados${missing?` · ${missing} sin precio`:''}`;
+  $('#finishPurchase').disabled=!ready;
+  $('#listTotalBar').classList.toggle('is-ready',ready);
+}
+function saveGeneralPrices({purchaseId=null,purchasedAt=new Date().toISOString()}={}){
+  const history=readStoredArray('smartPriceHistory'),day=localDateValue(new Date(purchasedAt));let saved=0,updated=0;
+  for(const item of cart){const price=validListPrice(listPrices[item.id]);if(price===null)continue;const identity=productIdentity(item),same=history.find(record=>historyIdentity(record)===identity&&record.store==='Compra general'&&Number(record.price)===price&&record.capturedAt&&localDateValue(new Date(record.capturedAt))===day),data={productId:item.id,identity,name:item.name,brand:item.preferredBrand||'',presentation:item.preferredPresentation||'',quantity:item.qty,store:'Compra general',price,currency:'GTQ',source:'manual',capturedAt:purchasedAt,purchaseId};if(same){Object.assign(same,data);updated++}else{history.push({id:`price-general-${Date.now()}-${saved}`,...data});saved++}}
+  localStorage.setItem('smartPriceHistory',JSON.stringify(history));renderPriceHistory();return{saved,updated,total:saved+updated};
+}
+$('#saveListPrices').addEventListener('click',()=>{const result=saveGeneralPrices();$('#status').textContent=result.total?`${result.total} precio${result.total===1?'':'s'} guardado${result.total===1?'':'s'} en el historial.`:'Ingresa al menos un precio antes de guardar.'});
+$('#finishPurchase').addEventListener('click',()=>{
+  const readyItems=cart.filter(item=>item.collected&&validListPrice(listPrices[item.id])!==null);if(!readyItems.length)return;
+  openDataModal({title:'Finalizar compra',eyebrow:'Lista lista para caja',saveText:'Registrar compra',body:`<p class="data-modal-help">Confirma los productos que pasarán a caja. La compra alimentará HISTORIAL y FRECUENTES.</p>${readyItems.map(item=>`<label class="data-modal-field purchase-choice"><input type="checkbox" name="purchaseItem" value="${escapeHtml(item.id)}" checked><span>${escapeHtml(item.name)} · ${escapeHtml(item.preferredPresentation)} · Q${itemSubtotal(item).toFixed(2)}</span></label>`).join('')}<label class="data-modal-field"><span>Fecha de compra</span><input type="date" name="date" required value="${localDateValue()}"></label>`,focusSelector:'input[type="checkbox"]',onSubmit:form=>{
+    const chosen=new Set(form.getAll('purchaseItem').map(String));if(!chosen.size){modalBody.insertAdjacentHTML('beforeend','<p class="data-modal-error">Selecciona al menos un producto.</p>');return}
+    const purchaseId=`purchase-${Date.now()}`,purchasedAt=`${form.get('date')}T12:00:00.000Z`,items=readyItems.filter(item=>chosen.has(item.id)).map(item=>({...item,identity:productIdentity(item),unitPrice:validListPrice(listPrices[item.id]),packages:listPurchaseCount(item)})),purchases=readStoredArray('smartPurchases');purchases.push({id:purchaseId,store:'Compra general',purchasedAt,items,total:items.reduce((sum,item)=>sum+item.unitPrice*item.packages,0)});localStorage.setItem('smartPurchases',JSON.stringify(purchases));saveGeneralPrices({purchaseId,purchasedAt});renderFrequentProducts();closeDataModal();$('#status').textContent=`Compra registrada con ${items.length} producto${items.length===1?'':'s'}.`;
+  }});
+});
 function frequentImage(name){const value=normalizedIdentityPart(name);if(value.includes('leche'))return'assets/frequent-products/milk.png?v=2';if(value.includes('huevo'))return'assets/frequent-products/eggs.png?v=3';if(value.includes('aguacate'))return'assets/frequent-products/avocado.png';if(value.includes('detergente'))return'assets/frequent-products/detergent.png';if(value.includes('galleta'))return'assets/frequent-products/cookies.png';if(value.includes('papel'))return'assets/frequent-products/toilet-paper.png?v=3';return'assets/branding/comprando-grocerias-icon.svg'}
 function getFrequentProducts(){
   const grouped=new Map();
@@ -2286,7 +2321,7 @@ function calculateManualTotals(){
     card.classList.toggle('has-award',hasAward);
   }
 }
-$('#manualPriceList').addEventListener('input',event=>{const input=event.target.closest('[data-manual-item]');if(!input)return;const parts=String(input.value).split('.');if(parts[1]?.length>2)input.value=`${parts[0]}.${parts[1].slice(0,2)}`;manualStorePrices[input.dataset.manualItem]||={};if(input.value==='')delete manualStorePrices[input.dataset.manualItem][input.dataset.manualStore];else manualStorePrices[input.dataset.manualItem][input.dataset.manualStore]=input.value;localStorage.setItem('smartManualStorePrices',JSON.stringify(manualStorePrices));calculateManualTotals();$('#manualSaveStatus').textContent=''});
+if($('#manualPriceList'))$('#manualPriceList').addEventListener('input',event=>{const input=event.target.closest('[data-manual-item]');if(!input)return;const parts=String(input.value).split('.');if(parts[1]?.length>2)input.value=`${parts[0]}.${parts[1].slice(0,2)}`;manualStorePrices[input.dataset.manualItem]||={};if(input.value==='')delete manualStorePrices[input.dataset.manualItem][input.dataset.manualStore];else manualStorePrices[input.dataset.manualItem][input.dataset.manualStore]=input.value;localStorage.setItem('smartManualStorePrices',JSON.stringify(manualStorePrices));calculateManualTotals();$('#manualSaveStatus').textContent=''});
 function storeLabel(store){return store==='walmart'?'Walmart':'La Torre'}
 function localDateValue(date=new Date()){
   const year=date.getFullYear(),month=String(date.getMonth()+1).padStart(2,'0'),day=String(date.getDate()).padStart(2,'0');
@@ -2297,7 +2332,7 @@ function saveCurrentPrices({purchaseId=null}={}){
   cart.filter(item=>(Number(item.qty)||0)>0).forEach(item=>['walmart','latorre'].forEach(store=>{const price=validManualPrice(manualPriceValue(item.id,store));if(price===null)return;const identity=productIdentity(item),label=storeLabel(store);const same=history.find(record=>(record.identity||[record.name,record.brand,record.presentation].map(normalizedIdentityPart).join('|'))===identity&&record.store===label&&record.price===price&&record.capturedAt&&localDateValue(new Date(record.capturedAt))===day);const data={productId:item.id,identity,name:item.name,brand:item.preferredBrand||'',presentation:item.preferredPresentation||'',quantity:item.qty,store:label,price,currency:'GTQ',source:'manual',capturedAt,purchaseId};if(same){Object.assign(same,data);updated++}else{history.push({id:`price-${Date.now()}-${saved}`,...data});saved++}}));
   localStorage.setItem('smartPriceHistory',JSON.stringify(history));renderPriceHistory();return{saved,updated,total:saved+updated};
 }
-$('#saveManualPrices').addEventListener('click',()=>{const result=saveCurrentPrices();$('#manualSaveStatus').textContent=result.total?`${result.total} precio${result.total===1?'':'s'} confirmado${result.total===1?'':'s'}; no se duplicaron registros iguales de hoy.`:'Ingresa al menos un precio antes de guardar.'});
+if($('#saveManualPrices'))$('#saveManualPrices').addEventListener('click',()=>{const result=saveCurrentPrices();$('#manualSaveStatus').textContent=result.total?`${result.total} precio${result.total===1?'':'s'} confirmado${result.total===1?'':'s'}; no se duplicaron registros iguales de hoy.`:'Ingresa al menos un precio antes de guardar.'});
 
 function openPurchaseModal(store){
   const priced=cart.filter(item=>(Number(item.qty)||0)>0&&validManualPrice(manualPriceValue(item.id,store))!==null);if(!priced.length){$('#manualSaveStatus').textContent=`Ingresa precios de ${storeLabel(store)} para productos con cantidad mayor que cero antes de registrar la compra.`;return}
@@ -2306,18 +2341,18 @@ function openPurchaseModal(store){
     const purchaseId=`purchase-${Date.now()}`,purchasedAt=`${form.get('date')}T12:00:00.000Z`;const items=priced.filter(item=>chosen.has(item.id)).map(item=>({...item,identity:productIdentity(item),unitPrice:validManualPrice(manualPriceValue(item.id,store)),packages:manualPurchaseCount(item)}));const purchases=readStoredArray('smartPurchases');purchases.push({id:purchaseId,store:storeLabel(store),purchasedAt,items,total:items.reduce((sum,item)=>sum+item.unitPrice*item.packages,0)});localStorage.setItem('smartPurchases',JSON.stringify(purchases));saveCurrentPrices({purchaseId});renderFrequentProducts();$('#manualSaveStatus').textContent=`Compra registrada en ${storeLabel(store)} con ${items.length} producto${items.length===1?'':'s'}.`;closeDataModal();
   }});
 }
-for(const store of ['walmart','latorre']){const card=$(`#${store}TotalCard`);card.tabIndex=0;card.setAttribute('role','button');card.setAttribute('aria-label',`Registrar compra en ${storeLabel(store)}`);card.addEventListener('click',()=>openPurchaseModal(store));card.addEventListener('keydown',event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();openPurchaseModal(store)}})}
+for(const store of ['walmart','latorre']){const card=$(`#${store}TotalCard`);if(!card)continue;card.tabIndex=0;card.setAttribute('role','button');card.setAttribute('aria-label',`Registrar compra en ${storeLabel(store)}`);card.addEventListener('click',()=>openPurchaseModal(store));card.addEventListener('keydown',event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();openPurchaseModal(store)}})}
 
 let historyProductFilter='',historyStoreFilter='Todas',historyExpanded=false;
 function historyIdentity(record){return record.identity||[record.name,record.brand,record.presentation].map(normalizedIdentityPart).join('|')}
 function historyDate(value){return new Intl.DateTimeFormat('es-GT',{day:'2-digit',month:'short',year:'numeric'}).format(new Date(value))}
 function renderPriceHistory(){
   const container=document.querySelector('.history-card');if(!container)return;const all=readStoredArray('smartPriceHistory').filter(record=>Number.isFinite(Number(record.price))&&record.name&&record.store).sort((a,b)=>new Date(b.capturedAt)-new Date(a.capturedAt));
-  if(!all.length){container.innerHTML='<div class="history-empty-real"><strong>Aún no hay historial de precios</strong>Ingresa precios en Tiendas y presiona “Guardar precios en el historial”.</div>';return}
+  if(!all.length){container.innerHTML='<div class="history-empty-real"><strong>Aún no hay historial de precios</strong>Ingresa precios en LISTA y presiona “Guardar precios”.</div>';return}
   const identities=[...new Map(all.map(record=>[historyIdentity(record),record])).entries()];if(!historyProductFilter||!identities.some(([id])=>id===historyProductFilter))historyProductFilter=historyIdentity(all[0]);const selectedRecord=all.find(record=>historyIdentity(record)===historyProductFilter);const filtered=all.filter(record=>historyIdentity(record)===historyProductFilter&&(historyStoreFilter==='Todas'||record.store===historyStoreFilter));const points=[...filtered].reverse().slice(-7);const prices=points.map(record=>Number(record.price));const min=Math.min(...prices),max=Math.max(...prices),range=max-min||1;const coords=points.map((record,index)=>`${28+(248*(points.length===1 ? .5 : index/(points.length-1)))} ${96-70*((Number(record.price)-min)/range)}`);const line=coords.length?`M${coords.join(' L')}`:'';
   const grouped=[...new Map(all.map(record=>[`${historyIdentity(record)}|${record.store}`,[]])).entries()].map(([key])=>{const rows=all.filter(record=>`${historyIdentity(record)}|${record.store}`===key);return{current:rows[0],previous:rows[1]}});const visible=grouped.slice(0,historyExpanded?grouped.length:3);
   container.innerHTML=`<div class="history-filter"><button type="button" id="historyProductButton"><span>Producto: <strong>${escapeHtml(selectedRecord?.name||'Todos')}</strong></span><svg viewBox="0 0 20 20"><path d="m6 8 4 4 4-4"/></svg></button><button type="button" id="historyStoreButton"><span>Tienda: <strong>${escapeHtml(historyStoreFilter)}</strong></span><svg viewBox="0 0 20 20"><path d="m6 8 4 4 4-4"/></svg></button><button type="button" class="history-filter-settings" id="historyResetButton" aria-label="Restablecer filtros"><svg viewBox="0 0 24 24"><path d="M4 6h10M18 6h2M14 4v4M4 12h3M11 12h9M7 10v4M4 18h10M18 18h2M14 16v4"/></svg></button></div><div class="history-chart-card"><div class="history-chart-heading"><strong>Tendencia de precios</strong><span>(${points.length} registro${points.length===1?'':'s'})</span></div><div class="history-chart-layout"><div class="history-chart-plot"><span class="history-axis history-axis-16">Q${max.toFixed(2)}</span><span class="history-axis history-axis-10">Q${min.toFixed(2)}</span><svg viewBox="0 0 282 126" role="img" aria-label="Tendencia real de precios"><path class="history-grid-line" d="M28 16H276M28 46H276M28 76H276M28 106H276"/><path class="history-line" d="${line}"/><g class="history-points">${coords.map(point=>{const[x,y]=point.split(' ');return`<circle cx="${x}" cy="${y}" r="4"/>`}).join('')}</g></svg><div class="history-days">${points.map(record=>`<span>${new Intl.DateTimeFormat('es-GT',{day:'2-digit',month:'short'}).format(new Date(record.capturedAt))}</span>`).join('')}</div></div><div class="history-current-price"><small>Precio actual</small><strong>${filtered[0]?`Q${Number(filtered[0].price).toFixed(2)}`:'—'}</strong><span>${escapeHtml(filtered[0]?.store||historyStoreFilter)}</span></div></div></div><div class="history-recent-title">Precios recientes</div><div class="history-recent-list">${visible.map(({current,previous})=>{const change=previous?Number(current.price)-Number(previous.price):0,pct=previous&&Number(previous.price)?change/Number(previous.price)*100:0;return`<article class="history-row"><img src="${frequentImage(current.name)}" alt="${escapeHtml(current.name)}"><div class="history-product"><strong>${escapeHtml(current.name)}</strong><span>${escapeHtml(current.presentation||'Sin presentación')}</span><b>${escapeHtml(current.store)}</b></div><div class="history-prices"><small>${historyDate(current.capturedAt)}</small><strong>Q${Number(current.price).toFixed(2)}</strong>${previous?`<small>Anterior</small><span>Q${Number(previous.price).toFixed(2)}</span>`:''}</div><div class="history-change ${change>0?'history-change-up':change<0?'history-change-down':''}"><strong>${change===0?'—':`${change>0?'↑':'↓'} ${change>0?'+':''}Q${change.toFixed(2)}`}</strong><span>${previous?`${pct>0?'+':''}${pct.toFixed(1)}%`:'Primer precio'}</span></div></article>`}).join('')}</div>${grouped.length>3?`<button type="button" class="history-more" id="historyMoreButton">${historyExpanded?'Ver menos':'Ver más historial'} <span>›</span></button>`:''}`;
-  $('#historyProductButton').onclick=()=>openDataModal({title:'Filtrar por producto',eyebrow:'Historial',body:`<label class="data-modal-field"><span>Producto</span><select name="product">${identities.map(([id,record])=>`<option value="${escapeHtml(id)}"${id===historyProductFilter?' selected':''}>${escapeHtml(record.name)} · ${escapeHtml(record.presentation||'')}</option>`).join('')}</select></label>`,onSubmit:form=>{historyProductFilter=String(form.get('product'));closeDataModal();renderPriceHistory()}});$('#historyStoreButton').onclick=()=>openDataModal({title:'Filtrar por tienda',eyebrow:'Historial',body:`<label class="data-modal-field"><span>Tienda</span><select name="store">${['Todas','Walmart','La Torre'].map(store=>`<option${store===historyStoreFilter?' selected':''}>${store}</option>`).join('')}</select></label>`,onSubmit:form=>{historyStoreFilter=String(form.get('store'));closeDataModal();renderPriceHistory()}});$('#historyResetButton').onclick=()=>{historyStoreFilter='Todas';historyProductFilter=historyIdentity(all[0]);renderPriceHistory()};if($('#historyMoreButton'))$('#historyMoreButton').onclick=()=>{historyExpanded=!historyExpanded;renderPriceHistory()};
+  const historySources=['Todas',...new Set(all.map(record=>record.store))];$('#historyProductButton').onclick=()=>openDataModal({title:'Filtrar por producto',eyebrow:'Historial',body:`<label class="data-modal-field"><span>Producto</span><select name="product">${identities.map(([id,record])=>`<option value="${escapeHtml(id)}"${id===historyProductFilter?' selected':''}>${escapeHtml(record.name)} · ${escapeHtml(record.presentation||'')}</option>`).join('')}</select></label>`,onSubmit:form=>{historyProductFilter=String(form.get('product'));closeDataModal();renderPriceHistory()}});$('#historyStoreButton').onclick=()=>openDataModal({title:'Filtrar por origen',eyebrow:'Historial',body:`<label class="data-modal-field"><span>Origen</span><select name="store">${historySources.map(store=>`<option${store===historyStoreFilter?' selected':''}>${escapeHtml(store)}</option>`).join('')}</select></label>`,onSubmit:form=>{historyStoreFilter=String(form.get('store'));closeDataModal();renderPriceHistory()}});$('#historyResetButton').onclick=()=>{historyStoreFilter='Todas';historyProductFilter=historyIdentity(all[0]);renderPriceHistory()};if($('#historyMoreButton'))$('#historyMoreButton').onclick=()=>{historyExpanded=!historyExpanded;renderPriceHistory()};
 }
 renderPriceHistory();
 

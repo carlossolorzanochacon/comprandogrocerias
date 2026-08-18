@@ -1,8 +1,8 @@
-const CACHE_VERSION='comprando-grocerias-v4';
+const CACHE_VERSION='comprando-grocerias-v8';
 const APP_SHELL=[
   './',
   './index.html',
-  './selected-design.css?v=real-test-fixes-3',
+  './selected-design.css?v=unified-list-4',
   './manifest.webmanifest',
   './assets/branding/comprando-grocerias-icon.svg',
   './assets/branding/comprando-grocerias-192.png',
