@@ -658,7 +658,7 @@ footer{display:none}
   .frequent-card{padding:14px 10px}.frequent-card>img{width:68px;height:68px}
 }
 </style>
-<link rel="stylesheet" href="selected-design.css?v=unified-list-6">
+<link rel="stylesheet" href="selected-design.css?v=unified-list-7">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="assets/branding/comprando-grocerias-icon.svg" type="image/svg+xml">
 </head>
@@ -708,6 +708,7 @@ footer{display:none}
         </div>
         <button class="mic" id="mic">Dictar artículos</button>
         <div class="dictation-live-status" id="dictationLiveStatus" role="status" aria-live="polite">Pulsa el botón y comienza a hablar.</div>
+        <code class="dictation-technical-status" id="dictationTechnicalStatus" hidden></code>
       </div>
       <textarea id="input" placeholder="Ej.: 2 leches descremadas, cereal Corn Flakes grande, 6 aguacates, detergente Ariel 3 kg..."></textarea>
       <div class="actions entry-actions">
@@ -1297,6 +1298,7 @@ let finalText = '';
 let dictationPrefix = '';
 let sessionFinalResults = [];
 let recognitionStartTimer = null;
+let dictationTechnicalTimer = null;
 
 function normalizeSpeechText(text){
   return (text || '').replace(/\s+/g,' ').trim();
@@ -1363,6 +1365,54 @@ function showPermissionHelp(show=true){
   if(panel) panel.classList.toggle('show', show);
 }
 
+function showDictationTechnicalError(error){
+  const technical=$('#dictationTechnicalStatus');if(!technical)return;
+  clearTimeout(dictationTechnicalTimer);
+  const name=String(error?.name||'Error'),message=String(error?.message||error||'Sin detalle');
+  technical.textContent=`${name}: ${message}`;
+  technical.hidden=false;
+  dictationTechnicalTimer=setTimeout(()=>{technical.hidden=true},12000);
+}
+
+function voiceEnvironmentDiagnostics(){
+  const policy=document.permissionsPolicy||document.featurePolicy;
+  let microphonePolicy=true;
+  try{if(policy?.allowsFeature)microphonePolicy=policy.allowsFeature('microphone')}catch{}
+  let inIframe=false;
+  try{inIframe=window.self!==window.top}catch{inIframe=true}
+  return {
+    isSecureContext:window.isSecureContext,
+    protocol:location.protocol,
+    hostname:location.hostname,
+    mediaDevices:!!navigator.mediaDevices,
+    getUserMedia:!!navigator.mediaDevices?.getUserMedia,
+    SpeechRecognition:!!(window.SpeechRecognition||window.webkitSpeechRecognition),
+    inIframe,
+    microphonePolicy
+  };
+}
+
+async function microphonePermissionState(){
+  try{return (await navigator.permissions?.query({name:'microphone'}))?.state||'unknown'}catch{return'unsupported'}
+}
+
+function microphoneErrorMessage(error,diagnostics,permissionState){
+  const name=String(error?.name||'Error'),localHost=['localhost','127.0.0.1','::1'].includes(diagnostics.hostname);
+  if(!diagnostics.isSecureContext||diagnostics.protocol==='http:'&&!localHost)return'El micrófono requiere una conexión HTTPS segura.';
+  if(!diagnostics.mediaDevices)return'Este navegador no expone navigator.mediaDevices.';
+  if(!diagnostics.getUserMedia)return'Este navegador no ofrece navigator.mediaDevices.getUserMedia().';
+  if(diagnostics.inIframe&&!diagnostics.microphonePolicy)return'La aplicación está dentro de un iframe que no permite usar el micrófono. Debe incluir allow="microphone".';
+  if(!diagnostics.microphonePolicy)return'La política de permisos de la página bloquea el micrófono.';
+  const messages={
+    NotAllowedError:permissionState==='denied'?'El permiso de micrófono está denegado específicamente para este sitio.':'Chrome no concedió el acceso al micrófono. Puede haberse rechazado o cerrado la solicitud.',
+    NotFoundError:'Android no encontró un dispositivo de micrófono disponible.',
+    NotReadableError:'Android encontró el micrófono, pero no pudo abrirlo. Puede estar ocupado o existir un problema del dispositivo.',
+    SecurityError:'El navegador rechazó el acceso por una restricción de seguridad del contexto o de la página.',
+    AbortError:'Android interrumpió la apertura del micrófono antes de completarla.'
+  };
+  return messages[name]||`No fue posible abrir el micrófono (${name}).`;
+}
+
 function stopDictationUI(){
   clearTimeout(recognitionStartTimer);
   recognitionStartTimer=null;
@@ -1373,16 +1423,26 @@ function stopDictationUI(){
 }
 
 async function requestMicPermissionIfPossible(){
-  if(location.protocol!=='https:'||!navigator.mediaDevices?.getUserMedia)return true;
+  const diagnostics=voiceEnvironmentDiagnostics();
+  const permissionStatePromise=microphonePermissionState();
+  console.log('[DICTADO] diagnóstico previo',diagnostics);
+  if(!diagnostics.isSecureContext){const error=new DOMException('La página no se ejecuta en un contexto seguro.','SecurityError');setDictationStatus(microphoneErrorMessage(error,diagnostics,'unknown'),'error');showDictationTechnicalError(error);return false}
+  if(!diagnostics.mediaDevices){const error=new DOMException('navigator.mediaDevices no está disponible.','NotSupportedError');setDictationStatus(microphoneErrorMessage(error,diagnostics,'unknown'),'error');showDictationTechnicalError(error);return false}
+  if(!diagnostics.getUserMedia){const error=new DOMException('navigator.mediaDevices.getUserMedia no está disponible.','NotSupportedError');setDictationStatus(microphoneErrorMessage(error,diagnostics,'unknown'),'error');showDictationTechnicalError(error);return false}
+  if(!diagnostics.microphonePolicy){const error=new DOMException(diagnostics.inIframe?'El iframe no permite microphone.':'Permissions-Policy bloquea microphone.','SecurityError');setDictationStatus(microphoneErrorMessage(error,diagnostics,'unknown'),'error');showDictationTechnicalError(error);return false}
   try{
     const stream=await navigator.mediaDevices.getUserMedia({audio:true});
     stream.getTracks().forEach(track=>track.stop());
     showPermissionHelp(false);
+    $('#dictationTechnicalStatus').hidden=true;
+    console.log('[DICTADO] getUserMedia correcto; pistas detenidas:',stream.getTracks().length);
     return true;
   }catch(error){
-    const blocked=error?.name==='NotAllowedError'||error?.name==='SecurityError';
-    setDictationStatus(blocked?'El micrófono está bloqueado para este sitio. Abre los permisos del sitio y selecciona “Permitir”.':'No fue posible abrir el micrófono. Revisa que ninguna otra aplicación lo esté utilizando.','error');
-    showPermissionHelp(true);
+    const permissionState=await permissionStatePromise;
+    console.error('[DICTADO] getUserMedia falló',error);
+    setDictationStatus(microphoneErrorMessage(error,diagnostics,permissionState),'error');
+    showDictationTechnicalError(error);
+    showPermissionHelp(['NotAllowedError','SecurityError'].includes(error?.name));
     return false;
   }
 }
@@ -1444,7 +1504,10 @@ function initRecognition(){
       'aborted': 'El dictado fue detenido.',
       'language-not-supported': 'El navegador no admite español de Guatemala; probaremos con español general al publicar.'
     };
+    const technicalError=new Error(e.message||code);technicalError.name=`SpeechRecognition:${code}`;
+    console.error('[DICTADO] SpeechRecognition falló',{error:code,message:e.message||'',event:e});
     setDictationStatus(messages[code] || `Error de dictado: ${code}`, code === 'aborted' ? 'warn' : 'error');
+    if(code!=='aborted')showDictationTechnicalError(technicalError);
     if(['audio-capture','not-allowed','service-not-allowed'].includes(code)){
       showPermissionHelp(true);
     }else{
@@ -1467,12 +1530,14 @@ if (window.isSecureContext && location.protocol === 'https:') {
   showPermissionHelp(false);
 }
 
-// Diagnóstico visible para la prueba local
-(function(){
-  const protocol = location.protocol || 'desconocido';
-  const secure = window.isSecureContext ? 'sí' : 'no';
-  console.log('[DICTADO] protocolo:', protocol, 'secureContext:', secure, 'SpeechRecognition:', !!SR);
-})();
+console.log({
+  isSecureContext:window.isSecureContext,
+  protocol:location.protocol,
+  hostname:location.hostname,
+  mediaDevices:!!navigator.mediaDevices,
+  getUserMedia:!!navigator.mediaDevices?.getUserMedia,
+  SpeechRecognition:!!(window.SpeechRecognition||window.webkitSpeechRecognition)
+});
 
 
 $('#mic').onclick = async () => {
