@@ -658,7 +658,7 @@ footer{display:none}
   .frequent-card{padding:14px 10px}.frequent-card>img{width:68px;height:68px}
 }
 </style>
-<link rel="stylesheet" href="selected-design.css?v=unified-list-9">
+<link rel="stylesheet" href="selected-design.css?v=unified-list-10">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="assets/branding/comprando-grocerias-icon.svg" type="image/svg+xml">
 </head>
@@ -854,6 +854,14 @@ footer{display:none}
       <div class="comparison-results" id="comparisonResults"></div>
       <p class="normalization-note"><span aria-hidden="true">i</span> <span id="normalizationNoteText">Precio por gramo normalizado para presentaciones diferentes.</span></p>
       <div class="comparison-toast" id="comparisonToast" role="status" aria-live="polite"></div>
+      <section class="ocr-test-panel" id="ocrTestPanel" data-state="idle" aria-live="polite">
+        <div class="ocr-test-heading"><strong>Control OCR · etapa de pruebas</strong><span id="ocrTestState">Esperando fotografía</span></div>
+        <div class="ocr-test-values"><span><b>Presentación</b><em id="ocrTestPresentation">—</em></span><span><b>Precio</b><em id="ocrTestPrice">—</em></span></div>
+        <div class="ocr-test-reason" id="ocrTestReason">Aquí aparecerá exactamente lo que logre interpretar el lector.</div>
+        <details class="ocr-test-raw" open><summary>Texto bruto capturado por OCR</summary><code id="ocrTestRaw">Aún no se ha procesado una etiqueta.</code></details>
+        <button type="button" id="openOcrCorrection" hidden>Corregir o completar datos</button>
+        <small>Diagnóstico local: la fotografía y el texto no se transmiten ni se guardan.</small>
+      </section>
     </section>
   </div>
 
@@ -2025,6 +2033,7 @@ readStoredArray('smartComparisonProductOverrides').forEach(override=>{const prod
 let comparedProductIds = JSON.parse(localStorage.getItem('smartComparedProductsV2') || 'null') || [];
 const comparisonPhotoPreviews = new Map();
 let comparisonPendingPreview='',comparisonPendingFile=null,isAnalyzingComparisonPhoto=false;
+let lastComparisonDiagnostic=null;
 let comparisonContext=null;
 try{comparisonContext=JSON.parse(localStorage.getItem('smartComparisonContext')||'null')}catch{comparisonContext=null}
 if(!comparisonContext||typeof comparisonContext!=='object'||!comparisonContext.product)comparisonContext=null;
@@ -2163,6 +2172,21 @@ function parseComparisonLabel(text){
   return {name,brand:/MARCA\s+ORO/.test(normalized) ? 'Marca Oro' : 'Marca detectada',amount,unit,price,display,rawText:normalized};
 }
 
+function renderOcrTestPanel({state='idle',reason='',ocrText='',parsed=null,file=null}={}){
+  const panel=$('#ocrTestPanel');if(!panel)return;
+  const presentation=parsed&&Number.isFinite(parsed.amount)&&parsed.amount>0?(parsed.display||`${parsed.amount} ${parsed.unit}`):'';
+  const price=parsed&&Number.isFinite(parsed.price)&&parsed.price>0?`Q${Number(parsed.price).toFixed(2)}`:'';
+  const labels={idle:'Esperando fotografía',processing:'Procesando…',success:'Lectura completada',warning:'Necesita revisión',error:'Error de lectura'};
+  panel.dataset.state=state;
+  $('#ocrTestState').textContent=labels[state]||state;
+  $('#ocrTestPresentation').textContent=presentation||'No reconocida';
+  $('#ocrTestPrice').textContent=price||'No reconocido';
+  $('#ocrTestReason').textContent=reason||'Aquí aparecerá exactamente lo que logre interpretar el lector.';
+  $('#ocrTestRaw').textContent=String(ocrText||'').trim()||'El OCR no devolvió texto legible.';
+  lastComparisonDiagnostic=file?{file,diagnostic:{ocrText:String(ocrText||''),parsed,reason}}:null;
+  $('#openOcrCorrection').hidden=!lastComparisonDiagnostic;
+}
+
 function integrateScannedComparisonProduct(data,file){
   const scannedMeasure=normalizedMeasure({amount:data.amount,unit:data.unit});
   if(comparisonContext&&normalizedIdentityPart(data.name)!==normalizedIdentityPart(comparisonContextName())){$('#comparisonToast').textContent=`No se agregó: esta comparación es únicamente de ${comparisonContextName()}.`;return false}
@@ -2196,6 +2220,7 @@ async function analyzeComparisonPhoto(file){
   $('#capturePriceLabel .camera-copy strong').textContent='Procesando etiqueta…';
   setPendingComparisonPhoto(file);
   $('#comparisonToast').textContent = 'Analizando precio y presentación de la etiqueta…';
+  renderOcrTestPanel({state:'processing',reason:'El lector está examinando la fotografía.',file:null});
   try{
     if(!window.Tesseract) throw new Error('OCR no disponible');
     const result = await Tesseract.recognize(file,'eng',{
@@ -2220,11 +2245,15 @@ async function analyzeComparisonPhoto(file){
     if(!Number.isFinite(parsed.amount)||parsed.amount<=0)missing.push('presentación/peso');
     if(!Number.isFinite(parsed.price)||parsed.price<=0)missing.push('precio');
     if(missing.length){const error=new Error(`No se reconoció ${missing.join(' ni ')}`);error.ocrText=ocrText;error.parsed=parsed;throw error}
-    if(integrateScannedComparisonProduct(parsed,file)===false)openComparisonCorrection(file,{ocrText,parsed,reason:'Los datos se leyeron, pero no son compatibles con la comparación actual.'});
+    if(integrateScannedComparisonProduct(parsed,file)===false){
+      renderOcrTestPanel({state:'warning',reason:'Los datos se leyeron, pero no son compatibles con la comparación actual.',ocrText,parsed,file});
+    }else{
+      renderOcrTestPanel({state:'success',reason:'Presentación y precio reconocidos; la etiqueta fue agregada al comparador.',ocrText,parsed});
+    }
   }catch(error){
-    $('#comparisonToast').textContent = `${error.message}. Confirma manualmente los datos leídos.`;
+    $('#comparisonToast').textContent = `${error.message}. Revisa el panel de control OCR.`;
     console.warn('[COMPARAR OCR] Se requiere confirmación',{error:error.message,text:error.ocrText||'',parsed:error.parsed||null});
-    openComparisonCorrection(file,{ocrText:error.ocrText||'',parsed:error.parsed||null,reason:error.message});
+    renderOcrTestPanel({state:error.ocrText?'warning':'error',reason:error.message,ocrText:error.ocrText||'',parsed:error.parsed||null,file});
   }finally{
     isAnalyzingComparisonPhoto=false;
     $('#capturePriceLabel').disabled=false;
@@ -2235,6 +2264,10 @@ async function analyzeComparisonPhoto(file){
 function openComparisonCorrection(file,diagnostic={}){
   openManualComparison(file,diagnostic);
 }
+
+$('#openOcrCorrection').addEventListener('click',()=>{
+  if(lastComparisonDiagnostic)openComparisonCorrection(lastComparisonDiagnostic.file,lastComparisonDiagnostic.diagnostic);
+});
 
 function openComparisonEditor(product){
   const presentation=product.display||`${product.amount} ${product.unit}`;
