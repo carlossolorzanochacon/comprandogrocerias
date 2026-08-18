@@ -658,7 +658,7 @@ footer{display:none}
   .frequent-card{padding:14px 10px}.frequent-card>img{width:68px;height:68px}
 }
 </style>
-<link rel="stylesheet" href="selected-design.css?v=unified-list-5">
+<link rel="stylesheet" href="selected-design.css?v=unified-list-6">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="assets/branding/comprando-grocerias-icon.svg" type="image/svg+xml">
 </head>
@@ -1296,6 +1296,7 @@ let isListening = false;
 let finalText = '';
 let dictationPrefix = '';
 let sessionFinalResults = [];
+let recognitionStartTimer = null;
 
 function normalizeSpeechText(text){
   return (text || '').replace(/\s+/g,' ').trim();
@@ -1363,9 +1364,12 @@ function showPermissionHelp(show=true){
 }
 
 function stopDictationUI(){
+  clearTimeout(recognitionStartTimer);
+  recognitionStartTimer=null;
   isListening = false;
+  $('#mic').disabled=false;
   $('#mic').classList.remove('on');
-  $('#mic').textContent = '🎙 Dictar';
+  $('#mic').textContent = 'Dictar artículos';
 }
 
 async function requestMicPermissionIfPossible(){
@@ -1400,6 +1404,8 @@ function initRecognition(){
   rec.maxAlternatives = 1;
 
   rec.onstart = () => {
+    clearTimeout(recognitionStartTimer);
+    recognitionStartTimer=null;
     showPermissionHelp(false);
     isListening = true;
     $('#mic').classList.add('on');
@@ -1426,6 +1432,8 @@ function initRecognition(){
   };
 
   rec.onerror = e => {
+    clearTimeout(recognitionStartTimer);
+    recognitionStartTimer=null;
     const code = e.error || 'desconocido';
     const messages = {
       'not-allowed': 'El micrófono fue bloqueado para este sitio. En Chrome abre los permisos del sitio y selecciona “Permitir”.',
@@ -1476,8 +1484,11 @@ $('#mic').onclick = async () => {
   }
 
   setDictationStatus('Preparando el micrófono…','normal');
+  $('#mic').disabled=true;
+  $('#mic').textContent='Preparando micrófono…';
   const allowed = await requestMicPermissionIfPossible();
-  if(!allowed) return;
+  $('#mic').disabled=false;
+  if(!allowed){$('#mic').textContent='Reintentar dictado';return}
 
   dictationPrefix = $('#input').value.replace(/\s+/g,' ').trim();
   finalText = '';
@@ -1485,12 +1496,28 @@ $('#mic').onclick = async () => {
 
   try{
     rec.start();
+    recognitionStartTimer=setTimeout(()=>{
+      if(isListening)return;
+      try{rec.abort()}catch{}
+      $('#mic').disabled=false;
+      $('#mic').textContent='Reintentar dictado';
+      setDictationStatus('Chrome no inició el reconocimiento de voz. Abre esta dirección directamente en Chrome y revisa el permiso de micrófono del sitio.','error');
+      showPermissionHelp(true);
+    },6000);
   }catch(err){
     // Algunos navegadores lanzan InvalidStateError si quedó una sesión previa abierta.
     try{ rec.abort(); }catch(e){}
     setTimeout(() => {
       try{
         rec.start();
+        recognitionStartTimer=setTimeout(()=>{
+          if(isListening)return;
+          try{rec.abort()}catch{}
+          $('#mic').disabled=false;
+          $('#mic').textContent='Reintentar dictado';
+          setDictationStatus('Chrome no inició el reconocimiento de voz. Revisa el permiso de micrófono del sitio.','error');
+          showPermissionHelp(true);
+        },6000);
       }catch(e2){
         setDictationStatus('No pude iniciar el dictado. Cierra y vuelve a abrir esta página en Chrome e inténtalo otra vez.', 'error');
       }
