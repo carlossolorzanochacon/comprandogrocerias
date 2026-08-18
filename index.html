@@ -855,8 +855,8 @@ footer{display:none}
       <p class="normalization-note"><span aria-hidden="true">i</span> <span id="normalizationNoteText">Precio por gramo normalizado para presentaciones diferentes.</span></p>
       <div class="comparison-toast" id="comparisonToast" role="status" aria-live="polite"></div>
       <section class="ocr-test-panel" id="ocrTestPanel" data-state="idle" aria-live="polite">
-        <div class="ocr-test-heading"><strong>Control OCR · etapa de pruebas <small>v16</small></strong><span id="ocrTestState">Esperando fotografía</span></div>
-        <div class="ocr-test-values"><span><b>Presentación</b><em id="ocrTestPresentation">—</em></span><span><b>Precio</b><em id="ocrTestPrice">—</em></span></div>
+        <div class="ocr-test-heading"><strong>Control OCR · etapa de pruebas <small>v17</small></strong><span id="ocrTestState">Esperando fotografía</span></div>
+        <div class="ocr-test-values"><span><b>Producto</b><em id="ocrTestProduct">—</em></span><span><b>Categoría</b><em id="ocrTestCategory">—</em></span><span><b>Presentación</b><em id="ocrTestPresentation">—</em></span><span><b>Precio</b><em id="ocrTestPrice">—</em></span></div>
         <div class="ocr-test-reason" id="ocrTestReason">Aquí aparecerá exactamente lo que logre interpretar el lector.</div>
         <details class="ocr-test-raw" open><summary>Texto bruto capturado por OCR</summary><code id="ocrTestRaw">Aún no se ha procesado una etiqueta.</code></details>
         <button type="button" id="openOcrCorrection" hidden>Corregir o completar datos</button>
@@ -1070,7 +1070,7 @@ const categories = [
   ['Bebidas',/coca|pepsi|agua|jugo|refresco|bebida|cerveza/i],
   ['Limpieza',/detergente|cloro|jabón|suavizante|desinfectante|limpiador/i],
   ['Hogar',/papel|servilleta|bolsa|aluminio|toalla/i],
-  ['Despensa',/cereal|arroz|frijol|pasta|aceite|az[uú]car|\bsal(?:es)?\b|harina|caf[eé]|consom[eé]s?|especias?|condimentos?|sazonadores?/i],
+  ['Despensa',/cereal|avena|hojuelas|arroz|frijol|pasta|aceite|az[uú]car|\bsal(?:es)?\b|harina|caf[eé]|consom[eé]s?|especias?|condimentos?|sazonadores?/i],
   ['Dulces y snacks',/dulce|galleta/i],
   ['Panadería',/pan|panader|croissant|pastel|tortilla|bollo/i],
   ['Carnes',/pollo|carne|res|cerdo|pescado|jam[oó]n|salchicha/i],
@@ -2144,13 +2144,25 @@ function comparisonProductFromOcr(text){
 }
 
 function parseComparisonLabel(text){
-  const normalized = String(text || '').replace(/,/g,'.').replace(/\s+/g,' ').toUpperCase();
+  const lines=String(text||'').split(/\r?\n/).map(line=>line.replace(/,/g,'.').replace(/\s+/g,' ').trim().toUpperCase()).filter(Boolean);
+  const usefulLines=lines.filter(line=>!/(?:SKU|UPC|C[ÓO]DIGO|BARCODE)/.test(line)&&!/(?:\d[\s|]*){7,}/.test(line));
+  const normalized = usefulLines.join(' ');
   const measurementText = normalized
     .replace(/\b([0-9S][0-9O]{1,3})\s*(G|6|9)\b/g,(_,digits,unit)=>`${digits.replace(/^S/,'5').replace(/O/g,'0')}${unit}`);
-  const labelledPrice = normalized.match(/PRECIO[^0-9]{0,12}Q?\s*([0-9]{1,3}\.[0-9]{2})\b/);
-  const quetzalPrice = normalized.match(/\bQ\s*([0-9]{1,3}\.[0-9]{2})\b/);
-  const fallbackPrices = [...normalized.matchAll(/\b([0-9]{1,3}\.[0-9]{2})\b/g)].map(match => Number(match[1])).filter(value => Number.isFinite(value) && value > 0 && value < 1000);
-  const price = Number(labelledPrice?.[1] || quetzalPrice?.[1]) || fallbackPrices[0];
+  const normalizeOcrDigits=value=>value.replace(/([0-9])O(?=[0-9])/g,(_,digit)=>`${digit}0`).replace(/\bO(?=[0-9])/g,'0');
+  const numericText=normalizeOcrDigits(normalized);
+  const priceCandidates=[];
+  usefulLines.forEach((line,index)=>{
+    const source=normalizeOcrDigits(`${line} ${usefulLines[index+1]||''}`);
+    for(const match of source.matchAll(/(?:\bQ\s*)?([0-9]{1,3})\s*[.]\s*([0-9]{1,2})\b/g)){
+      const value=Number(`${match[1]}.${match[2].padEnd(2,'0')}`);if(!Number.isFinite(value)||value<=0||value>=1000)continue;
+      const score=(/PRECIO/.test(source)?100:0)+(/\bQ/.test(source)?70:0)+(/OFERTA|AHORRO/.test(source)?-25:0)-index*.01;
+      priceCandidates.push({value,score});
+    }
+  });
+  if(!priceCandidates.length)for(const match of numericText.matchAll(/\b([0-9]{1,3}\.[0-9]{2})\b/g)){const value=Number(match[1]);if(value>0&&value<1000)priceCandidates.push({value,score:1})}
+  priceCandidates.sort((a,b)=>b.score-a.score);
+  const price=priceCandidates[0]?.value;
   // Chrome/Tesseract suele confundir la "g" pequeña con 6 o 9. Solo se
   // acepta esa corrección después de un peso razonable, nunca desde códigos
   // de barras largos.
@@ -2168,8 +2180,14 @@ function parseComparisonLabel(text){
   else if(millilitersMatch){amount=Number(millilitersMatch[1]);unit='ml';display=`${Math.round(amount)} ml`;}
   else if(litersMatch){amount=Number(litersMatch[1]);unit='l';display=`${litersMatch[1]} L`;}
   else if(unitsMatch){amount=Number(unitsMatch[1]);unit='unidad';display=`${Math.round(amount)} unidades`;}
-  const name = /AVENA|HOJUELAS/.test(normalized) ? 'Avena en hojuelas' : 'Producto escaneado';
-  return {name,brand:/MARCA\s+ORO/.test(normalized) ? 'Marca Oro' : 'Marca detectada',amount,unit,price,display,rawText:normalized};
+  const knownProducts=[[/AVENA|HOJUELAS/,'Avena en hojuelas'],[/LECHE/,'Leche'],[/HUEVOS?/,'Huevos'],[/JAM[ÓO]N/,'Jamón'],[/DETERGENTE/,'Detergente'],[/GALLETAS?/,'Galletas'],[/ARROZ/,'Arroz'],[/AZ[ÚU]CAR/,'Azúcar'],[/CAF[ÉE]/,'Café'],[/ACEITE/,'Aceite'],[/PASTA/,'Pasta'],[/PAN\b/,'Pan']];
+  const knownName=knownProducts.find(([pattern])=>pattern.test(normalized));
+  const descriptiveLine=usefulLines.filter(line=>!/(?:PRECIO|MARCA|OFERTA|AHORRO)/.test(line)&&!/[0-9]/.test(line)&&/[A-ZÁÉÍÓÚÑ]{3}/.test(line)).sort((a,b)=>b.replace(/[^A-ZÁÉÍÓÚÑ]/g,'').length-a.replace(/[^A-ZÁÉÍÓÚÑ]/g,'').length)[0];
+  const name=knownName?.[1]||(descriptiveLine?descriptiveLine.replace(/[^A-ZÁÉÍÓÚÑ ]/g,' ').replace(/\s+/g,' ').trim().toLocaleLowerCase('es-GT').replace(/^./,letter=>letter.toUpperCase()):'Producto escaneado');
+  const brandLine=lines.find(line=>/\bMARCA\b/.test(line));
+  const brandMatch=brandLine?.match(/\bMARCA\s+([A-ZÁÉÍÓÚÑ][A-ZÁÉÍÓÚÑ0-9 '&.-]{1,30})/);
+  const brand=/MARCA\s+ORO/.test(lines.join(' '))?'Marca Oro':brandMatch?brandMatch[1].replace(/[|=_-]+$/,'').trim().toLocaleLowerCase('es-GT').replace(/\b\p{L}/gu,letter=>letter.toUpperCase()):'Marca detectada';
+  return {name,brand,category:catFor(name),amount,unit,price,display,rawText:lines.join('\n'),candidates:{prices:priceCandidates.slice(0,3),ignoredLines:lines.length-usefulLines.length}};
 }
 
 function renderOcrTestPanel({state='idle',reason='',ocrText='',parsed=null,file=null}={}){
@@ -2179,6 +2197,8 @@ function renderOcrTestPanel({state='idle',reason='',ocrText='',parsed=null,file=
   const labels={idle:'Esperando fotografía',processing:'Procesando…',success:'Lectura completada',warning:'Necesita revisión',error:'Error de lectura'};
   panel.dataset.state=state;
   $('#ocrTestState').textContent=labels[state]||state;
+  $('#ocrTestProduct').textContent=parsed?.name||'No reconocido';
+  $('#ocrTestCategory').textContent=parsed?.category||'No categorizada';
   $('#ocrTestPresentation').textContent=presentation||'No reconocida';
   $('#ocrTestPrice').textContent=price||'No reconocido';
   $('#ocrTestReason').textContent=reason||'Aquí aparecerá exactamente lo que logre interpretar el lector.';
@@ -2223,7 +2243,7 @@ function integrateScannedComparisonProduct(data,file){
   if(currentProducts.length){const base=currentProducts[0],baseMeasure=normalizedMeasure(base);if(baseMeasure.baseUnit!==scannedMeasure.baseUnit||normalizedIdentityPart(base.name)!==normalizedIdentityPart(data.name)){$('#comparisonToast').textContent=`No se agregó: compáralo con el mismo producto y una unidad compatible (${base.name}, ${baseMeasure.baseUnit}).`;return false}}
   let product = comparisonCatalog.find(candidate => normalizedIdentityPart(candidate.name)===normalizedIdentityPart(data.name)&&normalizedIdentityPart(candidate.brand)===normalizedIdentityPart(data.brand)&&normalizedMeasure(candidate).baseUnit===scannedMeasure.baseUnit && Math.abs(normalizedMeasure(candidate).quantity-scannedMeasure.quantity) <= 2 && Math.abs(candidate.price-data.price) <= .03);
   if(!product){
-    product = {id:`${data.source==='manual'?'manual':'scan'}-${Date.now()}`,source:data.source||'scan',name:data.name,brand:data.brand,amount:data.amount,unit:data.unit,display:data.display,price:data.price,image:data.image||'assets/branding/comprando-grocerias-icon.svg'};
+    product = {id:`${data.source==='manual'?'manual':'scan'}-${Date.now()}`,source:data.source||'scan',name:data.name,brand:data.brand,category:data.category||catFor(data.name),amount:data.amount,unit:data.unit,display:data.display,price:data.price,image:data.image||'assets/branding/comprando-grocerias-icon.svg'};
     comparisonCatalog.push(product);
     localStorage.setItem('smartScannedComparisonProducts',JSON.stringify(comparisonCatalog.filter(candidate=>candidate.id.startsWith('scan-')||candidate.id.startsWith('manual-'))));
   }
@@ -2404,7 +2424,7 @@ $('#comparisonResults').addEventListener('click',event=>{
   if(!product)return;
   const existing=cart.find(item=>item.sourceComparisonId===product.id);
   if(existing) existing.qty+=1;
-  else cart.push({id:`cart-${Date.now()}-${Math.random().toString(16).slice(2)}`,sourceComparisonId:product.id,name:product.name,qty:1,category:'Despensa',preferredPresentation:product.display || `${product.amount} ${product.unit}`,preferredBrand:product.brand || 'Sin preferencia'});
+  else cart.push({id:`cart-${Date.now()}-${Math.random().toString(16).slice(2)}`,sourceComparisonId:product.id,name:product.name,qty:1,category:product.category||catFor(product.name),preferredPresentation:product.display || `${product.amount} ${product.unit}`,preferredBrand:product.brand || 'Sin preferencia'});
   persist();
   render();
   $('#comparisonToast').textContent=`${product.name} (${product.display || `${product.amount} ${product.unit}`}) agregado a tu carreta.`;
