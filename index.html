@@ -855,7 +855,7 @@ footer{display:none}
       <p class="normalization-note"><span aria-hidden="true">i</span> <span id="normalizationNoteText">Precio por gramo normalizado para presentaciones diferentes.</span></p>
       <div class="comparison-toast" id="comparisonToast" role="status" aria-live="polite"></div>
       <section class="ocr-test-panel" id="ocrTestPanel" data-state="idle" aria-live="polite">
-        <div class="ocr-test-heading"><strong>Control OCR · etapa de pruebas <small>v21</small></strong><span id="ocrTestState">Esperando fotografía</span></div>
+        <div class="ocr-test-heading"><strong>Control OCR · etapa de pruebas <small>v22</small></strong><span id="ocrTestState">Esperando fotografía</span></div>
         <div class="ocr-test-values"><span><b>Producto</b><em id="ocrTestProduct">—</em></span><span><b>Categoría</b><em id="ocrTestCategory">—</em></span><span><b>Presentación</b><em id="ocrTestPresentation">—</em></span><span><b>Precio</b><em id="ocrTestPrice">—</em></span></div>
         <div class="ocr-test-reason" id="ocrTestReason">Aquí aparecerá exactamente lo que logre interpretar el lector.</div>
         <details class="ocr-test-raw" open><summary>Texto bruto capturado por OCR</summary><code id="ocrTestRaw">Aún no se ha procesado una etiqueta.</code></details>
@@ -2641,11 +2641,12 @@ if(isInstalled){
 }
 
 if('serviceWorker' in navigator && ['http:','https:'].includes(location.protocol)){
+  const appBuild='v22';
   let reloadingForServiceWorker=false;
   navigator.serviceWorker.addEventListener('controllerchange',()=>{
-    if(reloadingForServiceWorker||sessionStorage.getItem('smartSwReloaded')==='1')return;
+    if(reloadingForServiceWorker||sessionStorage.getItem('smartSwReloadedBuild')===appBuild)return;
     reloadingForServiceWorker=true;
-    sessionStorage.setItem('smartSwReloaded','1');
+    sessionStorage.setItem('smartSwReloadedBuild',appBuild);
     location.reload();
   });
   window.addEventListener('load',async()=>{
