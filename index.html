@@ -855,7 +855,7 @@ footer{display:none}
       <p class="normalization-note"><span aria-hidden="true">i</span> <span id="normalizationNoteText">Precio por gramo normalizado para presentaciones diferentes.</span></p>
       <div class="comparison-toast" id="comparisonToast" role="status" aria-live="polite"></div>
       <section class="ocr-test-panel" id="ocrTestPanel" data-state="idle" aria-live="polite">
-        <div class="ocr-test-heading"><strong>Control OCR · etapa de pruebas <small>v15</small></strong><span id="ocrTestState">Esperando fotografía</span></div>
+        <div class="ocr-test-heading"><strong>Control OCR · etapa de pruebas <small>v16</small></strong><span id="ocrTestState">Esperando fotografía</span></div>
         <div class="ocr-test-values"><span><b>Presentación</b><em id="ocrTestPresentation">—</em></span><span><b>Precio</b><em id="ocrTestPrice">—</em></span></div>
         <div class="ocr-test-reason" id="ocrTestReason">Aquí aparecerá exactamente lo que logre interpretar el lector.</div>
         <details class="ocr-test-raw" open><summary>Texto bruto capturado por OCR</summary><code id="ocrTestRaw">Aún no se ha procesado una etiqueta.</code></details>
@@ -2187,6 +2187,34 @@ function renderOcrTestPanel({state='idle',reason='',ocrText='',parsed=null,file=
   $('#openOcrCorrection').hidden=!lastComparisonDiagnostic;
 }
 
+async function preprocessComparisonOcrImage(file){
+  if(!window.createImageBitmap)return file;
+  const bitmap=await createImageBitmap(file);
+  try{
+    const maxSide=1800,scale=Math.min(1,maxSide/Math.max(bitmap.width,bitmap.height));
+    const width=Math.max(1,Math.round(bitmap.width*scale)),height=Math.max(1,Math.round(bitmap.height*scale));
+    const canvas=document.createElement('canvas');canvas.width=width;canvas.height=height;
+    const context=canvas.getContext('2d',{willReadFrequently:true});
+    context.drawImage(bitmap,0,0,width,height);
+    const image=context.getImageData(0,0,width,height),pixels=image.data,histogram=new Uint32Array(256);
+    for(let index=0;index<pixels.length;index+=4){const gray=Math.round(.299*pixels[index]+.587*pixels[index+1]+.114*pixels[index+2]);histogram[gray]++}
+    const total=width*height;let sum=0;for(let value=0;value<256;value++)sum+=value*histogram[value];
+    let background=0,backgroundSum=0,bestVariance=-1,threshold=160;
+    for(let value=0;value<256;value++){
+      background+=histogram[value];if(!background)continue;
+      const foreground=total-background;if(!foreground)break;
+      backgroundSum+=value*histogram[value];
+      const meanBackground=backgroundSum/background,meanForeground=(sum-backgroundSum)/foreground;
+      const variance=background*foreground*(meanBackground-meanForeground)**2;
+      if(variance>bestVariance){bestVariance=variance;threshold=value}
+    }
+    threshold=Math.max(105,Math.min(205,threshold));
+    for(let index=0;index<pixels.length;index+=4){const gray=.299*pixels[index]+.587*pixels[index+1]+.114*pixels[index+2];const value=gray>threshold?255:0;pixels[index]=pixels[index+1]=pixels[index+2]=value;pixels[index+3]=255}
+    context.putImageData(image,0,0);
+    return await new Promise(resolve=>canvas.toBlob(blob=>resolve(blob||file),'image/png'));
+  }finally{bitmap.close()}
+}
+
 function integrateScannedComparisonProduct(data,file){
   const scannedMeasure=normalizedMeasure({amount:data.amount,unit:data.unit});
   if(comparisonContext&&normalizedIdentityPart(data.name)!==normalizedIdentityPart(comparisonContextName())){$('#comparisonToast').textContent=`No se agregó: esta comparación es únicamente de ${comparisonContextName()}.`;return false}
@@ -2223,13 +2251,14 @@ async function analyzeComparisonPhoto(file){
   renderOcrTestPanel({state:'processing',reason:'El lector está examinando la fotografía.',file:null});
   try{
     if(!window.Tesseract) throw new Error('OCR no disponible');
-    const result = await Tesseract.recognize(file,'eng',{
+    const preparedImage=await preprocessComparisonOcrImage(file);
+    const result = await Tesseract.recognize(preparedImage,'eng',{
       workerPath:'vendor/tesseract/worker.min.js',
       corePath:'vendor/tesseract/core',
       langPath:'vendor/tesseract/lang-data',
       logger:message => {
       if(message.status === 'recognizing text') $('#comparisonToast').textContent = `Analizando etiqueta… ${Math.round((message.progress || 0)*100)}%`;
-    }});
+    }},{tessedit_pageseg_mode:Tesseract.PSM?.SPARSE_TEXT||'11',preserve_interword_spaces:'1'});
     const ocrText=String(result?.data?.text||'').trim();
     const parsed = parseComparisonLabel(ocrText);
     console.log('[COMPARAR OCR]',{text:ocrText,parsed});
